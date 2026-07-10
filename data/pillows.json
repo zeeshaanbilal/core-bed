@@ -1,0 +1,263 @@
+[
+  {
+    "id": "pillow_microfiber",
+    "slug": "dolcevita-microfiber-pillow",
+    "name": "DolceVita Microfiber Pillow",
+    "category": "Pillows",
+    "description": "Soft microfiber fill for balanced comfort and hotel-style loft.",
+    "longDescription": "A gentle everyday pillow with plush loft, smooth outer fabric and easy styling for modern bedrooms.",
+    "price": 3145,
+    "compareAtPrice": 3700,
+    "badge": "15% OFF",
+    "firmness": "Soft",
+    "material": "Microfiber fill",
+    "image": "https://images.unsplash.com/photo-1582582429416-47f8f35f1c47?auto=format&fit=crop&w=1200&q=80",
+    "gallery": [
+      "https://images.unsplash.com/photo-1582582429416-47f8f35f1c47?auto=format&fit=crop&w=1200&q=80"
+    ],
+    "features": [
+      "Soft hand-feel",
+      "Daily use comfort",
+      "Clean white finish"
+    ],
+    "sizes": ["Standard"],
+    "support": "Good for daily comfort and softer feel buyers.",
+    "feel": "Soft plush comfort",
+    "status": "active",
+    "inventory": 21,
+    "rating": 4.7,
+    "reviewCount": 18
+  },
+  {
+    "id": "pillow_super_soft",
+    "slug": "super-soft-pillow",
+    "name": "Super Soft Pillow",
+    "category": "Pillows",
+    "description": "Fluffy and low-pressure sleep support for lighter sleepers.",
+    "longDescription": "Designed for users who prefer a gentler sleep cradle with a softer upper surface and cleaner sink-in comfort.",
+    "price": 4845,
+    "compareAtPrice": 5700,
+    "badge": "15% OFF",
+    "firmness": "Soft",
+    "material": "Soft fiber core",
+    "image": "https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&w=1200&q=80",
+    "gallery": [
+      "https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&w=1200&q=80"
+    ],
+    "features": [
+      "Fluffier profile",
+      "Everyday support",
+      "Simple finish"
+    ],
+    "sizes": ["Standard"],
+    "support": "Best for softer comfort and low-profile sleeping positions.",
+    "feel": "Soft lofted comfort",
+    "status": "active",
+    "inventory": 16,
+    "rating": 4.6,
+    "reviewCount": 12
+  },
+  {
+    "id": "pillow_supreme_care",
+    "slug": "supreme-care-pillow",
+    "name": "Supreme Care Pillow",
+    "category": "Pillows",
+    "description": "Slimmer profile with neat support for calmer neck alignment.",
+    "longDescription": "A neater pillow shape for minimalist bedding setups, with a flatter surface and balanced support.",
+    "price": 5185,
+    "compareAtPrice": 6100,
+    "badge": "15% OFF",
+    "firmness": "Medium",
+    "material": "Support foam blend",
+    "image": "https://images.unsplash.com/photo-1629949009765-40f02f52375f?auto=format&fit=crop&w=1200&q=80",
+    "gallery": [
+      "https://images.unsplash.com/photo-1629949009765-40f02f52375f?auto=format&fit=crop&w=1200&q=80"
+    ],
+    "features": [
+      "Slim support profile",
+      "Neat edges",
+      "Low visual bulk"
+    ],
+    "sizes": ["Standard"],
+    "support": "Good for buyers who prefer flatter pillow support.",
+    "feel": "Medium balanced support",
+    "status": "active",
+    "inventory": 14,
+    "rating": 4.5,
+    "reviewCount": 11
+  },
+  {
+    "id": "pillow_memory",
+    "slug": "supreme-memory-pillow",
+    "name": "Supreme Memory Pillow",
+    "category": "Pillows",
+    "description": "Responsive memory support with calmer contour retention.",
+    "longDescription": "A more adaptive memory profile that better supports repeat use and more structured head positioning.",
+    "price": 9180,
+    "compareAtPrice": 10800,
+    "badge": "15% OFF",
+    "firmness": "Medium-Firm",
+    "material": "Memory foam",
+    "image": "https://images.unsplash.com/photo-1549187774-b4e9b0445b41?auto=format&fit=crop&w=1200&q=80",
+    "gallery": [
+      "https://images.unsplash.com/photo-1549187774-b4e9b0445b41?auto=format&fit=crop&w=1200&q=80"
+    ],
+    "features": [
+      "Responsive memory feel",
+      "Structured comfort",
+      "Better pressure balance"
+    ],
+    "sizes": ["Standard"],
+    "support": "For buyers who want more shape retention than classic fiber pillows.",
+    "feel": "Adaptive memory support",
+    "status": "active",
+    "inventory": 13,
+    "rating": 4.8,
+    "reviewCount": 23
+  },
+  {
+    "id": "pillow_memory_contour",
+    "slug": "supreme-memory-contour-pillow",
+    "name": "Supreme Memory Contour Pillow",
+    "category": "Pillows",
+    "description": "Curved contour silhouette built for cleaner neck positioning.",
+    "longDescription": "This contour pillow is shaped for more guided support and better alignment through the night.",
+    "price": 9690,
+    "compareAtPrice": 11400,
+    "badge": "15% OFF",
+    "firmness": "Firm",
+    "material": "Contoured memory foam",
+    "image": "https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&w=1200&q=80&sat=-100",
+    "gallery": [
+      "https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&w=1200&q=80&sat=-100"
+    ],
+    "features": [
+      "Contour shape",
+      "Neck support",
+      "Memory hold"
+    ],
+    "sizes": ["Standard"],
+    "support": "Useful for posture-conscious sleepers who prefer a molded profile.",
+    "feel": "Structured contour support",
+    "status": "active",
+    "inventory": 9,
+    "rating": 4.8,
+    "reviewCount": 16
+  },
+  {
+    "id": "pillow_egel",
+    "slug": "e-gel-pillow",
+    "name": "E-Gel Pillow",
+    "category": "Pillows",
+    "description": "Gel layer accent for a cooler top-hand feel.",
+    "longDescription": "A cooler-touch pillow that visually stands out and offers a fresher upper surface for warmer nights.",
+    "price": 12749,
+    "compareAtPrice": 14999,
+    "badge": "15% OFF",
+    "firmness": "Medium",
+    "material": "Gel memory hybrid",
+    "image": "https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&w=1200&q=80&hue=160",
+    "gallery": [
+      "https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&w=1200&q=80&hue=160"
+    ],
+    "features": [
+      "Cooler touch surface",
+      "Modern profile",
+      "Balanced support"
+    ],
+    "sizes": ["Standard"],
+    "support": "For warmer sleepers and buyers who want cooler-touch materials.",
+    "feel": "Medium cool support",
+    "status": "active",
+    "inventory": 10,
+    "rating": 4.7,
+    "reviewCount": 19
+  },
+  {
+    "id": "pillow_jelly_foam",
+    "slug": "jelly-foam-pillow",
+    "name": "Jelly Foam Pillow",
+    "category": "Pillows",
+    "description": "Dual-tone modern support with airy foam styling.",
+    "longDescription": "A more contemporary foam pillow option with visual layering and cleaner support zones.",
+    "price": 12749,
+    "compareAtPrice": 14999,
+    "badge": "15% OFF",
+    "firmness": "Medium",
+    "material": "Air foam gel mix",
+    "image": "https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&w=1200&q=80&sat=80",
+    "gallery": [
+      "https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&w=1200&q=80&sat=80"
+    ],
+    "features": [
+      "Layered look",
+      "Fresh support zones",
+      "Contemporary styling"
+    ],
+    "sizes": ["Standard"],
+    "support": "Good for buyers wanting a more technical pillow presentation.",
+    "feel": "Balanced air-foam comfort",
+    "status": "active",
+    "inventory": 8,
+    "rating": 4.6,
+    "reviewCount": 15
+  },
+  {
+    "id": "pillow_neck_posture",
+    "slug": "neck-posture-pillow",
+    "name": "Neck Posture Pillow",
+    "category": "Pillows",
+    "description": "Targeted ergonomic shaping for neck and upper shoulder support.",
+    "longDescription": "A posture-focused pillow with sculpted support zones and cleaner contour geometry for alignment-led comfort.",
+    "price": 12749,
+    "compareAtPrice": 14999,
+    "badge": "15% OFF",
+    "firmness": "Firm",
+    "material": "Ergonomic foam core",
+    "image": "https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&w=1200&q=80&hue=40",
+    "gallery": [
+      "https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&w=1200&q=80&hue=40"
+    ],
+    "features": [
+      "Ergonomic cut",
+      "Neck support",
+      "Defined posture zones"
+    ],
+    "sizes": ["Standard"],
+    "support": "Best for users actively looking for a posture pillow.",
+    "feel": "Firm ergonomic support",
+    "status": "active",
+    "inventory": 7,
+    "rating": 4.7,
+    "reviewCount": 14
+  },
+  {
+    "id": "pillow_latex",
+    "slug": "latex-pillow",
+    "name": "Latex Pillow",
+    "category": "Pillows",
+    "description": "Airy latex-style support with a lifted and resilient feel.",
+    "longDescription": "A breathable pillow with a more lifted response and cleaner rebound than softer fiber-based options.",
+    "price": 12749,
+    "compareAtPrice": 14999,
+    "badge": "15% OFF",
+    "firmness": "Medium-Firm",
+    "material": "Latex support core",
+    "image": "https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&w=1200&q=80&sat=-20",
+    "gallery": [
+      "https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&w=1200&q=80&sat=-20"
+    ],
+    "features": [
+      "Lifted latex feel",
+      "Airflow-friendly",
+      "Responsive rebound"
+    ],
+    "sizes": ["Standard"],
+    "support": "For users who prefer a springier, lifted pillow response.",
+    "feel": "Breathable resilient support",
+    "status": "active",
+    "inventory": 9,
+    "rating": 4.8,
+    "reviewCount": 17
+  }
+]

@@ -1,0 +1,263 @@
+[
+  {
+    "id": "acc_pet_bed",
+    "slug": "supreme-pet-bed",
+    "name": "Supreme Pet Bed",
+    "category": "Accessories",
+    "description": "Supportive pet lounging surface with easy-clean outer finish.",
+    "longDescription": "A cleaner, better-shaped pet bed built to match the same calm blue language as the rest of the collection while staying practical for daily use.",
+    "price": 12325,
+    "compareAtPrice": 14500,
+    "badge": "New",
+    "firmness": "Medium",
+    "material": "Support foam base",
+    "image": "https://images.unsplash.com/photo-1545249390-6bdfa286032f?auto=format&fit=crop&w=1200&q=80",
+    "gallery": [
+      "https://images.unsplash.com/photo-1545249390-6bdfa286032f?auto=format&fit=crop&w=1200&q=80"
+    ],
+    "features": [
+      "Easy-clean surface",
+      "Raised edge comfort",
+      "Stable support base"
+    ],
+    "sizes": ["Standard"],
+    "support": "Good for pets that prefer a softer, protected edge.",
+    "feel": "Balanced support",
+    "status": "active",
+    "inventory": 11,
+    "rating": 4.6,
+    "reviewCount": 9
+  },
+  {
+    "id": "acc_memory_jai_namaz",
+    "slug": "supreme-memory-jai-namaz",
+    "name": "Supreme Memory Jai Namaz",
+    "category": "Accessories",
+    "description": "Memory support prayer mat with a cleaner quilted top and calm blue finish.",
+    "longDescription": "A more premium prayer mat design using memory support cues and a sharper, cleaner visual presentation for long sitting or kneeling use.",
+    "price": 7800,
+    "compareAtPrice": 9200,
+    "badge": "15% OFF",
+    "firmness": "Medium",
+    "material": "Memory support fill",
+    "image": "https://images.unsplash.com/photo-1517705008128-361805f42e86?auto=format&fit=crop&w=1200&q=80",
+    "gallery": [
+      "https://images.unsplash.com/photo-1517705008128-361805f42e86?auto=format&fit=crop&w=1200&q=80"
+    ],
+    "features": [
+      "Memory support core",
+      "Quilted top finish",
+      "Calmer pressure feel"
+    ],
+    "sizes": ["Standard"],
+    "support": "Useful for longer sitting or kneeling sessions.",
+    "feel": "Soft-medium supported comfort",
+    "status": "active",
+    "inventory": 13,
+    "rating": 4.8,
+    "reviewCount": 14
+  },
+  {
+    "id": "acc_spine_aligner",
+    "slug": "supreme-spine-aligner",
+    "name": "Supreme Spine Aligner",
+    "category": "Accessories",
+    "description": "Compact back support block with a clean ergonomic curve.",
+    "longDescription": "A neat spine support accessory intended for seated use, lower-back comfort and tidier posture while working or relaxing.",
+    "price": 3315,
+    "compareAtPrice": 3900,
+    "badge": "15% OFF",
+    "firmness": "Firm",
+    "material": "Ergonomic support foam",
+    "image": "https://images.unsplash.com/photo-1517705008128-361805f42e86?auto=format&fit=crop&w=1200&q=80&sat=-90",
+    "gallery": [
+      "https://images.unsplash.com/photo-1517705008128-361805f42e86?auto=format&fit=crop&w=1200&q=80&sat=-90"
+    ],
+    "features": [
+      "Compact support shape",
+      "Easy desk use",
+      "Structured lumbar hold"
+    ],
+    "sizes": ["Standard"],
+    "support": "Best for quick posture support on chairs and sofas.",
+    "feel": "Firm ergonomic hold",
+    "status": "active",
+    "inventory": 18,
+    "rating": 4.5,
+    "reviewCount": 7
+  },
+  {
+    "id": "acc_neck_relaxer",
+    "slug": "neck-relaxer",
+    "name": "Neck Relaxer",
+    "category": "Accessories",
+    "description": "Travel-style neck support with soft edge comfort.",
+    "longDescription": "A compact neck cushion designed for travel and short rest intervals, with a cleaner visual profile and easy support shape.",
+    "price": 3400,
+    "compareAtPrice": 4000,
+    "badge": "15% OFF",
+    "firmness": "Soft",
+    "material": "Soft cushion core",
+    "image": "https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&w=1200&q=80&sat=70&hue=220",
+    "gallery": [
+      "https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&w=1200&q=80&sat=70&hue=220"
+    ],
+    "features": [
+      "Travel friendly",
+      "Soft neck hold",
+      "Compact pack shape"
+    ],
+    "sizes": ["Standard"],
+    "support": "Good for quick travel support and lounge use.",
+    "feel": "Soft cradle support",
+    "status": "active",
+    "inventory": 20,
+    "rating": 4.4,
+    "reviewCount": 10
+  },
+  {
+    "id": "acc_phone_pad",
+    "slug": "supreme-phone-pad",
+    "name": "Supreme Phone Pad",
+    "category": "Accessories",
+    "description": "Foam support stand for tablets and phones in bed or on desks.",
+    "longDescription": "A simple viewing support accessory with a stable wedge form for reading, scrolling or hands-free media use.",
+    "price": 1870,
+    "compareAtPrice": 2200,
+    "badge": "15% OFF",
+    "firmness": "Firm",
+    "material": "Support wedge foam",
+    "image": "https://images.unsplash.com/photo-1517705008128-361805f42e86?auto=format&fit=crop&w=1200&q=80&hue=250",
+    "gallery": [
+      "https://images.unsplash.com/photo-1517705008128-361805f42e86?auto=format&fit=crop&w=1200&q=80&hue=250"
+    ],
+    "features": [
+      "Stable wedge form",
+      "Desk and bed use",
+      "Compact footprint"
+    ],
+    "sizes": ["Standard"],
+    "support": "Useful for casual hands-free viewing.",
+    "feel": "Firm static support",
+    "status": "active",
+    "inventory": 24,
+    "rating": 4.3,
+    "reviewCount": 8
+  },
+  {
+    "id": "acc_pillow_pad",
+    "slug": "supreme-pillow-pad",
+    "name": "Supreme Pillow Pad",
+    "category": "Accessories",
+    "description": "Triangular support block for reading, resting and upright comfort.",
+    "longDescription": "A clean wedge-style cushion for upright rest with a minimal footprint and a more architectural silhouette.",
+    "price": 2125,
+    "compareAtPrice": 2500,
+    "badge": "15% OFF",
+    "firmness": "Medium-Firm",
+    "material": "Support foam wedge",
+    "image": "https://images.unsplash.com/photo-1517705008128-361805f42e86?auto=format&fit=crop&w=1200&q=80&sat=-25",
+    "gallery": [
+      "https://images.unsplash.com/photo-1517705008128-361805f42e86?auto=format&fit=crop&w=1200&q=80&sat=-25"
+    ],
+    "features": [
+      "Reading support",
+      "Compact wedge form",
+      "Easy room styling"
+    ],
+    "sizes": ["Standard"],
+    "support": "Useful for backrest support and sitting comfort.",
+    "feel": "Medium-firm wedge support",
+    "status": "active",
+    "inventory": 17,
+    "rating": 4.4,
+    "reviewCount": 9
+  },
+  {
+    "id": "acc_coccyx_pro",
+    "slug": "coccyx-pro-cushion",
+    "name": "Coccyx Pro Cushion",
+    "category": "Accessories",
+    "description": "Seat support cushion with pressure-relief cutout.",
+    "longDescription": "A practical sitting cushion shaped for longer seated sessions with a cleaner and more premium visual execution.",
+    "price": 4080,
+    "compareAtPrice": 4800,
+    "badge": "15% OFF",
+    "firmness": "Firm",
+    "material": "Seat support foam",
+    "image": "https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&w=1200&q=80&hue=210&sat=-10",
+    "gallery": [
+      "https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&w=1200&q=80&hue=210&sat=-10"
+    ],
+    "features": [
+      "Pressure cutout shape",
+      "Desk-chair comfort",
+      "Structured seat support"
+    ],
+    "sizes": ["Standard"],
+    "support": "Good for seated work or driving comfort.",
+    "feel": "Firm posture support",
+    "status": "active",
+    "inventory": 12,
+    "rating": 4.6,
+    "reviewCount": 13
+  },
+  {
+    "id": "acc_ring_cushion",
+    "slug": "ring-cushion-pro",
+    "name": "Ring Cushion Pro",
+    "category": "Accessories",
+    "description": "Circular support cushion with pressure-aware center relief.",
+    "longDescription": "A simpler donut-style support cushion with neater shaping and a more premium cover direction.",
+    "price": 4080,
+    "compareAtPrice": 4800,
+    "badge": "15% OFF",
+    "firmness": "Medium",
+    "material": "Support cushion foam",
+    "image": "https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&w=1200&q=80&hue=35",
+    "gallery": [
+      "https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&w=1200&q=80&hue=35"
+    ],
+    "features": [
+      "Rounded support profile",
+      "Pressure relief center",
+      "Compact carry size"
+    ],
+    "sizes": ["Standard"],
+    "support": "Best for travel seating and shorter work sessions.",
+    "feel": "Balanced support relief",
+    "status": "active",
+    "inventory": 10,
+    "rating": 4.5,
+    "reviewCount": 8
+  },
+  {
+    "id": "acc_lounger",
+    "slug": "supreme-foam-lounger",
+    "name": "Supreme Foam Lounger",
+    "category": "Accessories",
+    "description": "Larger backrest lounge accessory for upright rest and casual support.",
+    "longDescription": "A room-friendly lounger cushion with multi-surface use, combining back support, arm positioning and a cleaner display shape.",
+    "price": 4675,
+    "compareAtPrice": 5500,
+    "badge": "15% OFF",
+    "firmness": "Medium-Firm",
+    "material": "Layered support foam",
+    "image": "https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&w=1200&q=80&sat=30",
+    "gallery": [
+      "https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&w=1200&q=80&sat=30"
+    ],
+    "features": [
+      "Lounge support",
+      "Arm and back comfort",
+      "Room-friendly silhouette"
+    ],
+    "sizes": ["Standard"],
+    "support": "Good for reading, support sitting and casual resting.",
+    "feel": "Structured lounging comfort",
+    "status": "active",
+    "inventory": 7,
+    "rating": 4.7,
+    "reviewCount": 12
+  }
+]

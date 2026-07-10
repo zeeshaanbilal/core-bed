@@ -1,0 +1,125 @@
+[
+  {
+    "id": "prod_natural_comfort",
+    "slug": "natural-comfort",
+    "name": "CoreSleep Natural Comfort Mattress",
+    "category": "Mattresses",
+    "description": "A breathable natural mattress with responsive support and a calm medium feel for primary bedrooms.",
+    "longDescription": "Natural Comfort is designed for buyers who want a polished everyday mattress with breathable comfort layers, balanced support and a refined visual finish. The construction is tuned for couples, growing families and shoppers moving up from mass-market foam beds into a more premium sleep setup.",
+    "price": 1299,
+    "compareAtPrice": 1499,
+    "badge": "Best Seller",
+    "firmness": "Medium",
+    "material": "Natural fiber comfort top",
+    "image": "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1200&q=80",
+    "gallery": [
+      "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1505693537694-cd1d132d7d82?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&w=1200&q=80"
+    ],
+    "features": [
+      "Balanced pressure relief for mixed sleeping positions",
+      "Breathable quilted surface with softer top-hand feel",
+      "Low-motion sleep surface for couples"
+    ],
+    "sizes": ["Single", "Queen", "King"],
+    "support": "Best for couples, guest rooms and buyers seeking an easy medium feel.",
+    "feel": "Balanced medium comfort",
+    "status": "active",
+    "inventory": 18,
+    "rating": 4.8,
+    "reviewCount": 24
+  },
+  {
+    "id": "prod_organic_latex",
+    "slug": "organic-latex",
+    "name": "CoreSleep Organic Latex Mattress",
+    "category": "Mattresses",
+    "description": "Layered natural latex for buoyant comfort, airflow and long-term support without a heavy sink.",
+    "longDescription": "Organic Latex is positioned as a premium breathable mattress for shoppers who want natural material storytelling and resilient support. The layer stack is aimed at warmer climates, active sleepers and buyers looking for a lifted sleep feel instead of deep foam hug.",
+    "price": 1499,
+    "compareAtPrice": 1699,
+    "badge": "Natural Latex",
+    "firmness": "Medium-Firm",
+    "material": "Organic latex and pocket support",
+    "image": "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1200&q=80&sat=-20",
+    "gallery": [
+      "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1200&q=80&sat=-20",
+      "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1200&q=80&hue=20"
+    ],
+    "features": [
+      "Naturally buoyant comfort response",
+      "Airflow-friendly construction for warmer rooms",
+      "Durable support profile for long-term use"
+    ],
+    "sizes": ["Single", "Queen", "King"],
+    "support": "Best for back and combination sleepers who want cooler, lifted comfort.",
+    "feel": "Lifted medium-firm support",
+    "status": "active",
+    "inventory": 9,
+    "rating": 4.9,
+    "reviewCount": 16
+  },
+  {
+    "id": "prod_signature_hybrid",
+    "slug": "signature-hybrid",
+    "name": "CoreSleep Signature Hybrid Mattress",
+    "category": "Mattresses",
+    "description": "A premium hybrid designed to balance pressure relief, airflow and reinforced edge support.",
+    "longDescription": "Signature Hybrid sits at the top of the storefront as a more architectural product: firmer, more structured and better suited to buyers comparing orthopedic, luxury or high-support options. It combines pocketed support, refined upholstery and a showroom-oriented finish.",
+    "price": 1899,
+    "compareAtPrice": 2099,
+    "badge": "Luxury Hybrid",
+    "firmness": "Firm",
+    "material": "Pocket coils with layered comfort foam",
+    "image": "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1200&q=80&contrast=20",
+    "gallery": [
+      "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1200&q=80&contrast=20",
+      "https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1200&q=80&sat=10"
+    ],
+    "features": [
+      "Structured edge support for easier movement",
+      "Pocket coil airflow and pressure balance",
+      "Luxury finish for premium bedroom positioning"
+    ],
+    "sizes": ["Single", "Queen", "King"],
+    "support": "Best for support-seeking couples and firmer sleep preferences.",
+    "feel": "Structured firm comfort",
+    "status": "active",
+    "inventory": 6,
+    "rating": 4.7,
+    "reviewCount": 13
+  },
+  {
+    "id": "prod_cloud_pillowtop",
+    "slug": "cloud-pillowtop",
+    "name": "CoreSleep Cloud Pillowtop",
+    "category": "Mattresses",
+    "description": "Plush top comfort with a calmer sink-in feel for side sleepers and luxury softness buyers.",
+    "longDescription": "Cloud Pillowtop gives the shop a softer, more indulgent option. It is useful for merchandising comfort-led buyers, upselling to premium bedrooms and creating stronger range contrast on the listing and compare pages.",
+    "price": 1699,
+    "compareAtPrice": 1899,
+    "badge": "Soft Comfort",
+    "firmness": "Soft-Medium",
+    "material": "Pillowtop quilting with responsive support core",
+    "image": "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1200&q=80&blur=10",
+    "gallery": [
+      "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1200&q=80&blur=10",
+      "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1200&q=80&sat=30"
+    ],
+    "features": [
+      "Plusher comfort for shoulders and hips",
+      "Refined hotel-style pillowtop look",
+      "Good merchandising option for soft feel shoppers"
+    ],
+    "sizes": ["Queen", "King"],
+    "support": "Best for side sleepers and shoppers wanting a softer luxury surface.",
+    "feel": "Deep plush comfort",
+    "status": "draft",
+    "inventory": 4,
+    "rating": 4.6,
+    "reviewCount": 7
+  }
+]

@@ -1,0 +1,26 @@
+[
+  {
+    "id": "content_guide_firmness",
+    "type": "guide",
+    "title": "How to Choose Mattress Firmness",
+    "slug": "how-to-choose-mattress-firmness",
+    "summary": "Guide buyers through side, back, combination and support preferences.",
+    "status": "draft"
+  },
+  {
+    "id": "content_policy_shipping",
+    "type": "policy",
+    "title": "Shipping Policy",
+    "slug": "shipping-policy",
+    "summary": "Delivery cities, timelines and special handling terms.",
+    "status": "draft"
+  },
+  {
+    "id": "content_home_materials",
+    "type": "homepage",
+    "title": "Materials Story Section",
+    "slug": "homepage-materials-story",
+    "summary": "Homepage editorial block for latex, wool, cotton and support layers.",
+    "status": "draft"
+  }
+]

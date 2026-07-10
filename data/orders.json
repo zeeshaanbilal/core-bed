@@ -1,0 +1,68 @@
+[
+  {
+    "id": "order_ym5a8cny",
+    "orderNumber": "CB-1002",
+    "sessionId": "cart_d51grz36es",
+    "customerName": "irfan",
+    "customerEmail": "muhammadirfan10241074@gmail.com",
+    "customerPhone": "+923013900245",
+    "city": "multan",
+    "address": "multan",
+    "notes": "multan",
+    "paymentMethod": "stripe_card",
+    "paymentStatus": "requires_action",
+    "orderStatus": "pending",
+    "items": [
+      {
+        "productSlug": "organic-latex",
+        "name": "CoreSleep Organic Latex Mattress",
+        "selectedSize": "Single",
+        "quantity": 1,
+        "unitPrice": 1499,
+        "lineTotal": 1499
+      },
+      {
+        "productSlug": "dolcevita-microfiber-pillow",
+        "name": "DolceVita Microfiber Pillow",
+        "selectedSize": "Standard",
+        "quantity": 1,
+        "unitPrice": 3145,
+        "lineTotal": 3145
+      }
+    ],
+    "subtotal": 4644,
+    "shippingFee": 0,
+    "total": 4644,
+    "paymentReference": "cs_test_u31d2jff",
+    "createdAt": "2026-07-07T08:08:08.332Z"
+  },
+  {
+    "id": "order_feykoi9f",
+    "orderNumber": "CB-1001",
+    "sessionId": "cart_sx93x7gpe3",
+    "customerName": "irfan",
+    "customerEmail": "codingwithme178@gmail.com",
+    "customerPhone": "03013900245",
+    "city": "Lahore",
+    "address": "Johar Town, C2 Block, Lahore",
+    "notes": "",
+    "paymentMethod": "cash_on_delivery",
+    "paymentStatus": "cod_pending",
+    "orderStatus": "pending",
+    "items": [
+      {
+        "productSlug": "organic-latex",
+        "name": "CoreSleep Organic Latex Mattress",
+        "selectedSize": "Single",
+        "quantity": 6,
+        "unitPrice": 1499,
+        "lineTotal": 8994
+      }
+    ],
+    "subtotal": 8994,
+    "shippingFee": 0,
+    "total": 8994,
+    "paymentReference": "cod_cxhyyde3",
+    "createdAt": "2026-07-06T09:30:08.170Z"
+  }
+]

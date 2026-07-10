@@ -1,0 +1,20 @@
+[
+  {
+    "sessionId": "cart_sx93x7gpe3",
+    "items": [
+      {
+        "id": "cartitem_9pggd6i1",
+        "productSlug": "signature-hybrid",
+        "quantity": 1,
+        "selectedSize": "Single",
+        "unitPrice": 1899
+      }
+    ],
+    "updatedAt": "2026-07-06T10:02:36.237Z"
+  },
+  {
+    "sessionId": "cart_d51grz36es",
+    "items": [],
+    "updatedAt": "2026-07-07T08:08:08.335Z"
+  }
+]

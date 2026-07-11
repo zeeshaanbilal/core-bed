@@ -38,6 +38,13 @@ export async function registerAction(formData: FormData) {
   const country = getString(formData, "country") || "Pakistan";
   const password = getString(formData, "password");
   const confirmPassword = getString(formData, "confirmPassword");
+  let sessionToSet:
+    | {
+        access_token: string;
+        refresh_token: string;
+        expires_in?: number;
+      }
+    | null = null;
 
   if (password !== confirmPassword) {
     redirect("/account/register?error=Passwords%20do%20not%20match");
@@ -68,16 +75,20 @@ export async function registerAction(formData: FormData) {
     });
 
     if (result.access_token && result.refresh_token) {
-      await setAuthCookies(result as {
+      sessionToSet = result as {
         access_token: string;
         refresh_token: string;
         expires_in?: number;
-      });
-      redirect("/account");
+      };
     }
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unable to create account";
     redirect(`/account/register?error=${encodeURIComponent(message)}`);
+  }
+
+  if (sessionToSet) {
+    await setAuthCookies(sessionToSet);
+    redirect("/account");
   }
 
   redirect("/account/login?success=Account%20created.%20Please%20sign%20in.");

@@ -84,8 +84,8 @@ export function SiteHeader({
             </Link>
           </div>
           <div className="flex items-center gap-3 sm:gap-6">
-            <span>0311 1111666</span>
-            <span className="hidden sm:inline">111-111-666</span>
+            <span>WhatsApp: +15855029662</span>
+            <span className="hidden sm:inline">contact@e.corebed.com</span>
             <Link href="/store-locator" className="hidden transition hover:text-navy sm:inline">
               Stores
             </Link>

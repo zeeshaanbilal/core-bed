@@ -140,19 +140,19 @@ export const storeLocations = [
     city: "Lahore",
     address: "MM Alam Road showroom district",
     timing: "11am to 9pm",
-    phone: "+92 311 1111666"
+    phone: "+15855029662"
   },
   {
     city: "Karachi",
     address: "Shahrah-e-Faisal partner studio",
     timing: "11am to 9pm",
-    phone: "+92 311 1111666"
+    phone: "+15855029662"
   },
   {
     city: "Islamabad",
     address: "Blue Area appointment showroom",
     timing: "12pm to 8pm",
-    phone: "+92 311 1111666"
+    phone: "+15855029662"
   }
 ];
 

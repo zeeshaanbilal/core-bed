@@ -185,9 +185,9 @@ export function ProductDetailView({
               </p>
             </div>
             <div className="grid border-t border-ink/10 text-sm text-slate md:grid-cols-3">
-              <div className="border-r border-ink/10 px-5 py-4">Order on WhatsApp</div>
-              <div className="border-r border-ink/10 px-5 py-4">Call Us</div>
-              <div className="px-5 py-4">Email Us</div>
+              <div className="border-r border-ink/10 px-5 py-4">WhatsApp: +15855029662</div>
+              <div className="border-r border-ink/10 px-5 py-4">Call: +15855029662</div>
+              <div className="px-5 py-4">Email: contact@e.corebed.com</div>
             </div>
           </div>
 
@@ -208,7 +208,6 @@ export function ProductDetailView({
       <section className="mt-20">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <h2 className="text-5xl font-semibold tracking-[-0.05em] text-navy">Customer feedback for this product</h2>
-          <p className="text-sm text-slate">Approved feedback appears here after admin review.</p>
         </div>
         <div className="mt-10 space-y-4">
           {testimonials.length > 0 ? (
@@ -220,13 +219,7 @@ export function ProductDetailView({
                 <p className="mt-2 text-base text-slate">From {testimonial.customerCity}</p>
               </article>
             ))
-          ) : (
-            <article className="rounded-[1.5rem] bg-white p-8 shadow-[0_14px_40px_rgba(47,42,40,0.08)]">
-              <p className="text-base leading-8 text-slate">
-                No approved feedback is live for this product yet. You can submit a new review below and it will appear here after admin approval.
-              </p>
-            </article>
-          )}
+          ) : null}
         </div>
       </section>
 

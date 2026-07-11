@@ -81,7 +81,7 @@ export function AccessoryCatalog({ products, country }: { products: ProductRecor
                       href={`/accessories/${product.slug}`}
                       className="inline-flex w-full justify-center rounded-md bg-navy px-7 py-3 text-base font-semibold text-white sm:w-auto"
                     >
-                      Shop now
+                      Add to Cart
                     </Link>
                   </div>
                 </article>

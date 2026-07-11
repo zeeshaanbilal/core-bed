@@ -151,10 +151,11 @@ export function SiteFooter() {
           ))}
         </div>
         <p>2026 Corebed Sleep Studio | All Rights Reserved.</p>
-        <div className="flex gap-6">
-          <Link href="/faq">Privacy Policy</Link>
-          <Link href="/faq">Terms & Conditions</Link>
-          <Link href="/faq">FAQ&apos;s</Link>
+        <div className="flex flex-wrap items-center justify-center gap-6">
+          <Link href="/privacy-policy" className="hover:text-[#dbe8b2] transition-colors">Privacy Policy</Link>
+          <Link href="/terms-conditions" className="hover:text-[#dbe8b2] transition-colors">Terms & Conditions</Link>
+          <Link href="/return-policy" className="hover:text-[#dbe8b2] transition-colors">Return Policy</Link>
+          <Link href="/faq" className="hover:text-[#dbe8b2] transition-colors">FAQ&apos;s</Link>
         </div>
       </div>
     </footer>

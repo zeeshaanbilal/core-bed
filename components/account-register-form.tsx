@@ -1,11 +1,18 @@
+"use client";
+
+import { useState } from "react";
 import Link from "next/link";
 
 import { registerAction } from "@/app/actions/auth";
 import { FormSubmitButton } from "@/components/form-submit-button";
+import { getCurrencyConfig } from "@/lib/format";
+import { countryOptions } from "@/lib/site-data";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 
 export function AccountRegisterForm({ error }: { error?: string }) {
   const configured = isSupabaseConfigured();
+  const [country, setCountry] = useState("Pakistan");
+  const currency = getCurrencyConfig(country).currency;
 
   return (
     <main className="mx-auto max-w-3xl px-6 py-16">
@@ -35,9 +42,26 @@ export function AccountRegisterForm({ error }: { error?: string }) {
             <input className="rounded-2xl border border-ink/10 bg-ivory px-4 py-3" name="city" placeholder="City" required />
             <input className="rounded-2xl border border-ink/10 bg-ivory px-4 py-3" name="state" placeholder="State / Province" />
             <input className="rounded-2xl border border-ink/10 bg-ivory px-4 py-3" name="postalCode" placeholder="Postal code" />
-            <input className="rounded-2xl border border-ink/10 bg-ivory px-4 py-3" defaultValue="Pakistan" name="country" placeholder="Country" required />
+            <select
+              className="rounded-2xl border border-ink/10 bg-ivory px-4 py-3"
+              name="country"
+              value={country}
+              onChange={(event) => setCountry(event.target.value)}
+              required
+            >
+              {countryOptions.map((countryOption) => (
+                <option key={countryOption} value={countryOption}>
+                  {countryOption}
+                </option>
+              ))}
+            </select>
             <input className="rounded-2xl border border-ink/10 bg-ivory px-4 py-3" name="password" placeholder="Password" required type="password" />
             <input className="rounded-2xl border border-ink/10 bg-ivory px-4 py-3" name="confirmPassword" placeholder="Confirm password" required type="password" />
+          </div>
+          <div className="rounded-[1.25rem] border border-[#dbe8b2] bg-[#f7fbef] p-4 text-sm leading-7 text-slate">
+            Preferred market: <span className="font-semibold text-ink">{country}</span>
+            <br />
+            Product prices will be shown in <span className="font-semibold text-ink">{currency}</span> after account creation and sign-in.
           </div>
           <label className="text-sm text-slate">
             <input className="mr-2" type="checkbox" /> Sign up for sleep guides and offers

@@ -1,7 +1,9 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
+import { getCurrentUser } from "@/lib/auth";
 import { upsertCustomerProfile } from "@/lib/mock-store";
 import { clearAuthCookies, setAuthCookies, signInWithPassword, signUpWithPassword } from "@/lib/supabase/server";
 
@@ -97,4 +99,34 @@ export async function registerAction(formData: FormData) {
 export async function logoutAction() {
   await clearAuthCookies();
   redirect("/account/login?success=Signed%20out");
+}
+
+export async function updateAccountProfileAction(formData: FormData) {
+  const user = await getCurrentUser();
+
+  if (!user?.email) {
+    redirect("/account/login?redirect=%2Faccount");
+  }
+
+  await upsertCustomerProfile({
+    email: user.email,
+    name: getString(formData, "fullName") || user.user_metadata?.["full_name"]?.toString() || "",
+    phone: getString(formData, "phone"),
+    addressLine1: getString(formData, "addressLine1"),
+    addressLine2: getString(formData, "addressLine2"),
+    city: getString(formData, "city"),
+    state: getString(formData, "state"),
+    postalCode: getString(formData, "postalCode"),
+    country: getString(formData, "country") || "Pakistan"
+  });
+
+  revalidatePath("/account");
+  revalidatePath("/");
+  revalidatePath("/shop");
+  revalidatePath("/pillows");
+  revalidatePath("/accessories");
+  revalidatePath("/cart");
+  revalidatePath("/checkout");
+
+  redirect("/account?success=Profile%20updated");
 }

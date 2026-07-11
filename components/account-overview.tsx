@@ -1,7 +1,9 @@
 import Link from "next/link";
 
-import { logoutAction } from "@/app/actions/auth";
+import { logoutAction, updateAccountProfileAction } from "@/app/actions/auth";
 import { FormSubmitButton } from "@/components/form-submit-button";
+import { getCurrencyConfig } from "@/lib/format";
+import { countryOptions } from "@/lib/site-data";
 import type { SupabaseAuthUser } from "@/lib/supabase/server";
 import { accountLinks } from "@/lib/site-data";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
@@ -9,16 +11,20 @@ import type { CustomerProfileRecord } from "@/lib/store-types";
 
 export function AccountOverview({
   error,
+  success,
   user,
   isAdmin,
   profile
 }: {
   error?: string;
+  success?: string;
   user: SupabaseAuthUser | null;
   isAdmin: boolean;
   profile: CustomerProfileRecord | null;
 }) {
   const configured = isSupabaseConfigured();
+  const preferredCountry = profile?.country || "Pakistan";
+  const preferredCurrency = getCurrencyConfig(preferredCountry).currency;
 
   return (
     <main className="mx-auto max-w-7xl px-6 py-16">
@@ -40,6 +46,12 @@ export function AccountOverview({
         </div>
       ) : null}
 
+      {success ? (
+        <div className="mt-8 rounded-[1.5rem] border border-[#b9e2c7] bg-[#eefaf2] p-5 text-sm text-[#1f6b3c]">
+          {success}
+        </div>
+      ) : null}
+
       {user ? (
         <div className="mt-10 grid gap-6 lg:grid-cols-[0.8fr_1.2fr]">
           <article className="section-frame rounded-[1.75rem] p-6">
@@ -53,6 +65,9 @@ export function AccountOverview({
               <div className="mt-6 space-y-2 rounded-[1.25rem] bg-[#f7fbff] p-4 text-sm leading-7 text-slate">
                 <p>Phone: {profile.phone || "Not added yet"}</p>
                 <p>City: {profile.city || "Not added yet"}</p>
+                <p>
+                  Preferred market: {preferredCountry} · Currency: {preferredCurrency}
+                </p>
                 <p>
                   Address: {[profile.addressLine1, profile.addressLine2, profile.state, profile.postalCode, profile.country]
                     .filter(Boolean)
@@ -77,6 +92,41 @@ export function AccountOverview({
           </article>
 
           <div className="grid gap-4 md:grid-cols-2">
+            <form action={updateAccountProfileAction} className="section-frame rounded-[1.75rem] p-6 md:col-span-2">
+              <p className="font-serif text-3xl">Country and currency preferences</p>
+              <p className="mt-3 text-sm leading-7 text-slate">
+                Update your delivery country here. Product listings, cart totals, and checkout pricing will use this market preference.
+              </p>
+
+              <div className="mt-5 grid gap-4 md:grid-cols-2">
+                <input className="rounded-2xl border border-ink/10 bg-ivory px-4 py-3" defaultValue={profile?.name || ""} name="fullName" placeholder="Full name" />
+                <input className="rounded-2xl border border-ink/10 bg-ivory px-4 py-3" defaultValue={profile?.phone || ""} name="phone" placeholder="Phone number" />
+                <input className="rounded-2xl border border-ink/10 bg-ivory px-4 py-3 md:col-span-2" defaultValue={profile?.addressLine1 || ""} name="addressLine1" placeholder="Address line 1" />
+                <input className="rounded-2xl border border-ink/10 bg-ivory px-4 py-3 md:col-span-2" defaultValue={profile?.addressLine2 || ""} name="addressLine2" placeholder="Address line 2" />
+                <input className="rounded-2xl border border-ink/10 bg-ivory px-4 py-3" defaultValue={profile?.city || ""} name="city" placeholder="City" />
+                <input className="rounded-2xl border border-ink/10 bg-ivory px-4 py-3" defaultValue={profile?.state || ""} name="state" placeholder="State / Province" />
+                <input className="rounded-2xl border border-ink/10 bg-ivory px-4 py-3" defaultValue={profile?.postalCode || ""} name="postalCode" placeholder="Postal code" />
+                <select className="rounded-2xl border border-ink/10 bg-ivory px-4 py-3" defaultValue={preferredCountry} name="country">
+                  {countryOptions.map((country) => (
+                    <option key={country} value={country}>
+                      {country}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="mt-5 flex flex-wrap items-center justify-between gap-4 rounded-[1.25rem] bg-[#f7fbef] p-4 text-sm text-slate">
+                <span>
+                  Current pricing currency: <span className="font-semibold text-ink">{preferredCurrency}</span>
+                </span>
+                <FormSubmitButton
+                  idleLabel="Save preferences"
+                  pendingLabel="Saving..."
+                  className="rounded-full bg-navy px-5 py-3 text-sm text-white"
+                />
+              </div>
+            </form>
+
             {accountLinks.map((item) => (
               <Link key={item.href} href={item.href} className="section-frame rounded-[1.75rem] p-6">
                 <p className="font-serif text-3xl">{item.label}</p>

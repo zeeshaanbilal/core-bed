@@ -1,4 +1,5 @@
 import { cookies } from "next/headers";
+import { getSiteUrl } from "@/lib/site-url";
 
 const ACCESS_COOKIE = "corebed-access-token";
 const REFRESH_COOKIE = "corebed-refresh-token";
@@ -68,7 +69,7 @@ export async function signUpWithPassword(
       password,
       options: {
         data: metadata,
-        emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"}/account`
+        emailRedirectTo: `${getSiteUrl()}/account`
       }
     }),
     cache: "no-store"

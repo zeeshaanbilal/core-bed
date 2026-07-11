@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 
 import { ensureCartSessionId } from "@/lib/cart-session";
 import { getCurrentUser, requireAdminUser } from "@/lib/auth";
+import { getSiteUrl } from "@/lib/site-url";
 import { createStripeEmbeddedCheckoutSession, isStripeServerReady } from "@/lib/stripe";
 import {
   addCartItem,
@@ -118,7 +119,7 @@ export async function submitCheckoutAction(formData: FormData) {
       redirect("/checkout?error=Your%20cart%20is%20empty.");
     }
 
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+    const siteUrl = getSiteUrl();
     const checkoutSession = await createStripeEmbeddedCheckoutSession({
       customerEmail,
       returnUrl: `${siteUrl}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,

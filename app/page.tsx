@@ -257,17 +257,38 @@ export default async function HomePage() {
         <div className="mt-12 grid gap-8 lg:grid-cols-4">
           {featuredProducts.map((product) => (
             <div key={product.id} className="text-center">
-              <div className="overflow-hidden rounded-sm bg-[linear-gradient(180deg,#f5f2ea_0%,#e6dece_100%)] p-6">
+              <Link
+                href={
+                  product.category === "Pillows"
+                    ? `/pillows/${product.slug}`
+                    : product.category === "Accessories"
+                      ? `/accessories/${product.slug}`
+                      : `/shop/${product.slug}`
+                }
+                className="block overflow-hidden rounded-sm bg-[linear-gradient(180deg,#f5f2ea_0%,#e6dece_100%)] p-6"
+              >
                 <div
                   className="h-[300px] w-full bg-contain bg-center bg-no-repeat"
                   style={{ backgroundImage: `url(${product.image})` }}
                 />
-              </div>
+              </Link>
               <h3 className="mt-7 text-2xl font-medium tracking-[-0.04em] text-navy">{product.name}</h3>
               <div className="mt-3 text-lg text-slate">{formatCurrency(product.price, profile?.country)}</div>
               {product.compareAtPrice ? (
                 <div className="mt-1 text-base text-slate line-through">{formatCurrency(product.compareAtPrice, profile?.country)}</div>
               ) : null}
+              <Link
+                href={
+                  product.category === "Pillows"
+                    ? `/pillows/${product.slug}`
+                    : product.category === "Accessories"
+                      ? `/accessories/${product.slug}`
+                      : `/shop/${product.slug}`
+                }
+                className="mt-5 inline-flex rounded-full bg-navy px-5 py-3 text-sm font-medium text-white"
+              >
+                Shop now
+              </Link>
             </div>
           ))}
         </div>

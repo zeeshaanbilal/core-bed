@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 
 import { getAccessorySlugs, getBlogPostSlugs, getPillowSlugs, getProductSlugs } from "@/lib/mock-store";
-import { getSiteUrl } from "@/lib/seo";
+import { getSiteUrl } from "@/lib/site-url";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const [productSlugs, pillowSlugs, accessorySlugs, blogSlugs] = await Promise.all([

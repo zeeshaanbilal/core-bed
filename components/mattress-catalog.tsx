@@ -144,7 +144,7 @@ export function MattressCatalog({ products, country }: { products: ProductRecord
                       </p>
                     </div>
                     <Link href={`/shop/${product.slug}`} className="inline-flex w-full justify-center rounded-md bg-navy px-7 py-3 text-base font-semibold text-white sm:w-auto">
-                      Add to Cart
+                      Shop now
                     </Link>
                   </div>
                 </article>

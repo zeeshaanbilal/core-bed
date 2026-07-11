@@ -27,5 +27,9 @@ export function getSiteUrl() {
     return previewUrl;
   }
 
+  if (process.env.NODE_ENV === "production") {
+    return "https://corebed.com";
+  }
+
   return "http://localhost:3000";
 }

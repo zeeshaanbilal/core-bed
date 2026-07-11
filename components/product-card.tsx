@@ -6,7 +6,21 @@ import { FormSubmitButton } from "@/components/form-submit-button";
 import { formatCurrency } from "@/lib/mock-store";
 import type { ProductRecord } from "@/lib/store-types";
 
+function getProductHref(product: ProductRecord) {
+  if (product.category.toLowerCase() === "pillows") {
+    return `/pillows/${product.slug}`;
+  }
+
+  if (product.category.toLowerCase() === "accessories") {
+    return `/accessories/${product.slug}`;
+  }
+
+  return `/shop/${product.slug}`;
+}
+
 export function ProductCard({ product, country }: { product: ProductRecord; country?: string }) {
+  const productHref = getProductHref(product);
+
   return (
     <article className="overflow-hidden rounded-[2rem] border border-ink/10 bg-ivory shadow-soft transition duration-300 hover:-translate-y-1">
       <div className="relative h-72 overflow-hidden">
@@ -27,7 +41,7 @@ export function ProductCard({ product, country }: { product: ProductRecord; coun
       <div className="space-y-5 p-6">
         <div className="space-y-2">
           <p className="text-xs uppercase tracking-[0.3em] text-bronze">{product.category}</p>
-          <Link href={`/shop/${product.slug}`} className="font-serif text-3xl leading-tight text-ink">
+          <Link href={productHref} className="font-serif text-3xl leading-tight text-ink">
             {product.name}
           </Link>
           <p className="text-sm leading-7 text-slate">{product.description}</p>
@@ -51,7 +65,13 @@ export function ProductCard({ product, country }: { product: ProductRecord; coun
               <p className="text-sm text-slate line-through">{formatCurrency(product.compareAtPrice, country)}</p>
             ) : null}
           </div>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap justify-end gap-2">
+            <Link
+              href={productHref}
+              className="rounded-full border border-ink/15 px-4 py-3 text-sm font-medium text-ink transition hover:bg-sand"
+            >
+              Shop now
+            </Link>
             <form action={addWishlistAction}>
               <input name="productSlug" type="hidden" value={product.slug} />
               <FormSubmitButton

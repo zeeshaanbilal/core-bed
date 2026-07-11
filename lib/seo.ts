@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
 import { getCurrencyConfig } from "@/lib/format";
+import { getSiteUrl } from "@/lib/site-url";
 import type { BlogFaqRecord, BlogPostRecord, ProductRecord } from "@/lib/store-types";
 
 export const defaultKeywords = [
@@ -17,10 +18,6 @@ export const defaultKeywords = [
   "premium mattress store",
   "bedroom comfort"
 ];
-
-export function getSiteUrl() {
-  return process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/+$/, "") || "http://localhost:3000";
-}
 
 export function absoluteUrl(path = "/") {
   const normalizedPath = path.startsWith("/") ? path : `/${path}`;

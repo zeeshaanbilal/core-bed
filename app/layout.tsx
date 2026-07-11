@@ -9,7 +9,8 @@ import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import LLM from "@/components/LLM";
 import { StructuredData } from "@/components/structured-data";
-import { buildMetadata, buildOrganizationSchema, buildWebSiteSchema, getSiteUrl } from "@/lib/seo";
+import { buildMetadata, buildOrganizationSchema, buildWebSiteSchema } from "@/lib/seo";
+import { getSiteUrl } from "@/lib/site-url";
 
 export const metadata: Metadata = {
   metadataBase: new URL(getSiteUrl()),

@@ -6,11 +6,8 @@ import { useEffect, useMemo, useState } from "react";
 
 import { addToCartAction, addWishlistAction, removeWishlistAction, submitTestimonialAction } from "@/app/actions/store";
 import { FormSubmitButton } from "@/components/form-submit-button";
+import { formatCurrency } from "@/lib/format";
 import type { ProductRecord, TestimonialRecord } from "@/lib/store-types";
-
-function formatPkr(value: number) {
-  return `PKR ${value.toLocaleString("en-PK")}.00`;
-}
 
 export function ProductDetailView({
   product,
@@ -19,7 +16,8 @@ export function ProductDetailView({
   compareLabel,
   relatedProducts,
   isWishlisted,
-  testimonials
+  testimonials,
+  country
 }: {
   product: ProductRecord;
   backHref: string;
@@ -28,6 +26,7 @@ export function ProductDetailView({
   relatedProducts: ProductRecord[];
   isWishlisted: boolean;
   testimonials: TestimonialRecord[];
+  country?: string;
 }) {
   const gallery = useMemo(() => [product.image, ...product.gallery].slice(0, 4), [product.gallery, product.image]);
   const initialVariant = product.variants[0];
@@ -55,7 +54,6 @@ export function ProductDetailView({
 
   const activePrice = selectedVariant?.price ?? product.price;
   const activeCompareAt = selectedVariant?.compareAtPrice ?? product.compareAtPrice;
-  const monthlyInstallment = Math.round(activePrice / 3);
   const returnPath = `${backHref}/${product.slug}`;
 
   return (
@@ -95,13 +93,9 @@ export function ProductDetailView({
         <div className="space-y-7">
           <div>
             <h1 className="text-5xl font-semibold tracking-[-0.06em] text-navy">{product.name}</h1>
-            <div className="mt-5 inline-flex rounded-md bg-bronze px-4 py-2 text-base font-semibold text-white">Installments available</div>
-            <p className="mt-5 text-xl text-slate">
-              Pay in 3 Easy Instalments of <span className="font-semibold text-bronze">{formatPkr(monthlyInstallment)}</span>
-            </p>
-            <div className="mt-4 flex flex-wrap items-center gap-3 text-[1.9rem]">
-              {activeCompareAt ? <span className="text-xl text-slate line-through">{formatPkr(activeCompareAt)}</span> : null}
-              <span className="font-semibold text-navy">{formatPkr(activePrice)}</span>
+            <div className="mt-5 flex flex-wrap items-center gap-3 text-[1.9rem]">
+              {activeCompareAt ? <span className="text-xl text-slate line-through">{formatCurrency(activeCompareAt, country)}</span> : null}
+              <span className="font-semibold text-navy">{formatCurrency(activePrice, country)}</span>
             </div>
             <p className="mt-3 text-sm text-slate">SKU: {selectedVariant?.sku ?? "Custom"} | Stock: {selectedVariant?.stock ?? product.inventory}</p>
           </div>
@@ -254,8 +248,8 @@ export function ProductDetailView({
                       {related.name}
                     </Link>
                     <div className="mt-3 flex flex-wrap items-center gap-3 text-lg">
-                      {related.compareAtPrice ? <span className="text-slate line-through">{formatPkr(related.compareAtPrice)}</span> : null}
-                      <span className="text-navy">{formatPkr(related.price)}</span>
+                      {related.compareAtPrice ? <span className="text-slate line-through">{formatCurrency(related.compareAtPrice, country)}</span> : null}
+                      <span className="text-navy">{formatCurrency(related.price, country)}</span>
                     </div>
                   </div>
                   <Link href={`${backHref}/${related.slug}`} className="rounded-md bg-navy px-6 py-3 text-sm font-semibold text-white">

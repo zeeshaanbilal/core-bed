@@ -160,21 +160,21 @@ export default async function CheckoutPage({
                     {item.selectedFirmness ? ` / ${item.selectedFirmness}` : ""}
                   </span>
                 </span>
-                <span>{formatCurrency(item.lineTotal)}</span>
+                <span>{formatCurrency(item.lineTotal, profile?.country)}</span>
               </div>
             ))}
             <div className="border-t border-ink/10 pt-4">
               <div className="flex justify-between">
                 <span>Subtotal</span>
-                <span>{formatCurrency(cart.subtotal)}</span>
+                <span>{formatCurrency(cart.subtotal, profile?.country)}</span>
               </div>
               <div className="mt-2 flex justify-between">
                 <span>Shipping</span>
-                <span>{cart.shippingFee === 0 ? "Free" : formatCurrency(cart.shippingFee)}</span>
+                <span>{cart.shippingFee === 0 ? "Free" : formatCurrency(cart.shippingFee, profile?.country)}</span>
               </div>
               <div className="mt-4 flex justify-between text-base font-semibold text-ink">
                 <span>Total</span>
-                <span>{formatCurrency(cart.total)}</span>
+                <span>{formatCurrency(cart.total, profile?.country)}</span>
               </div>
             </div>
           </div>

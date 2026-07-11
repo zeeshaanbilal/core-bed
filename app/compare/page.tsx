@@ -1,4 +1,15 @@
+import type { Metadata } from "next";
+
 import { formatCurrency, getProducts } from "@/lib/mock-store";
+import { buildMetadata } from "@/lib/seo";
+
+export const metadata: Metadata = buildMetadata({
+  title: "Compare Corebed Mattresses | Firmness, Materials and Pricing",
+  description:
+    "Compare Corebed mattress models by firmness, material, price, and stock to choose the right support level for your bedroom.",
+  path: "/compare",
+  keywords: ["compare mattresses", "mattress comparison", "firmness comparison", "support comparison"]
+});
 
 export default async function ComparePage() {
   const products = (await getProducts()).slice(0, 4);

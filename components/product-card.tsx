@@ -6,7 +6,7 @@ import { FormSubmitButton } from "@/components/form-submit-button";
 import { formatCurrency } from "@/lib/mock-store";
 import type { ProductRecord } from "@/lib/store-types";
 
-export function ProductCard({ product }: { product: ProductRecord }) {
+export function ProductCard({ product, country }: { product: ProductRecord; country?: string }) {
   return (
     <article className="overflow-hidden rounded-[2rem] border border-ink/10 bg-ivory shadow-soft transition duration-300 hover:-translate-y-1">
       <div className="relative h-72 overflow-hidden">
@@ -46,9 +46,9 @@ export function ProductCard({ product }: { product: ProductRecord }) {
 
         <div className="flex items-end justify-between gap-4">
           <div>
-            <p className="text-2xl font-semibold text-ink">{formatCurrency(product.price)}</p>
+            <p className="text-2xl font-semibold text-ink">{formatCurrency(product.price, country)}</p>
             {product.compareAtPrice ? (
-              <p className="text-sm text-slate line-through">{formatCurrency(product.compareAtPrice)}</p>
+              <p className="text-sm text-slate line-through">{formatCurrency(product.compareAtPrice, country)}</p>
             ) : null}
           </div>
           <div className="flex gap-2">

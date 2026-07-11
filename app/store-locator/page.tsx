@@ -1,4 +1,15 @@
+import type { Metadata } from "next";
+
+import { buildMetadata } from "@/lib/seo";
 import { storeLocations } from "@/lib/site-data";
+
+export const metadata: Metadata = buildMetadata({
+  title: "Corebed Store Locator | Find a Showroom Near You",
+  description:
+    "Find Corebed showroom and support locations, with store timing, contact details, and visit planning information.",
+  path: "/store-locator",
+  keywords: ["store locator", "mattress showroom", "Corebed contact", "visit store"]
+});
 
 export default function StoreLocatorPage() {
   return (

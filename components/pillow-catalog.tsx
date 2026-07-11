@@ -4,14 +4,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 
+import { formatCurrency } from "@/lib/format";
 import type { ProductRecord } from "@/lib/store-types";
 import { ProductZoomModal } from "@/components/product-zoom-modal";
 
-function formatPkr(value: number) {
-  return `PKR ${value.toLocaleString("en-PK")}.00`;
-}
-
-export function PillowCatalog({ products }: { products: ProductRecord[] }) {
+export function PillowCatalog({ products, country }: { products: ProductRecord[]; country?: string }) {
   const [zoomState, setZoomState] = useState<{ image: string | null; title: string }>({
     image: null,
     title: ""
@@ -68,9 +65,9 @@ export function PillowCatalog({ products }: { products: ProductRecord[] }) {
                     </Link>
                     <div className="mt-3 flex flex-wrap items-center gap-3 text-[1.08rem]">
                       <span className="text-slate line-through">
-                        {formatPkr(product.compareAtPrice ?? product.price + 1200)}
+                        {formatCurrency(product.compareAtPrice ?? product.price + 1200, country)}
                       </span>
-                      <span className="text-[#ff2d2d]">{formatPkr(product.price)}</span>
+                      <span className="text-[#ff2d2d]">{formatCurrency(product.price, country)}</span>
                     </div>
                   </div>
 

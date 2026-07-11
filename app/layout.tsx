@@ -6,10 +6,25 @@ import { getCurrentUser, isAdminUser } from "@/lib/auth";
 import { getCartDetail, getWishlistCount } from "@/lib/mock-store";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
+import LLM from "@/components/LLM";
+import { StructuredData } from "@/components/structured-data";
+import { buildMetadata, buildOrganizationSchema, buildWebSiteSchema, getSiteUrl } from "@/lib/seo";
 
 export const metadata: Metadata = {
-  title: "CoreSleep Premium Mattress Studio",
-  description: "Luxury mattress ecommerce redesign foundation for Corebed/CoreSleep."
+  metadataBase: new URL(getSiteUrl()),
+  ...buildMetadata({
+    title: "Corebed Natural Mattress | Mattresses, Pillows and Sleep Accessories",
+    description:
+      "Explore Corebed mattresses, pillows, accessories, sleep guides, and embedded checkout with product-rich answers, SEO-ready structure, and dynamic catalog content.",
+    path: "/",
+    keywords: [
+      "buy mattress online",
+      "best mattress for back pain",
+      "cooling pillow",
+      "sleep accessories Pakistan",
+      "natural mattress store"
+    ]
+  })
 };
 
 export const dynamic = "force-dynamic";
@@ -26,6 +41,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
   return (
     <html lang="en">
       <body className="page-shell font-sans text-ink">
+        <StructuredData data={[buildOrganizationSchema(), buildWebSiteSchema()]} />
         <SiteHeader
           cartCount={cart.items.reduce((total, item) => total + item.quantity, 0)}
           wishlistCount={wishlistCount}
@@ -34,6 +50,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
         />
         {children}
         <SiteFooter />
+        <LLM />
       </body>
     </html>
   );

@@ -1,4 +1,15 @@
+import type { Metadata } from "next";
+
+import { buildMetadata } from "@/lib/seo";
 import { materialHighlights } from "@/lib/site-data";
+
+export const metadata: Metadata = buildMetadata({
+  title: "Corebed Materials | Natural Latex, Cooling Layers and Mattress Construction",
+  description:
+    "Learn about Corebed mattress materials including natural latex, cooling layers, and structural comfort components with buyer-friendly explanations.",
+  path: "/materials",
+  keywords: ["mattress materials", "natural latex", "cooling layers", "mattress construction"]
+});
 
 export default function MaterialsPage() {
   return (

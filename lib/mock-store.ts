@@ -4,6 +4,7 @@ import path from "path";
 import { ContentStatus, ContentType, OrderStatus, Prisma, ProductStatus } from "@prisma/client";
 
 import { prisma } from "@/lib/prisma";
+import { formatCurrency as formatCurrencyForCountry } from "@/lib/format";
 import { sendOrderConfirmationEmails } from "@/lib/notifications";
 import type {
   BlogPostRecord,
@@ -534,11 +535,8 @@ async function getProductEntityBySlug(slug: string) {
   });
 }
 
-export function formatCurrency(value: number) {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD"
-  }).format(value);
+export function formatCurrency(value: number, country?: string) {
+  return formatCurrencyForCountry(value, country);
 }
 
 export async function getProducts() {

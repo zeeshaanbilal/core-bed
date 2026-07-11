@@ -4,12 +4,15 @@ import { addToCartAction, removeWishlistAction } from "@/app/actions/store";
 import { FormSubmitButton } from "@/components/form-submit-button";
 import { getCurrentUser } from "@/lib/auth";
 import { getCartSessionId } from "@/lib/cart-session";
-import { formatCurrency, getWishlist, getWishlistByUserEmail } from "@/lib/mock-store";
+import { formatCurrency, getCustomerProfileByEmail, getWishlist, getWishlistByUserEmail } from "@/lib/mock-store";
 
 export default async function WishlistPage() {
   const sessionId = await getCartSessionId();
   const user = await getCurrentUser();
-  const products = user?.email ? await getWishlistByUserEmail(user.email) : await getWishlist(sessionId);
+  const [products, profile] = await Promise.all([
+    user?.email ? getWishlistByUserEmail(user.email) : getWishlist(sessionId),
+    user?.email ? getCustomerProfileByEmail(user.email) : Promise.resolve(null)
+  ]);
 
   return (
     <main className="mx-auto max-w-7xl px-6 py-16">
@@ -38,7 +41,7 @@ export default async function WishlistPage() {
                 <p className="mt-3 max-w-3xl text-sm leading-7 text-slate">{product.description}</p>
               </div>
               <div className="flex flex-wrap gap-3">
-                <p className="self-center text-lg font-semibold">{formatCurrency(product.price)}</p>
+                <p className="self-center text-lg font-semibold">{formatCurrency(product.price, profile?.country)}</p>
                 <form action={addToCartAction}>
                   <input name="productSlug" type="hidden" value={product.slug} />
                   <input name="selectedSize" type="hidden" value={product.sizes[0]} />

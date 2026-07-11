@@ -1,4 +1,15 @@
+import type { Metadata } from "next";
+
+import { buildMetadata } from "@/lib/seo";
 import { getApprovedTestimonialsForHome } from "@/lib/mock-store";
+
+export const metadata: Metadata = buildMetadata({
+  title: "Corebed Reviews | Customer Feedback and Sleep Product Testimonials",
+  description:
+    "Browse approved Corebed customer reviews and feedback for mattresses, pillows, and accessories before you buy.",
+  path: "/reviews",
+  keywords: ["mattress reviews", "customer feedback", "sleep product testimonials"]
+});
 
 export default async function ReviewsPage() {
   const testimonials = await getApprovedTestimonialsForHome();

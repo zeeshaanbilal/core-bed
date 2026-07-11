@@ -2,12 +2,17 @@ import Link from "next/link";
 
 import { removeCartItemAction, updateCartQuantityAction } from "@/app/actions/store";
 import { FormSubmitButton } from "@/components/form-submit-button";
+import { getCurrentUser } from "@/lib/auth";
 import { getCartSessionId } from "@/lib/cart-session";
-import { formatCurrency, getCartDetail } from "@/lib/mock-store";
+import { formatCurrency, getCartDetail, getCustomerProfileByEmail } from "@/lib/mock-store";
 
 export default async function CartPage() {
   const sessionId = await getCartSessionId();
-  const cart = await getCartDetail(sessionId);
+  const user = await getCurrentUser();
+  const [cart, profile] = await Promise.all([
+    getCartDetail(sessionId),
+    user?.email ? getCustomerProfileByEmail(user.email) : Promise.resolve(null)
+  ]);
 
   return (
     <main className="mx-auto max-w-7xl px-6 py-16">
@@ -35,11 +40,11 @@ export default async function CartPage() {
                       </p>
                       <h2 className="mt-2 font-serif text-3xl">{item.product.name}</h2>
                       <p className="mt-2 text-sm text-slate">{item.product.description}</p>
-                      <p className="mt-3 text-sm text-slate">Unit price: {formatCurrency(item.unitPrice)}</p>
+                      <p className="mt-3 text-sm text-slate">Unit price: {formatCurrency(item.unitPrice, profile?.country)}</p>
                     </div>
 
                     <div className="flex flex-col items-start gap-3 md:items-end">
-                      <p className="text-xl font-semibold">{formatCurrency(item.lineTotal)}</p>
+                      <p className="text-xl font-semibold">{formatCurrency(item.lineTotal, profile?.country)}</p>
                       <div className="flex gap-3">
                         <form action={updateCartQuantityAction} className="flex items-center gap-3">
                           <input name="itemId" type="hidden" value={item.id} />
@@ -84,16 +89,16 @@ export default async function CartPage() {
           <div className="mt-6 space-y-4 text-sm text-slate">
             <div className="flex justify-between">
               <span>Subtotal</span>
-              <span>{formatCurrency(cart.subtotal)}</span>
+              <span>{formatCurrency(cart.subtotal, profile?.country)}</span>
             </div>
             <div className="flex justify-between">
               <span>Shipping</span>
-              <span>{cart.shippingFee === 0 ? "Free" : formatCurrency(cart.shippingFee)}</span>
+              <span>{cart.shippingFee === 0 ? "Free" : formatCurrency(cart.shippingFee, profile?.country)}</span>
             </div>
             <div className="border-t border-ink/10 pt-4">
               <div className="flex justify-between text-base font-semibold text-ink">
                 <span>Estimated total</span>
-                <span>{formatCurrency(cart.total)}</span>
+                <span>{formatCurrency(cart.total, profile?.country)}</span>
               </div>
             </div>
           </div>

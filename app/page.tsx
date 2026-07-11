@@ -1,8 +1,19 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 
 import { ProductCard } from "@/components/product-card";
-import { formatCurrency, getApprovedTestimonialsForHome, getProducts } from "@/lib/mock-store";
+import { StructuredData } from "@/components/structured-data";
+import { getCurrentUser } from "@/lib/auth";
+import { formatCurrency, getApprovedTestimonialsForHome, getCustomerProfileByEmail, getProducts } from "@/lib/mock-store";
+import { buildBreadcrumbSchema, buildMetadata } from "@/lib/seo";
 import { storeLocations, testimonials } from "@/lib/site-data";
+
+export const metadata: Metadata = buildMetadata({
+  title: "Corebed Natural Mattress | Premium Mattresses, Pillows and Accessories",
+  description:
+    "Shop Corebed mattresses, pillows, and accessories with cleaner buying flows, sleep guides, customer feedback, and embedded checkout support.",
+  path: "/"
+});
 
 const categoryCards = [
   {
@@ -68,8 +79,12 @@ const articleCards = [
 ];
 
 export default async function HomePage() {
-  const allProducts = await getProducts();
-  const approvedTestimonials = await getApprovedTestimonialsForHome();
+  const user = await getCurrentUser();
+  const [allProducts, approvedTestimonials, profile] = await Promise.all([
+    getProducts(),
+    getApprovedTestimonialsForHome(),
+    user?.email ? getCustomerProfileByEmail(user.email) : Promise.resolve(null)
+  ]);
   const featuredProducts = allProducts.filter((product) => product.status === "active").slice(0, 4);
   const liveTestimonials =
     approvedTestimonials.length > 0
@@ -82,6 +97,11 @@ export default async function HomePage() {
 
   return (
     <main className="overflow-hidden">
+      <StructuredData
+        data={buildBreadcrumbSchema([
+          { name: "Home", path: "/" }
+        ])}
+      />
       <section className="mx-auto grid min-h-[680px] max-w-[1900px] gap-0 bg-white lg:grid-cols-[0.58fr_1.22fr]">
         <div className="flex items-center justify-center px-10 py-20 md:px-16 lg:justify-end">
           <div className="w-full max-w-[420px]">
@@ -243,9 +263,9 @@ export default async function HomePage() {
                 />
               </div>
               <h3 className="mt-7 text-2xl font-medium tracking-[-0.04em] text-navy">{product.name}</h3>
-              <div className="mt-3 text-lg text-slate">{formatCurrency(product.price)}</div>
+              <div className="mt-3 text-lg text-slate">{formatCurrency(product.price, profile?.country)}</div>
               {product.compareAtPrice ? (
-                <div className="mt-1 text-base text-slate line-through">{formatCurrency(product.compareAtPrice)}</div>
+                <div className="mt-1 text-base text-slate line-through">{formatCurrency(product.compareAtPrice, profile?.country)}</div>
               ) : null}
             </div>
           ))}

@@ -1,6 +1,16 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 
 import { searchStore } from "@/lib/mock-store";
+import { buildMetadata } from "@/lib/seo";
+
+export const metadata: Metadata = buildMetadata({
+  title: "Corebed Search | Find Products, Guides and Support Pages",
+  description:
+    "Search across Corebed mattresses, pillows, accessories, support pages, and educational blog content.",
+  path: "/search",
+  keywords: ["site search", "find mattress", "search pillows", "search blog"]
+});
 
 function getProductHref(category: string, slug: string) {
   if (category.toLowerCase() === "pillows") {

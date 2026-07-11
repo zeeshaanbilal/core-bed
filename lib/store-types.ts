@@ -135,7 +135,8 @@ export type OrderRecord = {
   notes: string;
   paymentMethod: PaymentMethod;
   paymentStatus: string;
-  orderStatus: "pending" | "processing" | "paid";
+  orderStatus: "pending" | "processing" | "paid" | "shipped" | "delivered" | "cancelled";
+  shippingStatus?: string;
   items: Array<{
     productSlug: string;
     name: string;

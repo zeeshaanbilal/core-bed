@@ -1,4 +1,9 @@
+import { updateOrderStatusAction } from "@/app/actions/store";
 import { formatCurrency, getOrders } from "@/lib/mock-store";
+
+const orderStatusOptions = ["pending", "processing", "paid", "shipped", "delivered", "cancelled"] as const;
+const paymentStatusOptions = ["unpaid", "pending", "paid", "failed", "refunded", "expired"] as const;
+const shippingStatusOptions = ["order_received", "processing", "shipped", "out_for_delivery", "delivered"] as const;
 
 function getStatusTone(status: string) {
   const normalized = status.toLowerCase();
@@ -69,6 +74,77 @@ export default async function AdminOrdersPage() {
           </tbody>
         </table>
       </div>
+
+      {orders.length > 0 ? (
+        <div className="grid gap-5">
+          {orders.map((order) => (
+            <form key={order.id} action={updateOrderStatusAction} className="section-frame rounded-[1.75rem] p-6">
+              <input name="id" type="hidden" value={order.id} />
+
+              <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
+                <div>
+                  <p className="text-xs uppercase tracking-[0.28em] text-bronze">Update order</p>
+                  <h3 className="mt-3 font-serif text-3xl text-ink">{order.orderNumber}</h3>
+                  <p className="mt-2 text-sm text-slate">
+                    {order.customerName} · {order.customerEmail}
+                  </p>
+                </div>
+
+                <button className="rounded-full bg-ink px-6 py-3 text-sm font-medium text-ivory" type="submit">
+                  Save status
+                </button>
+              </div>
+
+              <div className="mt-6 grid gap-4 md:grid-cols-3">
+                <label className="space-y-2 text-sm text-slate">
+                  <span className="text-xs uppercase tracking-[0.22em] text-slate/70">Order status</span>
+                  <select
+                    className="w-full rounded-2xl border border-ink/10 bg-white px-4 py-3 text-ink"
+                    defaultValue={order.orderStatus}
+                    name="orderStatus"
+                  >
+                    {orderStatusOptions.map((status) => (
+                      <option key={status} value={status.toUpperCase()}>
+                        {status.replaceAll("_", " ")}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+
+                <label className="space-y-2 text-sm text-slate">
+                  <span className="text-xs uppercase tracking-[0.22em] text-slate/70">Payment state</span>
+                  <select
+                    className="w-full rounded-2xl border border-ink/10 bg-white px-4 py-3 text-ink"
+                    defaultValue={order.paymentStatus}
+                    name="paymentStatus"
+                  >
+                    {paymentStatusOptions.map((status) => (
+                      <option key={status} value={status}>
+                        {status.replaceAll("_", " ")}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+
+                <label className="space-y-2 text-sm text-slate">
+                  <span className="text-xs uppercase tracking-[0.22em] text-slate/70">Shipping state</span>
+                  <select
+                    className="w-full rounded-2xl border border-ink/10 bg-white px-4 py-3 text-ink"
+                    defaultValue={order.shippingStatus || "order_received"}
+                    name="shippingStatus"
+                  >
+                    {shippingStatusOptions.map((status) => (
+                      <option key={status} value={status}>
+                        {status.replaceAll("_", " ")}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              </div>
+            </form>
+          ))}
+        </div>
+      ) : null}
     </div>
   );
 }

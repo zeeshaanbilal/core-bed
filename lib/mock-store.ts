@@ -491,7 +491,19 @@ function toOrderRecord(
     notes: snapshot.notes ?? "",
     paymentMethod,
     paymentStatus: firstPayment?.status ?? getPaymentStatus(paymentMethod),
-    orderStatus: order.status === "PROCESSING" ? "processing" : order.status === "PAID" ? "paid" : "pending",
+    orderStatus:
+      order.status === "PROCESSING"
+        ? "processing"
+        : order.status === "PAID"
+          ? "paid"
+          : order.status === "SHIPPED"
+            ? "shipped"
+            : order.status === "DELIVERED"
+              ? "delivered"
+              : order.status === "CANCELLED"
+                ? "cancelled"
+                : "pending",
+    shippingStatus: order.shippingStatus,
     items: order.items.map((item) => {
       const productSnapshot =
         typeof item.productSnapshot === "object" && item.productSnapshot !== null ? item.productSnapshot : {};
@@ -1219,6 +1231,33 @@ export async function getOrders() {
   });
 
   return orders.map(toOrderRecord);
+}
+
+export async function updateOrderStatus(input: {
+  id: string;
+  orderStatus: "PENDING" | "PROCESSING" | "PAID" | "SHIPPED" | "DELIVERED" | "CANCELLED";
+  paymentStatus: string;
+  shippingStatus: string;
+}) {
+  await prisma.order.update({
+    where: { id: input.id },
+    data: {
+      status:
+        input.orderStatus === "PAID"
+          ? OrderStatus.PAID
+          : input.orderStatus === "PROCESSING"
+            ? OrderStatus.PROCESSING
+            : input.orderStatus === "SHIPPED"
+              ? OrderStatus.SHIPPED
+              : input.orderStatus === "DELIVERED"
+                ? OrderStatus.DELIVERED
+                : input.orderStatus === "CANCELLED"
+                  ? OrderStatus.CANCELLED
+                  : OrderStatus.PENDING,
+      paymentStatus: input.paymentStatus,
+      shippingStatus: input.shippingStatus
+    }
+  });
 }
 
 export async function getAdminDashboardStats() {

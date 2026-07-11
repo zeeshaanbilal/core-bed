@@ -135,6 +135,64 @@ export const testimonials = [
   }
 ];
 
+export const countryOptions = [
+  "Pakistan",
+  "United States",
+  "United Kingdom",
+  "United Arab Emirates",
+  "Saudi Arabia",
+  "Canada",
+  "Australia",
+  "India",
+  "Germany",
+  "France"
+];
+
+export const featureCards = [
+  {
+    slug: "contactless-delivery",
+    title: "Contactless delivery",
+    body: "Free, safe delivery with every order, no matter how big or small.",
+    icon: "□",
+    detailTitle: "Delivery built for comfort from checkout to doorstep",
+    detailBody:
+      "Corebed delivery flow is designed to stay simple, safe, and visible. Customers can place an order, receive confirmation, track progress, and stay updated without friction.",
+    bullets: [
+      "Clear delivery expectations from order placement to final handover",
+      "Safer handling structure for mattresses, pillows, and accessories",
+      "Customer-friendly updates for dispatch and arrival stages"
+    ]
+  },
+  {
+    slug: "15-years-warranty",
+    title: "15-years warranty",
+    body: "Long-term comfort backed by a simple and clear support promise.",
+    icon: "◔",
+    detailTitle: "Warranty clarity that feels easy to trust",
+    detailBody:
+      "The Corebed warranty story is structured to explain support duration, care expectations, and after-purchase confidence in cleaner language.",
+    bullets: [
+      "Long-term support positioning for premium sleep products",
+      "Simple policy storytelling that can expand into FAQ and support pages",
+      "A cleaner post-purchase experience for mattress buyers"
+    ]
+  },
+  {
+    slug: "highest-hygiene-standards",
+    title: "Highest hygiene standards",
+    body: "Your mattress stays protected from finishing to final delivery.",
+    icon: "◌",
+    detailTitle: "Cleaner handling and product protection across the journey",
+    detailBody:
+      "Corebed product presentation is framed around safer packaging, cleaner finishing, and more reassuring care standards from storage to delivery.",
+    bullets: [
+      "Packaging and finishing that support premium brand trust",
+      "Clearer hygiene positioning for modern mattress retail",
+      "Suitable for showrooms, delivery messaging, and product education"
+    ]
+  }
+] as const;
+
 export const storeLocations = [
   {
     city: "Lahore",

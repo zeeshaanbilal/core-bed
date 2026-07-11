@@ -25,6 +25,7 @@ import {
   updateBlogPost,
   updateCartItem,
   updateContentEntry,
+  updateOrderStatus,
   updateProduct,
   upsertCustomerProfile
 } from "@/lib/mock-store";
@@ -84,7 +85,7 @@ export async function removeCartItemAction(formData: FormData) {
 
 export async function submitCheckoutAction(formData: FormData) {
   const sessionId = await ensureCartSessionId();
-  const paymentMethod = getString(formData, "paymentMethod") as PaymentMethod;
+  const paymentMethod: PaymentMethod = "stripe_card";
   const customerName = getString(formData, "customerName");
   const customerEmail = getString(formData, "customerEmail");
   const customerPhone = getString(formData, "customerPhone");
@@ -108,70 +109,22 @@ export async function submitCheckoutAction(formData: FormData) {
     country
   });
 
-  if (paymentMethod === "stripe_card") {
-    if (!isStripeServerReady()) {
-      redirect("/checkout?error=Stripe%20is%20not%20configured%20yet.%20Add%20live%20keys%20to%20enable%20card%20checkout.");
-    }
+  if (!isStripeServerReady()) {
+    redirect("/checkout?error=Stripe%20is%20not%20configured%20yet.%20Add%20live%20keys%20to%20enable%20card%20checkout.");
+  }
 
-    const cart = await getCartDetail(sessionId);
+  const cart = await getCartDetail(sessionId);
 
-    if (cart.items.length === 0) {
-      redirect("/checkout?error=Your%20cart%20is%20empty.");
-    }
+  if (cart.items.length === 0) {
+    redirect("/checkout?error=Your%20cart%20is%20empty.");
+  }
 
-    const siteUrl = getSiteUrl();
-    const checkoutSession = await createStripeEmbeddedCheckoutSession({
-      customerEmail,
-      returnUrl: `${siteUrl}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
-      metadata: {
-        cartSessionId: sessionId,
-        customerName,
-        customerEmail,
-        customerPhone,
-        city,
-        addressLine1,
-        addressLine2,
-        state,
-        postalCode,
-        country,
-        notes
-      },
-      lineItems: [
-        ...cart.items.map((item) => ({
-          quantity: item.quantity,
-          price_data: {
-            currency: "pkr",
-            product_data: {
-              name: item.product.name,
-              description: `${item.selectedSize} / ${item.selectedFirmness || item.product.firmness} / ${item.product.category}`,
-              images: item.product.gallery.slice(0, 1)
-            },
-            unit_amount: Math.round(item.unitPrice * 100)
-          }
-        })),
-        ...(cart.shippingFee > 0
-          ? [
-              {
-                quantity: 1,
-                price_data: {
-                  currency: "pkr",
-                  product_data: {
-                    name: "Shipping"
-                  },
-                  unit_amount: Math.round(cart.shippingFee * 100)
-                }
-              }
-            ]
-          : [])
-      ]
-    });
-
-    if (!checkoutSession.id || !checkoutSession.client_secret) {
-      redirect("/checkout?error=Unable%20to%20start%20Stripe%20embedded%20checkout.");
-    }
-
-    await createOrderFromCart({
-      sessionId,
+  const siteUrl = getSiteUrl();
+  const checkoutSession = await createStripeEmbeddedCheckoutSession({
+    customerEmail,
+    returnUrl: `${siteUrl}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
+    metadata: {
+      cartSessionId: sessionId,
       customerName,
       customerEmail,
       customerPhone,
@@ -181,23 +134,43 @@ export async function submitCheckoutAction(formData: FormData) {
       state,
       postalCode,
       country,
-      notes,
-      paymentMethod,
-      paymentReference: checkoutSession.id,
-      paymentClientSecret: checkoutSession.client_secret,
-      paymentStatus: checkoutSession.payment_status || "unpaid",
-      orderStatus: "PENDING",
-      clearCart: false
-    });
+      notes
+    },
+    lineItems: [
+      ...cart.items.map((item) => ({
+        quantity: item.quantity,
+        price_data: {
+          currency: "pkr",
+          product_data: {
+            name: item.product.name,
+            description: `${item.selectedSize} / ${item.selectedFirmness || item.product.firmness} / ${item.product.category}`,
+            images: item.product.gallery.slice(0, 1)
+          },
+          unit_amount: Math.round(item.unitPrice * 100)
+        }
+      })),
+      ...(cart.shippingFee > 0
+        ? [
+            {
+              quantity: 1,
+              price_data: {
+                currency: "pkr",
+                product_data: {
+                  name: "Shipping"
+                },
+                unit_amount: Math.round(cart.shippingFee * 100)
+              }
+            }
+          ]
+        : [])
+    ]
+  });
 
-    revalidatePath("/admin");
-    revalidatePath("/admin/orders");
-    revalidatePath("/account");
-
-    redirect(`/checkout?embedded=1&payment_reference=${checkoutSession.id}`);
+  if (!checkoutSession.id || !checkoutSession.client_secret) {
+    redirect("/checkout?error=Unable%20to%20start%20Stripe%20embedded%20checkout.");
   }
 
-  const order = await createOrderFromCart({
+  await createOrderFromCart({
     sessionId,
     customerName,
     customerEmail,
@@ -209,12 +182,33 @@ export async function submitCheckoutAction(formData: FormData) {
     postalCode,
     country,
     notes,
-    paymentMethod
+    paymentMethod,
+    paymentReference: checkoutSession.id,
+    paymentClientSecret: checkoutSession.client_secret,
+    paymentStatus: checkoutSession.payment_status || "unpaid",
+    orderStatus: "PENDING",
+    clearCart: false
   });
 
   revalidatePath("/admin");
   revalidatePath("/admin/orders");
-  redirect(`/checkout/success?order=${order.orderNumber}`);
+  revalidatePath("/account");
+
+  redirect(`/checkout?embedded=1&payment_reference=${checkoutSession.id}`);
+}
+
+export async function updateOrderStatusAction(formData: FormData) {
+  await assertAdminUser();
+
+  await updateOrderStatus({
+    id: getString(formData, "id"),
+    orderStatus: getString(formData, "orderStatus") as "PENDING" | "PROCESSING" | "PAID" | "SHIPPED" | "DELIVERED" | "CANCELLED",
+    paymentStatus: getString(formData, "paymentStatus") || "pending",
+    shippingStatus: getString(formData, "shippingStatus") || "order_received"
+  });
+
+  revalidatePath("/admin/orders");
+  revalidatePath("/track-order");
 }
 
 export async function createProductAction(formData: FormData) {

@@ -27,7 +27,7 @@ export default function StoreLocatorPage() {
             <h2 className="mt-4 font-serif text-3xl">{location.address}</h2>
             <p className="mt-4 text-sm leading-7 text-slate">Showroom hours: {location.timing}</p>
             <p className="text-sm leading-7 text-slate">Support: {location.phone}</p>
-            <p className="text-sm leading-7 text-slate">Email: contact@e.corebed.com</p>
+            <p className="text-sm leading-7 text-slate">Email: contact@corebed.com</p>
             <button className="mt-6 rounded-full bg-ink px-5 py-3 text-sm text-ivory">Book visit</button>
           </article>
         ))}

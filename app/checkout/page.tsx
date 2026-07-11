@@ -6,6 +6,7 @@ import { StripeEmbeddedCheckout } from "@/components/stripe-embedded-checkout";
 import { getCurrentUser } from "@/lib/auth";
 import { getCartSessionId } from "@/lib/cart-session";
 import { formatCurrency, getCartDetail, getCustomerProfileByEmail, getOrderByPaymentReference } from "@/lib/mock-store";
+import { countryOptions } from "@/lib/site-data";
 import { isStripeConfigured } from "@/lib/supabase/config";
 
 export default async function CheckoutPage({
@@ -106,7 +107,13 @@ export default async function CheckoutPage({
                   <input className="rounded-2xl border border-ink/10 bg-ivory px-4 py-3" defaultValue={profile?.city || ""} name="city" placeholder="City" required />
                   <input className="rounded-2xl border border-ink/10 bg-ivory px-4 py-3" defaultValue={profile?.state || ""} name="state" placeholder="State / Province" />
                   <input className="rounded-2xl border border-ink/10 bg-ivory px-4 py-3" defaultValue={profile?.postalCode || ""} name="postalCode" placeholder="Postal code" />
-                  <input className="rounded-2xl border border-ink/10 bg-ivory px-4 py-3" defaultValue={profile?.country || "Pakistan"} name="country" placeholder="Country" required />
+                  <select className="rounded-2xl border border-ink/10 bg-ivory px-4 py-3" defaultValue={profile?.country || "Pakistan"} name="country" required>
+                    {countryOptions.map((country) => (
+                      <option key={country} value={country}>
+                        {country}
+                      </option>
+                    ))}
+                  </select>
                   <textarea className="min-h-24 rounded-2xl border border-ink/10 bg-ivory px-4 py-3 md:col-span-2" name="notes" placeholder="Delivery notes, landmark, or support request" />
                 </div>
               </article>
@@ -118,28 +125,12 @@ export default async function CheckoutPage({
                     ? "Stripe card payment loads inside this website with an embedded secure form. No external redirect is required."
                     : "Stripe is not configured yet. Add the Stripe keys to enable card checkout."}
                 </div>
-                <div className="mt-5 grid gap-4">
-                  <label className="rounded-2xl border border-ink/10 bg-ivory p-4">
-                    <input defaultChecked name="paymentMethod" type="radio" value="stripe_card" />{" "}
-                    <span className="font-medium">Embedded Stripe card payment</span>
-                    <span className="mt-2 block text-sm text-slate">
-                      The secure card form opens inside this website and keeps the full checkout journey on-page.
-                    </span>
-                  </label>
-                  <label className="rounded-2xl border border-ink/10 bg-ivory p-4">
-                    <input name="paymentMethod" type="radio" value="bank_transfer" />{" "}
-                    <span className="font-medium">Manual bank transfer</span>
-                    <span className="mt-2 block text-sm text-slate">
-                      Marks the order as awaiting transfer and keeps the reconciliation path ready for admin review.
-                    </span>
-                  </label>
-                  <label className="rounded-2xl border border-ink/10 bg-ivory p-4">
-                    <input name="paymentMethod" type="radio" value="cash_on_delivery" />{" "}
-                    <span className="font-medium">Cash on delivery</span>
-                    <span className="mt-2 block text-sm text-slate">
-                      Keeps COD visible for city-based logic and later order value restrictions.
-                    </span>
-                  </label>
+                <input name="paymentMethod" type="hidden" value="stripe_card" />
+                <div className="mt-5 rounded-2xl border border-ink/10 bg-ivory p-4">
+                  <p className="font-medium text-ink">Embedded Stripe card payment</p>
+                  <p className="mt-2 text-sm text-slate">
+                    The secure card form opens inside this website and keeps the full checkout journey on-page.
+                  </p>
                 </div>
               </article>
 

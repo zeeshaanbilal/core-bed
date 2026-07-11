@@ -181,7 +181,7 @@ export function ProductDetailView({
             <div className="grid border-t border-ink/10 text-sm text-slate md:grid-cols-3">
               <div className="border-b border-ink/10 px-5 py-4 md:border-b-0 md:border-r">WhatsApp: +15855029662</div>
               <div className="border-b border-ink/10 px-5 py-4 md:border-b-0 md:border-r">Call: +15855029662</div>
-              <div className="break-all px-5 py-4">Email: contact@e.corebed.com</div>
+              <div className="break-all px-5 py-4">Email: contact@corebed.com</div>
             </div>
           </div>
 

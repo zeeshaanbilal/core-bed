@@ -1,5 +1,28 @@
 import { getOrders } from "@/lib/mock-store";
 
+function buildTrackingSteps(order: NonNullable<Awaited<ReturnType<typeof getOrders>>[number]>) {
+  const shippingState = order.shippingStatus || "order_received";
+  const processingLike =
+    order.orderStatus === "processing" ||
+    order.orderStatus === "paid" ||
+    order.orderStatus === "shipped" ||
+    order.orderStatus === "delivered" ||
+    shippingState === "processing";
+  const shippedLike =
+    order.orderStatus === "shipped" ||
+    order.orderStatus === "delivered" ||
+    shippingState === "shipped" ||
+    shippingState === "out_for_delivery";
+  const deliveredLike = order.orderStatus === "delivered" || shippingState === "delivered";
+
+  return [
+    { label: "Order received", active: true },
+    { label: "Processing", active: processingLike },
+    { label: "Shipped", active: shippedLike },
+    { label: "Delivered", active: deliveredLike }
+  ];
+}
+
 export default async function TrackOrderPage({
   searchParams
 }: {
@@ -31,9 +54,26 @@ export default async function TrackOrderPage({
           <article className="section-frame rounded-[1.75rem] p-8">
             <p className="text-xs uppercase tracking-[0.3em] text-bronze">{order.orderNumber}</p>
             <h2 className="mt-4 font-serif text-4xl">Current status: {order.orderStatus}</h2>
+            <div className="mt-8 grid gap-4 md:grid-cols-4">
+              {buildTrackingSteps(order).map((step) => (
+                <div
+                  key={step.label}
+                  className={`rounded-[1.5rem] border px-4 py-5 text-sm ${
+                    step.active ? "border-[#97b96e]/40 bg-[#f3f7ec] text-ink" : "border-ink/10 bg-white text-slate"
+                  }`}
+                >
+                  <p className="text-xs uppercase tracking-[0.24em] text-bronze">Step</p>
+                  <p className="mt-2 font-medium">{step.label}</p>
+                </div>
+              ))}
+            </div>
             <div className="mt-6 grid gap-4 md:grid-cols-2">
               <div className="rounded-2xl border border-ink/10 bg-ivory p-4 text-sm text-slate">Payment state: {order.paymentStatus}</div>
+              <div className="rounded-2xl border border-ink/10 bg-ivory p-4 text-sm text-slate">
+                Shipping state: {order.shippingStatus || "order_received"}
+              </div>
               <div className="rounded-2xl border border-ink/10 bg-ivory p-4 text-sm text-slate">City: {order.city}</div>
+              <div className="rounded-2xl border border-ink/10 bg-ivory p-4 text-sm text-slate">Country: {order.country || "Pakistan"}</div>
             </div>
           </article>
         ) : (

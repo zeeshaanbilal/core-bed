@@ -74,7 +74,7 @@ export function buildOrganizationSchema() {
     alternateName: "CoreSleep",
     url: getSiteUrl(),
     logo: absoluteUrl("/corebed-logo.png"),
-    email: "contact@e.corebed.com",
+    email: "contact@corebed.com",
     telephone: "+15855029662",
     sameAs: [
       "https://facebook.com/corebedmattress",

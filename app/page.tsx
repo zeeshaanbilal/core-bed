@@ -6,7 +6,7 @@ import { StructuredData } from "@/components/structured-data";
 import { getCurrentUser } from "@/lib/auth";
 import { formatCurrency, getApprovedTestimonialsForHome, getCustomerProfileByEmail, getProducts } from "@/lib/mock-store";
 import { buildBreadcrumbSchema, buildMetadata } from "@/lib/seo";
-import { storeLocations, testimonials } from "@/lib/site-data";
+import { featureCards, storeLocations, testimonials } from "@/lib/site-data";
 
 export const metadata: Metadata = buildMetadata({
   title: "Corebed Natural Mattress | Premium Mattresses, Pillows and Accessories",
@@ -182,14 +182,15 @@ export default async function HomePage() {
             A sleep system built around comfort, clarity and the few promises that customers actually care about.
           </p>
           <div className="mt-12 grid gap-10 md:grid-cols-3">
-            {servicePoints.map((point) => (
-              <article key={point.title} className="px-6">
+            {featureCards.map((point) => (
+              <Link key={point.slug} href={`/features/${point.slug}`} className="block px-6 transition hover:-translate-y-1">
                 <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full border border-sky/20 text-4xl text-sky">
                   {point.icon}
                 </div>
                 <h3 className="mt-8 text-3xl font-semibold tracking-[-0.05em] text-navy">{point.title}</h3>
                 <p className="mx-auto mt-4 max-w-sm text-base leading-8 text-slate">{point.body}</p>
-              </article>
+                <span className="mt-5 inline-flex text-sm font-semibold text-navy">Read more</span>
+              </Link>
             ))}
           </div>
         </div>

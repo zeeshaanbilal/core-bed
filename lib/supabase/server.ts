@@ -1,5 +1,4 @@
 import { cookies } from "next/headers";
-import { getSiteUrl } from "@/lib/site-url";
 
 const ACCESS_COOKIE = "corebed-access-token";
 const REFRESH_COOKIE = "corebed-refresh-token";
@@ -24,6 +23,10 @@ function getSupabaseUrl() {
 
 function getSupabaseAnonKey() {
   return process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "";
+}
+
+function getSupabaseServiceRoleKey() {
+  return process.env.SUPABASE_SERVICE_ROLE_KEY ?? "";
 }
 
 async function parseError(response: Response) {
@@ -58,19 +61,24 @@ export async function signUpWithPassword(
   password: string,
   metadata?: Record<string, string>
 ) {
-  const response = await fetch(`${getSupabaseUrl()}/auth/v1/signup`, {
+  const serviceRoleKey = getSupabaseServiceRoleKey();
+
+  if (!serviceRoleKey) {
+    throw new Error("Supabase service role key is not configured");
+  }
+
+  const response = await fetch(`${getSupabaseUrl()}/auth/v1/admin/users`, {
     method: "POST",
     headers: {
-      apikey: getSupabaseAnonKey(),
+      apikey: serviceRoleKey,
+      Authorization: `Bearer ${serviceRoleKey}`,
       "Content-Type": "application/json"
     },
     body: JSON.stringify({
       email,
       password,
-      options: {
-        data: metadata,
-        emailRedirectTo: `${getSiteUrl()}/account`
-      }
+      email_confirm: true,
+      user_metadata: metadata ?? {}
     }),
     cache: "no-store"
   });
@@ -79,7 +87,13 @@ export async function signUpWithPassword(
     throw new Error(await parseError(response));
   }
 
-  return (await response.json()) as Partial<AuthSessionResponse> & {
+  const payload = (await response.json()) as { user?: SupabaseAuthUser };
+  const session = await signInWithPassword(email, password);
+
+  return {
+    ...session,
+    user: payload.user ?? session.user
+  } as Partial<AuthSessionResponse> & {
     user?: SupabaseAuthUser;
   };
 }

@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { CurrencyAmount } from "@/components/currency-amount";
+import type { ExchangeRates } from "@/lib/format";
 import type { ProductRecord } from "@/lib/store-types";
 
 type SalesSeason = "summer" | "winter";
@@ -45,10 +46,14 @@ function getProductHref(product: ProductRecord) {
 
 export function SalesLanding({
   season,
-  products
+  products,
+  exchangeRates,
+  country
 }: {
   season: SalesSeason;
   products: ProductRecord[];
+  exchangeRates?: ExchangeRates;
+  country?: string;
 }) {
   const content = seasonalContent[season];
 
@@ -100,11 +105,11 @@ export function SalesLanding({
               <div className="mt-3 flex flex-wrap items-center gap-3 text-base">
                 {product.compareAtPrice ? (
                   <span className="text-slate line-through">
-                    <CurrencyAmount value={product.compareAtPrice} />
+                    <CurrencyAmount value={product.compareAtPrice} country={country} exchangeRates={exchangeRates} />
                   </span>
                 ) : null}
                 <span className="font-semibold text-navy">
-                  <CurrencyAmount value={product.price} />
+                  <CurrencyAmount value={product.price} country={country} exchangeRates={exchangeRates} />
                 </span>
               </div>
               <Link href={getProductHref(product)} className="mt-5 inline-flex rounded-md bg-navy px-6 py-3 text-sm font-semibold text-white">

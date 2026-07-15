@@ -6,6 +6,7 @@ import { CurrencyAmount } from "@/components/currency-amount";
 import { FormSubmitButton } from "@/components/form-submit-button";
 import { StructuredData } from "@/components/structured-data";
 import { getCurrentUser } from "@/lib/auth";
+import { getExchangeRates } from "@/lib/exchange-rates";
 import { getApprovedTestimonialsForHome, getCustomerProfileByEmail, getProducts } from "@/lib/mock-store";
 import { buildBreadcrumbSchema, buildMetadata } from "@/lib/seo";
 import { featureCards, storeLocations, testimonials } from "@/lib/site-data";
@@ -94,10 +95,11 @@ const articleCards = [
 
 export default async function HomePage() {
   const user = await getCurrentUser();
-  const [allProducts, approvedTestimonials, profile] = await Promise.all([
+  const [allProducts, approvedTestimonials, profile, exchangeRates] = await Promise.all([
     getProducts(),
     getApprovedTestimonialsForHome(),
-    user?.email ? getCustomerProfileByEmail(user.email) : Promise.resolve(null)
+    user?.email ? getCustomerProfileByEmail(user.email) : Promise.resolve(null),
+    getExchangeRates()
   ]);
   const featuredProducts = allProducts.filter((product) => product.status === "active").slice(0, 4);
   const liveTestimonials =
@@ -288,11 +290,11 @@ export default async function HomePage() {
                 {product.name}
               </Link>
               <div className="mt-3 text-lg text-slate">
-                <CurrencyAmount value={product.price} country={profile?.country} />
+                <CurrencyAmount value={product.price} country={profile?.country} exchangeRates={exchangeRates} />
               </div>
               {product.compareAtPrice ? (
                 <div className="mt-1 text-base text-slate line-through">
-                  <CurrencyAmount value={product.compareAtPrice} country={profile?.country} />
+                  <CurrencyAmount value={product.compareAtPrice} country={profile?.country} exchangeRates={exchangeRates} />
                 </div>
               ) : null}
               <div className="mt-5 flex flex-col items-center gap-3">

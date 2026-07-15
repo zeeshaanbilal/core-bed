@@ -5,14 +5,16 @@ import { CurrencyAmount } from "@/components/currency-amount";
 import { FormSubmitButton } from "@/components/form-submit-button";
 import { getCurrentUser } from "@/lib/auth";
 import { getCartSessionId } from "@/lib/cart-session";
+import { getExchangeRates } from "@/lib/exchange-rates";
 import { getCustomerProfileByEmail, getWishlist, getWishlistByUserEmail } from "@/lib/mock-store";
 
 export default async function WishlistPage() {
   const sessionId = await getCartSessionId();
   const user = await getCurrentUser();
-  const [products, profile] = await Promise.all([
+  const [products, profile, exchangeRates] = await Promise.all([
     user?.email ? getWishlistByUserEmail(user.email) : getWishlist(sessionId),
-    user?.email ? getCustomerProfileByEmail(user.email) : Promise.resolve(null)
+    user?.email ? getCustomerProfileByEmail(user.email) : Promise.resolve(null),
+    getExchangeRates()
   ]);
 
   return (
@@ -43,7 +45,7 @@ export default async function WishlistPage() {
               </div>
               <div className="flex flex-wrap gap-3">
                 <p className="self-center text-lg font-semibold">
-                  <CurrencyAmount value={product.price} country={profile?.country} />
+                  <CurrencyAmount value={product.price} country={profile?.country} exchangeRates={exchangeRates} />
                 </p>
                 <form action={addToCartAction}>
                   <input name="productSlug" type="hidden" value={product.slug} />

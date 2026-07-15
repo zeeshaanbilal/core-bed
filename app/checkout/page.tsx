@@ -6,6 +6,7 @@ import { FormSubmitButton } from "@/components/form-submit-button";
 import { StripeEmbeddedCheckout } from "@/components/stripe-embedded-checkout";
 import { getCurrentUser } from "@/lib/auth";
 import { getCartSessionId } from "@/lib/cart-session";
+import { getExchangeRates } from "@/lib/exchange-rates";
 import { getCartDetail, getCustomerProfileByEmail, getOrderByPaymentReference } from "@/lib/mock-store";
 import { countryOptions } from "@/lib/site-data";
 import { isStripeConfigured } from "@/lib/supabase/config";
@@ -18,10 +19,11 @@ export default async function CheckoutPage({
   const params = await searchParams;
   const sessionId = await getCartSessionId();
   const user = await getCurrentUser();
-  const [cart, profile, stripeOrder] = await Promise.all([
+  const [cart, profile, stripeOrder, exchangeRates] = await Promise.all([
     getCartDetail(sessionId),
     user?.email ? getCustomerProfileByEmail(user.email) : null,
-    params.payment_reference ? getOrderByPaymentReference(params.payment_reference) : Promise.resolve(null)
+    params.payment_reference ? getOrderByPaymentReference(params.payment_reference) : Promise.resolve(null),
+    getExchangeRates()
   ]);
   const stripeReady = isStripeConfigured();
   const publishableKey = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY ?? "";
@@ -152,21 +154,21 @@ export default async function CheckoutPage({
                     {item.selectedFirmness ? ` / ${item.selectedFirmness}` : ""}
                   </span>
                 </span>
-                <span><CurrencyAmount value={item.lineTotal} country={profile?.country} /></span>
+                <span><CurrencyAmount value={item.lineTotal} country={profile?.country} exchangeRates={exchangeRates} /></span>
               </div>
             ))}
             <div className="border-t border-ink/10 pt-4">
               <div className="flex justify-between">
                 <span>Subtotal</span>
-                <span><CurrencyAmount value={cart.subtotal} country={profile?.country} /></span>
+                <span><CurrencyAmount value={cart.subtotal} country={profile?.country} exchangeRates={exchangeRates} /></span>
               </div>
               <div className="mt-2 flex justify-between">
                 <span>Shipping</span>
-                <span>{cart.shippingFee === 0 ? "Free" : <CurrencyAmount value={cart.shippingFee} country={profile?.country} />}</span>
+                <span>{cart.shippingFee === 0 ? "Free" : <CurrencyAmount value={cart.shippingFee} country={profile?.country} exchangeRates={exchangeRates} />}</span>
               </div>
               <div className="mt-4 flex justify-between text-base font-semibold text-ink">
                 <span>Total</span>
-                <span><CurrencyAmount value={cart.total} country={profile?.country} /></span>
+                <span><CurrencyAmount value={cart.total} country={profile?.country} exchangeRates={exchangeRates} /></span>
               </div>
             </div>
           </div>

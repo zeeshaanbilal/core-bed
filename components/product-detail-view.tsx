@@ -7,6 +7,7 @@ import { useEffect, useMemo, useState } from "react";
 import { addToCartAction, addWishlistAction, removeWishlistAction, submitTestimonialAction } from "@/app/actions/store";
 import { CurrencyAmount } from "@/components/currency-amount";
 import { FormSubmitButton } from "@/components/form-submit-button";
+import type { ExchangeRates } from "@/lib/format";
 import type { ProductRecord, TestimonialRecord } from "@/lib/store-types";
 
 export function ProductDetailView({
@@ -17,7 +18,8 @@ export function ProductDetailView({
   relatedProducts,
   isWishlisted,
   testimonials,
-  country
+  country,
+  exchangeRates
 }: {
   product: ProductRecord;
   backHref: string;
@@ -27,6 +29,7 @@ export function ProductDetailView({
   isWishlisted: boolean;
   testimonials: TestimonialRecord[];
   country?: string;
+  exchangeRates?: ExchangeRates;
 }) {
   const gallery = useMemo(() => [product.image, ...product.gallery].slice(0, 4), [product.gallery, product.image]);
   const initialVariant = product.variants[0];
@@ -96,11 +99,11 @@ export function ProductDetailView({
             <div className="mt-5 flex flex-wrap items-center gap-3 text-[1.9rem]">
               {activeCompareAt ? (
                 <span className="text-xl text-slate line-through">
-                  <CurrencyAmount value={activeCompareAt} country={country} />
+                  <CurrencyAmount value={activeCompareAt} country={country} exchangeRates={exchangeRates} />
                 </span>
               ) : null}
               <span className="font-semibold text-navy">
-                <CurrencyAmount value={activePrice} country={country} />
+                <CurrencyAmount value={activePrice} country={country} exchangeRates={exchangeRates} />
               </span>
             </div>
             <p className="mt-3 text-sm text-slate">SKU: {selectedVariant?.sku ?? "Custom"} | Stock: {selectedVariant?.stock ?? product.inventory}</p>
@@ -256,11 +259,11 @@ export function ProductDetailView({
                     <div className="mt-3 flex flex-wrap items-center gap-3 text-lg">
                       {related.compareAtPrice ? (
                         <span className="text-slate line-through">
-                          <CurrencyAmount value={related.compareAtPrice} country={country} />
+                          <CurrencyAmount value={related.compareAtPrice} country={country} exchangeRates={exchangeRates} />
                         </span>
                       ) : null}
                       <span className="text-navy">
-                        <CurrencyAmount value={related.price} country={country} />
+                        <CurrencyAmount value={related.price} country={country} exchangeRates={exchangeRates} />
                       </span>
                     </div>
                   </div>

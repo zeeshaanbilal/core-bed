@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 
 import { CurrencyAmount } from "@/components/currency-amount";
-import { getProducts } from "@/lib/mock-store";
+import { getCurrentUser } from "@/lib/auth";
+import { getExchangeRates } from "@/lib/exchange-rates";
+import { getCustomerProfileByEmail, getProducts } from "@/lib/mock-store";
 import { buildMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = buildMetadata({
@@ -13,7 +15,13 @@ export const metadata: Metadata = buildMetadata({
 });
 
 export default async function ComparePage() {
-  const products = (await getProducts()).slice(0, 4);
+  const user = await getCurrentUser();
+  const [allProducts, exchangeRates, profile] = await Promise.all([
+    getProducts(),
+    getExchangeRates(),
+    user?.email ? getCustomerProfileByEmail(user.email) : Promise.resolve(null)
+  ]);
+  const products = allProducts.slice(0, 4);
 
   return (
     <main className="mx-auto max-w-7xl px-6 py-16">
@@ -44,7 +52,7 @@ export default async function ComparePage() {
                   <td className="px-6 py-5 text-sm text-slate">{product.firmness}</td>
                   <td className="px-6 py-5 text-sm text-slate">{product.material}</td>
                   <td className="px-6 py-5 text-sm font-semibold text-ink">
-                    <CurrencyAmount value={product.price} />
+                    <CurrencyAmount value={product.price} country={profile?.country} exchangeRates={exchangeRates} />
                   </td>
                   <td className="px-6 py-5 text-sm text-slate">{product.inventory}</td>
                 </tr>

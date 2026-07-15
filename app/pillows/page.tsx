@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 
 import { PillowCatalog } from "@/components/pillow-catalog";
 import { getCurrentUser } from "@/lib/auth";
+import { getExchangeRates } from "@/lib/exchange-rates";
 import { getCustomerProfileByEmail, getPillows } from "@/lib/mock-store";
 import { buildMetadata } from "@/lib/seo";
 
@@ -15,14 +16,15 @@ export const metadata: Metadata = buildMetadata({
 
 export default async function PillowsPage() {
   const user = await getCurrentUser();
-  const [pillows, profile] = await Promise.all([
+  const [pillows, profile, exchangeRates] = await Promise.all([
     getPillows(),
-    user?.email ? getCustomerProfileByEmail(user.email) : Promise.resolve(null)
+    user?.email ? getCustomerProfileByEmail(user.email) : Promise.resolve(null),
+    getExchangeRates()
   ]);
 
   return (
     <main>
-      <PillowCatalog products={pillows} country={profile?.country} />
+      <PillowCatalog products={pillows} country={profile?.country} exchangeRates={exchangeRates} />
     </main>
   );
 }

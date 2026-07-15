@@ -4,9 +4,18 @@ import Link from "next/link";
 import { addToCartAction, addWishlistAction } from "@/app/actions/store";
 import { CurrencyAmount } from "@/components/currency-amount";
 import { FormSubmitButton } from "@/components/form-submit-button";
+import type { ExchangeRates } from "@/lib/format";
 import type { ProductRecord } from "@/lib/store-types";
 
-export function ProductCard({ product, country }: { product: ProductRecord; country?: string }) {
+export function ProductCard({
+  product,
+  country,
+  exchangeRates
+}: {
+  product: ProductRecord;
+  country?: string;
+  exchangeRates?: ExchangeRates;
+}) {
   return (
     <article className="overflow-hidden rounded-[2rem] border border-ink/10 bg-ivory shadow-soft transition duration-300 hover:-translate-y-1">
       <div className="relative h-72 overflow-hidden">
@@ -47,11 +56,11 @@ export function ProductCard({ product, country }: { product: ProductRecord; coun
         <div className="flex items-end justify-between gap-4">
           <div>
             <p className="text-2xl font-semibold text-ink">
-              <CurrencyAmount value={product.price} country={country} />
+              <CurrencyAmount value={product.price} country={country} exchangeRates={exchangeRates} />
             </p>
             {product.compareAtPrice ? (
               <p className="text-sm text-slate line-through">
-                <CurrencyAmount value={product.compareAtPrice} country={country} />
+                <CurrencyAmount value={product.compareAtPrice} country={country} exchangeRates={exchangeRates} />
               </p>
             ) : null}
           </div>

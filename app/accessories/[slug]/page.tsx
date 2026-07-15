@@ -5,6 +5,7 @@ import { ProductDetailView } from "@/components/product-detail-view";
 import { StructuredData } from "@/components/structured-data";
 import { getCurrentUser } from "@/lib/auth";
 import { getCartSessionId } from "@/lib/cart-session";
+import { getExchangeRates } from "@/lib/exchange-rates";
 import { getAccessories, getAccessoryBySlug, getApprovedTestimonialsForProduct, getCustomerProfileByEmail, isProductWishlisted } from "@/lib/mock-store";
 import { buildBreadcrumbSchema, buildMetadata, buildProductSchema } from "@/lib/seo";
 
@@ -43,12 +44,13 @@ export default async function AccessoryDetailPage({
   const { slug } = await params;
   const sessionId = await getCartSessionId();
   const user = await getCurrentUser();
-  const [product, products, wishlisted, testimonials, profile] = await Promise.all([
+  const [product, products, wishlisted, testimonials, profile, exchangeRates] = await Promise.all([
     getAccessoryBySlug(slug),
     getAccessories(),
     isProductWishlisted({ productSlug: slug, sessionId, userEmail: user?.email }),
     getApprovedTestimonialsForProduct(slug),
-    user?.email ? getCustomerProfileByEmail(user.email) : Promise.resolve(null)
+    user?.email ? getCustomerProfileByEmail(user.email) : Promise.resolve(null),
+    getExchangeRates()
   ]);
 
   if (!product) {
@@ -78,6 +80,7 @@ export default async function AccessoryDetailPage({
         isWishlisted={wishlisted}
         testimonials={testimonials}
         country={profile?.country}
+        exchangeRates={exchangeRates}
       />
     </>
   );

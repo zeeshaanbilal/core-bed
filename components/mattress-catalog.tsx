@@ -7,6 +7,7 @@ import { useMemo, useState } from "react";
 import { addToCartAction, buyNowAction } from "@/app/actions/store";
 import { CurrencyAmount } from "@/components/currency-amount";
 import { FormSubmitButton } from "@/components/form-submit-button";
+import type { ExchangeRates } from "@/lib/format";
 import type { ProductRecord } from "@/lib/store-types";
 import { ProductZoomModal } from "@/components/product-zoom-modal";
 
@@ -16,7 +17,15 @@ type ZoomState = {
   tag: string;
 };
 
-export function MattressCatalog({ products, country }: { products: ProductRecord[]; country?: string }) {
+export function MattressCatalog({
+  products,
+  country,
+  exchangeRates
+}: {
+  products: ProductRecord[];
+  country?: string;
+  exchangeRates?: ExchangeRates;
+}) {
   const [zoomState, setZoomState] = useState<ZoomState | null>(null);
 
   const sections = useMemo(() => {
@@ -138,12 +147,13 @@ export function MattressCatalog({ products, country }: { products: ProductRecord
                         {product.name}
                       </Link>
                       <p className="mt-2 text-[1.1rem] text-slate">
-                        <CurrencyAmount value={product.price} country={country} /> -{" "}
+                        <CurrencyAmount value={product.price} country={country} exchangeRates={exchangeRates} /> -{" "}
                         <CurrencyAmount
                           value={
                             product.compareAtPrice ? Math.max(product.compareAtPrice, product.price + 1200) : product.price + 2400
                           }
                           country={country}
+                          exchangeRates={exchangeRates}
                         />
                       </p>
                     </div>

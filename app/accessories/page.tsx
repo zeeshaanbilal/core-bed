@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 
 import { AccessoryCatalog } from "@/components/accessory-catalog";
 import { getCurrentUser } from "@/lib/auth";
+import { getExchangeRates } from "@/lib/exchange-rates";
 import { getAccessories, getCustomerProfileByEmail } from "@/lib/mock-store";
 import { buildMetadata } from "@/lib/seo";
 
@@ -15,14 +16,15 @@ export const metadata: Metadata = buildMetadata({
 
 export default async function AccessoriesPage() {
   const user = await getCurrentUser();
-  const [accessories, profile] = await Promise.all([
+  const [accessories, profile, exchangeRates] = await Promise.all([
     getAccessories(),
-    user?.email ? getCustomerProfileByEmail(user.email) : Promise.resolve(null)
+    user?.email ? getCustomerProfileByEmail(user.email) : Promise.resolve(null),
+    getExchangeRates()
   ]);
 
   return (
     <main>
-      <AccessoryCatalog products={accessories} country={profile?.country} />
+      <AccessoryCatalog products={accessories} country={profile?.country} exchangeRates={exchangeRates} />
     </main>
   );
 }

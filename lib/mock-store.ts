@@ -61,6 +61,25 @@ function slugify(value: string) {
     .replace(/^-+|-+$/g, "");
 }
 
+function getOrderPrefixForCategory(category: string) {
+  const normalized = category.trim().toLowerCase();
+
+  if (normalized === "mattresses" || normalized === "mattress") {
+    return "MCB";
+  }
+
+  if (normalized === "pillows" || normalized === "pillow") {
+    return "PCB";
+  }
+
+  if (normalized === "accessories" || normalized === "accessory") {
+    return "ACB";
+  }
+
+  const firstLetter = normalized.charAt(0).toUpperCase() || "C";
+  return `${firstLetter}CB`;
+}
+
 function normalizeVariantSizes(sizes: string[]) {
   const seen = new Set<string>();
 
@@ -574,6 +593,13 @@ export async function getCatalogProducts() {
   return normalizedProducts.filter(isProductEntity).map(toProductRecord).sort((left, right) => right.price - left.price);
 }
 
+export async function getCatalogProductBySlug(slug: string) {
+  const product = await getProductEntityBySlug(slug);
+  const normalizedProduct = await ensureMattressVariantsReady(product);
+
+  return normalizedProduct ? toProductRecord(normalizedProduct) : null;
+}
+
 export async function getFeaturedProducts() {
   const products = await prisma.product.findMany({
     where: { featured: true, status: ProductStatus.ACTIVE },
@@ -1035,7 +1061,9 @@ export async function createOrderFromCart(input: {
   }
 
   const orderCount = await prisma.order.count();
-  const orderNumber = `CB-${String(orderCount + 1001)}`;
+  const primaryCategory = cart.items[0]?.product.category ?? "";
+  const orderPrefix = getOrderPrefixForCategory(primaryCategory);
+  const orderNumber = `${orderPrefix}-${String(orderCount + 1001)}`;
   const paymentReference =
     input.paymentReference ??
     (input.paymentMethod === "stripe_card"
@@ -1679,6 +1707,15 @@ export async function createProduct(input: Omit<ProductRecord, "id" | "rating" |
   });
 
   await replaceProductVariants(product.id, input);
+
+  const created = await getProductEntityBySlug(input.slug);
+  const normalizedCreated = await ensureMattressVariantsReady(created);
+
+  if (!normalizedCreated) {
+    throw new Error("Unable to load created product");
+  }
+
+  return toProductRecord(normalizedCreated);
 }
 
 export async function updateProduct(
@@ -1742,6 +1779,15 @@ export async function updateProduct(
   });
 
   await replaceProductVariants(id, input);
+
+  const updated = await getProductEntityBySlug(input.slug);
+  const normalizedUpdated = await ensureMattressVariantsReady(updated);
+
+  if (!normalizedUpdated) {
+    throw new Error("Unable to load updated product");
+  }
+
+  return toProductRecord(normalizedUpdated);
 }
 
 export async function deleteProduct(id: string) {

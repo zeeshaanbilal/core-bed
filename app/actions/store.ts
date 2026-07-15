@@ -237,11 +237,12 @@ export async function updateOrderStatusAction(formData: FormData) {
 export async function createProductAction(formData: FormData) {
   await assertAdminUser();
   const slug = getString(formData, "slug");
+  const category = getString(formData, "category");
 
-  await createProduct({
+  const createdProduct = await createProduct({
     slug,
     name: getString(formData, "name"),
-    category: getString(formData, "category"),
+    category,
     description: getString(formData, "description"),
     longDescription: getString(formData, "longDescription"),
     price: getNumber(formData, "price", 0),
@@ -273,12 +274,13 @@ export async function createProductAction(formData: FormData) {
 
   revalidatePath("/shop");
   revalidatePath("/admin/products");
+  redirect(`/admin/products/${createdProduct.slug}`);
 }
 
 export async function updateProductAction(formData: FormData) {
   await assertAdminUser();
 
-  await updateProduct(getString(formData, "id"), {
+  const updatedProduct = await updateProduct(getString(formData, "id"), {
     slug: getString(formData, "slug"),
     name: getString(formData, "name"),
     category: getString(formData, "category"),
@@ -316,6 +318,7 @@ export async function updateProductAction(formData: FormData) {
   revalidatePath("/pillows");
   revalidatePath("/accessories");
   revalidatePath("/admin/products");
+  redirect(`/admin/products/${updatedProduct.slug}`);
 }
 
 export async function deleteProductAction(formData: FormData) {

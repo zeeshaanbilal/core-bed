@@ -1,5 +1,22 @@
+import { promises as fs } from "fs";
+import path from "path";
+
 import { getAdminEmails } from "@/lib/supabase/config";
 import type { OrderRecord } from "@/lib/store-types";
+
+const emailLogPath = path.join(process.cwd(), "data", "email-log.json");
+
+export type EmailLogEntry = {
+  id: string;
+  channel: "customer" | "admin" | "test" | "system";
+  provider: "sender";
+  recipient: string;
+  subject: string;
+  status: "sent" | "failed" | "skipped";
+  error?: string;
+  response?: string;
+  createdAt: string;
+};
 
 function getSenderApiToken() {
   return process.env.SENDER_API_TOKEN ?? "";
@@ -23,6 +40,31 @@ function isSenderReady() {
 
 function isEmailReady() {
   return isSenderReady();
+}
+
+function createEmailLogId() {
+  return `email_${Math.random().toString(36).slice(2, 10)}`;
+}
+
+async function readEmailLogs() {
+  try {
+    const content = await fs.readFile(emailLogPath, "utf8");
+    return JSON.parse(content) as EmailLogEntry[];
+  } catch {
+    return [];
+  }
+}
+
+async function appendEmailLog(entry: Omit<EmailLogEntry, "id" | "createdAt">) {
+  const logs = await readEmailLogs();
+  const nextEntry: EmailLogEntry = {
+    id: createEmailLogId(),
+    createdAt: new Date().toISOString(),
+    ...entry
+  };
+
+  await fs.mkdir(path.dirname(emailLogPath), { recursive: true });
+  await fs.writeFile(emailLogPath, JSON.stringify([nextEntry, ...logs].slice(0, 50), null, 2));
 }
 
 async function sendViaSender(input: {
@@ -66,7 +108,8 @@ async function sendViaSender(input: {
         throw new Error(`Sender email failed: ${payload}`);
       }
 
-      return response.json();
+      const payload = await response.json();
+      return JSON.stringify(payload);
     })
   );
 }
@@ -110,13 +153,33 @@ export async function sendOrderConfirmationEmails(order: OrderRecord) {
     html: `<h1>Order Confirmed</h1><p>Thank you ${order.customerName}.</p><p>Your order <strong>${order.orderNumber}</strong> has been confirmed.</p><ul>${itemsHtml}</ul><p>Total: PKR ${order.total.toLocaleString("en-PK")}</p>`,
     text: `Order Confirmed\nOrder: ${order.orderNumber}\n${itemsText}\nTotal: PKR ${order.total.toLocaleString("en-PK")}`
   })
-    .then((result) => ({
-      ok: !("skipped" in Object(result) && (result as { skipped?: boolean }).skipped),
-      skipped: "skipped" in Object(result) && Boolean((result as { skipped?: boolean }).skipped)
-    }) satisfies EmailDispatchResult)
+    .then(async (result) => {
+      const skipped = "skipped" in Object(result) && Boolean((result as { skipped?: boolean }).skipped);
+      const response = Array.isArray(result) ? result.join("\n") : undefined;
+      await appendEmailLog({
+        channel: "customer",
+        provider: "sender",
+        recipient: order.customerEmail,
+        subject: `Corebed order confirmed - ${order.orderNumber}`,
+        status: skipped ? "skipped" : "sent",
+        response
+      });
+      return {
+        ok: !skipped,
+        skipped
+      } satisfies EmailDispatchResult;
+    })
     .catch((error: unknown) => {
       const message = error instanceof Error ? error.message : "Unknown customer email error";
       console.error(`[email][customer][${order.orderNumber}] ${message}`);
+      void appendEmailLog({
+        channel: "customer",
+        provider: "sender",
+        recipient: order.customerEmail,
+        subject: `Corebed order confirmed - ${order.orderNumber}`,
+        status: "failed",
+        error: message
+      });
       return {
         ok: false,
         skipped: false,
@@ -132,13 +195,33 @@ export async function sendOrderConfirmationEmails(order: OrderRecord) {
           html: `<h1>New Confirmed Order</h1><p>Customer: ${order.customerName}</p><p>Email: ${order.customerEmail}</p><p>Phone: ${order.customerPhone}</p><p>City: ${order.city}</p><ul>${itemsHtml}</ul><p>Total: PKR ${order.total.toLocaleString("en-PK")}</p>`,
           text: `New Confirmed Order\nOrder: ${order.orderNumber}\nCustomer: ${order.customerName}\n${itemsText}\nTotal: PKR ${order.total.toLocaleString("en-PK")}`
         })
-          .then((result) => ({
-            ok: !("skipped" in Object(result) && (result as { skipped?: boolean }).skipped),
-            skipped: "skipped" in Object(result) && Boolean((result as { skipped?: boolean }).skipped)
-          }) satisfies EmailDispatchResult)
+          .then(async (result) => {
+            const skipped = "skipped" in Object(result) && Boolean((result as { skipped?: boolean }).skipped);
+            const response = Array.isArray(result) ? result.join("\n") : undefined;
+            await appendEmailLog({
+              channel: "admin",
+              provider: "sender",
+              recipient: adminEmails.join(", "),
+              subject: `New confirmed order - ${order.orderNumber}`,
+              status: skipped ? "skipped" : "sent",
+              response
+            });
+            return {
+              ok: !skipped,
+              skipped
+            } satisfies EmailDispatchResult;
+          })
           .catch((error: unknown) => {
             const message = error instanceof Error ? error.message : "Unknown admin email error";
             console.error(`[email][admin][${order.orderNumber}] ${message}`);
+            void appendEmailLog({
+              channel: "admin",
+              provider: "sender",
+              recipient: adminEmails.join(", "),
+              subject: `New confirmed order - ${order.orderNumber}`,
+              status: "failed",
+              error: message
+            });
             return {
               ok: false,
               skipped: false,
@@ -160,4 +243,72 @@ export async function sendOrderConfirmationEmails(order: OrderRecord) {
 
 export function areOrderEmailsConfigured() {
   return isEmailReady();
+}
+
+export function getEmailConfigurationSummary() {
+  const from = getSenderFromConfig();
+  const adminEmails = getAdminEmails();
+
+  return {
+    senderReady: isSenderReady(),
+    senderFromEmail: from.email,
+    senderFromName: from.name,
+    hasApiToken: Boolean(getSenderApiToken()),
+    adminEmails
+  };
+}
+
+export async function getRecentEmailLogs() {
+  return readEmailLogs();
+}
+
+export async function sendTestEmail(recipient: string) {
+  const summary = getEmailConfigurationSummary();
+  const subject = "Corebed test email";
+
+  try {
+    const result = await sendEmail({
+      to: recipient,
+      subject,
+      html: "<h1>Corebed email test</h1><p>If you received this, Sender delivery from the website is working.</p>",
+      text: "Corebed email test. If you received this, Sender delivery from the website is working."
+    });
+
+    const skipped = "skipped" in Object(result) && Boolean((result as { skipped?: boolean }).skipped);
+    const response = Array.isArray(result) ? result.join("\n") : undefined;
+
+    await appendEmailLog({
+      channel: "test",
+      provider: "sender",
+      recipient,
+      subject,
+      status: skipped ? "skipped" : "sent",
+      response,
+      error: skipped ? "Sender configuration missing." : undefined
+    });
+
+    return {
+      ok: !skipped,
+      skipped,
+      reason: skipped ? "Sender configuration missing." : undefined,
+      summary
+    };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Unknown Sender error";
+    await appendEmailLog({
+      channel: "test",
+      provider: "sender",
+      recipient,
+      subject,
+      status: "failed",
+      error: message
+    });
+
+    return {
+      ok: false,
+      skipped: false,
+      reason: message,
+      summary
+    };
+  }
 }

@@ -6,6 +6,7 @@ import { redirect } from "next/navigation";
 import { ensureCartSessionId } from "@/lib/cart-session";
 import { getCurrentUser, requireAdminUser } from "@/lib/auth";
 import { getSiteUrl } from "@/lib/site-url";
+import { sendTestEmail } from "@/lib/notifications";
 import { createStripeEmbeddedCheckoutSession, isStripeServerReady } from "@/lib/stripe";
 import {
   addCartItem,
@@ -493,4 +494,25 @@ export async function moderateTestimonialAction(formData: FormData) {
   revalidatePath("/");
   revalidatePath("/reviews");
   revalidatePath("/admin/testimonials");
+}
+
+export async function sendTestEmailAction(formData: FormData) {
+  await assertAdminUser();
+
+  const recipient = getString(formData, "recipient");
+
+  if (!recipient) {
+    redirect("/admin/settings?emailTestError=Recipient%20email%20is%20required.");
+  }
+
+  const result = await sendTestEmail(recipient);
+
+  revalidatePath("/admin/settings");
+
+  if (result.ok) {
+    redirect(`/admin/settings?emailTestSuccess=Test%20email%20sent%20to%20${encodeURIComponent(recipient)}.`);
+  }
+
+  const reason = result.reason ?? "Sender test failed.";
+  redirect(`/admin/settings?emailTestError=${encodeURIComponent(reason)}`);
 }

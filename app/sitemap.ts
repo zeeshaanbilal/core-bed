@@ -2,6 +2,7 @@ import type { MetadataRoute } from "next";
 
 import { getAccessorySlugs, getBlogPostSlugs, getPillowSlugs, getProductSlugs } from "@/lib/mock-store";
 import { getSiteUrl } from "@/lib/seo";
+import { storeLocations } from "@/lib/site-data";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const [productSlugs, pillowSlugs, accessorySlugs, blogSlugs] = await Promise.all([
@@ -59,6 +60,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: new Date(),
       changeFrequency: "monthly" as const,
       priority: 0.75
+    })),
+    ...storeLocations.map((location) => ({
+      url: `${siteUrl}/store-locator/${location.slug}`,
+      lastModified: new Date(),
+      changeFrequency: "monthly" as const,
+      priority: 0.7
     }))
   ];
 }

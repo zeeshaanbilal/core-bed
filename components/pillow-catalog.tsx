@@ -5,8 +5,8 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 
 import { addToCartAction, buyNowAction } from "@/app/actions/store";
+import { CurrencyAmount } from "@/components/currency-amount";
 import { FormSubmitButton } from "@/components/form-submit-button";
-import { formatCurrency } from "@/lib/format";
 import type { ProductRecord } from "@/lib/store-types";
 import { ProductZoomModal } from "@/components/product-zoom-modal";
 
@@ -67,9 +67,11 @@ export function PillowCatalog({ products, country }: { products: ProductRecord[]
                     </Link>
                     <div className="mt-3 flex flex-wrap items-center gap-3 text-[1.08rem]">
                       <span className="text-slate line-through">
-                        {formatCurrency(product.compareAtPrice ?? product.price + 1200, country)}
+                        <CurrencyAmount value={product.compareAtPrice ?? product.price + 1200} country={country} />
                       </span>
-                      <span className="text-[#ff2d2d]">{formatCurrency(product.price, country)}</span>
+                      <span className="text-[#ff2d2d]">
+                        <CurrencyAmount value={product.price} country={country} />
+                      </span>
                     </div>
                   </div>
                   <div className="flex w-full flex-col gap-3 sm:w-auto">

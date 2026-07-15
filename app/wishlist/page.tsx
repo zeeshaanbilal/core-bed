@@ -1,10 +1,11 @@
 import Link from "next/link";
 
 import { addToCartAction, removeWishlistAction } from "@/app/actions/store";
+import { CurrencyAmount } from "@/components/currency-amount";
 import { FormSubmitButton } from "@/components/form-submit-button";
 import { getCurrentUser } from "@/lib/auth";
 import { getCartSessionId } from "@/lib/cart-session";
-import { formatCurrency, getCustomerProfileByEmail, getWishlist, getWishlistByUserEmail } from "@/lib/mock-store";
+import { getCustomerProfileByEmail, getWishlist, getWishlistByUserEmail } from "@/lib/mock-store";
 
 export default async function WishlistPage() {
   const sessionId = await getCartSessionId();
@@ -41,7 +42,9 @@ export default async function WishlistPage() {
                 <p className="mt-3 max-w-3xl text-sm leading-7 text-slate">{product.description}</p>
               </div>
               <div className="flex flex-wrap gap-3">
-                <p className="self-center text-lg font-semibold">{formatCurrency(product.price, profile?.country)}</p>
+                <p className="self-center text-lg font-semibold">
+                  <CurrencyAmount value={product.price} country={profile?.country} />
+                </p>
                 <form action={addToCartAction}>
                   <input name="productSlug" type="hidden" value={product.slug} />
                   <input name="selectedSize" type="hidden" value={product.sizes[0]} />

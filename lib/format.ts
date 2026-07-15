@@ -1,8 +1,14 @@
-const COUNTRY_CURRENCY_MAP: Array<{
+export type CurrencyConfig = {
   match: string[];
   locale: string;
   currency: string;
-}> = [
+};
+
+export type ExchangeRates = Record<string, number>;
+
+const BASE_CURRENCY = "PKR";
+
+const COUNTRY_CURRENCY_MAP: CurrencyConfig[] = [
   { match: ["pakistan"], locale: "en-PK", currency: "PKR" },
   { match: ["united states", "usa", "us"], locale: "en-US", currency: "USD" },
   { match: ["united kingdom", "uk", "great britain", "england"], locale: "en-GB", currency: "GBP" },
@@ -30,13 +36,30 @@ export function getCurrencyConfig(country?: string) {
   return COUNTRY_CURRENCY_MAP[0];
 }
 
-export function formatCurrency(value: number, country?: string) {
+export function convertCurrencyValue(value: number, country?: string, rates?: ExchangeRates) {
+  const { currency } = getCurrencyConfig(country);
+
+  if (!rates || currency === BASE_CURRENCY) {
+    return value;
+  }
+
+  const exchangeRate = rates[currency];
+
+  if (typeof exchangeRate !== "number" || !Number.isFinite(exchangeRate) || exchangeRate <= 0) {
+    return value;
+  }
+
+  return value * exchangeRate;
+}
+
+export function formatCurrency(value: number, country?: string, rates?: ExchangeRates) {
   const { locale, currency } = getCurrencyConfig(country);
+  const normalizedValue = convertCurrencyValue(value, country, rates);
 
   return new Intl.NumberFormat(locale, {
     style: "currency",
     currency,
     maximumFractionDigits: 2,
     minimumFractionDigits: 2
-  }).format(value);
+  }).format(normalizedValue);
 }

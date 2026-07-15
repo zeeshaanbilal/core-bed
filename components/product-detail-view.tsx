@@ -5,8 +5,8 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 
 import { addToCartAction, addWishlistAction, removeWishlistAction, submitTestimonialAction } from "@/app/actions/store";
+import { CurrencyAmount } from "@/components/currency-amount";
 import { FormSubmitButton } from "@/components/form-submit-button";
-import { formatCurrency } from "@/lib/format";
 import type { ProductRecord, TestimonialRecord } from "@/lib/store-types";
 
 export function ProductDetailView({
@@ -94,8 +94,14 @@ export function ProductDetailView({
           <div>
             <h1 className="text-5xl font-semibold tracking-[-0.06em] text-navy">{product.name}</h1>
             <div className="mt-5 flex flex-wrap items-center gap-3 text-[1.9rem]">
-              {activeCompareAt ? <span className="text-xl text-slate line-through">{formatCurrency(activeCompareAt, country)}</span> : null}
-              <span className="font-semibold text-navy">{formatCurrency(activePrice, country)}</span>
+              {activeCompareAt ? (
+                <span className="text-xl text-slate line-through">
+                  <CurrencyAmount value={activeCompareAt} country={country} />
+                </span>
+              ) : null}
+              <span className="font-semibold text-navy">
+                <CurrencyAmount value={activePrice} country={country} />
+              </span>
             </div>
             <p className="mt-3 text-sm text-slate">SKU: {selectedVariant?.sku ?? "Custom"} | Stock: {selectedVariant?.stock ?? product.inventory}</p>
           </div>
@@ -248,8 +254,14 @@ export function ProductDetailView({
                       {related.name}
                     </Link>
                     <div className="mt-3 flex flex-wrap items-center gap-3 text-lg">
-                      {related.compareAtPrice ? <span className="text-slate line-through">{formatCurrency(related.compareAtPrice, country)}</span> : null}
-                      <span className="text-navy">{formatCurrency(related.price, country)}</span>
+                      {related.compareAtPrice ? (
+                        <span className="text-slate line-through">
+                          <CurrencyAmount value={related.compareAtPrice} country={country} />
+                        </span>
+                      ) : null}
+                      <span className="text-navy">
+                        <CurrencyAmount value={related.price} country={country} />
+                      </span>
                     </div>
                   </div>
                   <Link href={`${backHref}/${related.slug}`} className="rounded-md bg-navy px-6 py-3 text-sm font-semibold text-white">

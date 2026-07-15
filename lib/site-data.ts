@@ -195,22 +195,21 @@ export const featureCards = [
 
 export const storeLocations = [
   {
-    city: "Lahore",
-    address: "MM Alam Road showroom district",
-    timing: "11am to 9pm",
-    phone: "+15855029662"
-  },
-  {
-    city: "Karachi",
-    address: "Shahrah-e-Faisal partner studio",
-    timing: "11am to 9pm",
-    phone: "+15855029662"
-  },
-  {
-    city: "Islamabad",
-    address: "Blue Area appointment showroom",
-    timing: "12pm to 8pm",
-    phone: "+15855029662"
+    slug: "granbury-texas",
+    city: "Granbury",
+    address: "307 West Pearl Street",
+    state: "Texas",
+    postalCode: "76048",
+    country: "United States",
+    timezone: "(GMT-08:00) Pacific Time",
+    timing: "By appointment",
+    phone: "+15855029662",
+    summary: "Private Corebed showroom support for appointments, consultations, and direct purchase guidance.",
+    mapQuery: "307 West Pearl Street, Granbury, Texas 76048, United States",
+    mapEmbedUrl:
+      "https://www.google.com/maps?q=307+West+Pearl+Street,+Granbury,+Texas+76048,+United+States&z=15&output=embed",
+    mapLink:
+      "https://www.google.com/maps/search/?api=1&query=307+West+Pearl+Street,+Granbury,+Texas+76048,+United+States"
   }
 ];
 

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
-import { formatCurrency, getProducts } from "@/lib/mock-store";
+import { CurrencyAmount } from "@/components/currency-amount";
+import { getProducts } from "@/lib/mock-store";
 import { buildMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = buildMetadata({
@@ -42,7 +43,9 @@ export default async function ComparePage() {
                   <td className="px-6 py-5 font-serif text-2xl">{product.name}</td>
                   <td className="px-6 py-5 text-sm text-slate">{product.firmness}</td>
                   <td className="px-6 py-5 text-sm text-slate">{product.material}</td>
-                  <td className="px-6 py-5 text-sm font-semibold text-ink">{formatCurrency(product.price)}</td>
+                  <td className="px-6 py-5 text-sm font-semibold text-ink">
+                    <CurrencyAmount value={product.price} />
+                  </td>
                   <td className="px-6 py-5 text-sm text-slate">{product.inventory}</td>
                 </tr>
               ))}

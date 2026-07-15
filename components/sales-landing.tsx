@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { formatCurrency } from "@/lib/format";
+import { CurrencyAmount } from "@/components/currency-amount";
 import type { ProductRecord } from "@/lib/store-types";
 
 type SalesSeason = "summer" | "winter";
@@ -98,8 +98,14 @@ export function SalesLanding({
                 {product.name}
               </Link>
               <div className="mt-3 flex flex-wrap items-center gap-3 text-base">
-                {product.compareAtPrice ? <span className="text-slate line-through">{formatCurrency(product.compareAtPrice)}</span> : null}
-                <span className="font-semibold text-navy">{formatCurrency(product.price)}</span>
+                {product.compareAtPrice ? (
+                  <span className="text-slate line-through">
+                    <CurrencyAmount value={product.compareAtPrice} />
+                  </span>
+                ) : null}
+                <span className="font-semibold text-navy">
+                  <CurrencyAmount value={product.price} />
+                </span>
               </div>
               <Link href={getProductHref(product)} className="mt-5 inline-flex rounded-md bg-navy px-6 py-3 text-sm font-semibold text-white">
                 View deal

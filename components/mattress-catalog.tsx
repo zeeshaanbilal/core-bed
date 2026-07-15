@@ -5,8 +5,8 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 
 import { addToCartAction, buyNowAction } from "@/app/actions/store";
+import { CurrencyAmount } from "@/components/currency-amount";
 import { FormSubmitButton } from "@/components/form-submit-button";
-import { formatCurrency } from "@/lib/format";
 import type { ProductRecord } from "@/lib/store-types";
 import { ProductZoomModal } from "@/components/product-zoom-modal";
 
@@ -138,11 +138,13 @@ export function MattressCatalog({ products, country }: { products: ProductRecord
                         {product.name}
                       </Link>
                       <p className="mt-2 text-[1.1rem] text-slate">
-                        {formatCurrency(product.price, country)} -{" "}
-                        {formatCurrency(
-                          product.compareAtPrice ? Math.max(product.compareAtPrice, product.price + 1200) : product.price + 2400,
-                          country
-                        )}
+                        <CurrencyAmount value={product.price} country={country} /> -{" "}
+                        <CurrencyAmount
+                          value={
+                            product.compareAtPrice ? Math.max(product.compareAtPrice, product.price + 1200) : product.price + 2400
+                          }
+                          country={country}
+                        />
                       </p>
                     </div>
                     <div className="flex w-full flex-col gap-3 sm:w-auto">

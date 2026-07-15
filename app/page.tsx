@@ -2,11 +2,11 @@ import Link from "next/link";
 import type { Metadata } from "next";
 
 import { addToCartAction, buyNowAction } from "@/app/actions/store";
+import { CurrencyAmount } from "@/components/currency-amount";
 import { FormSubmitButton } from "@/components/form-submit-button";
-import { ProductCard } from "@/components/product-card";
 import { StructuredData } from "@/components/structured-data";
 import { getCurrentUser } from "@/lib/auth";
-import { formatCurrency, getApprovedTestimonialsForHome, getCustomerProfileByEmail, getProducts } from "@/lib/mock-store";
+import { getApprovedTestimonialsForHome, getCustomerProfileByEmail, getProducts } from "@/lib/mock-store";
 import { buildBreadcrumbSchema, buildMetadata } from "@/lib/seo";
 import { featureCards, storeLocations, testimonials } from "@/lib/site-data";
 
@@ -108,6 +108,7 @@ export default async function HomePage() {
         }))
       : testimonials;
   const repeatedTestimonials = [...liveTestimonials, ...liveTestimonials];
+  const primaryStore = storeLocations[0];
 
   return (
     <main className="overflow-hidden">
@@ -268,9 +269,9 @@ export default async function HomePage() {
         <h2 className="text-center font-serif text-4xl font-semibold tracking-[-0.05em] text-navy md:text-5xl">
           Our featured products
         </h2>
-        <div className="mt-12 grid gap-8 lg:grid-cols-4">
+        <div className="mt-12 grid justify-items-center gap-8 md:grid-cols-2 xl:grid-cols-3">
           {featuredProducts.map((product) => (
-            <div key={product.id} className="text-center">
+            <div key={product.id} className="w-full max-w-[360px] text-center">
               <Link
                 href={getProductHref(product.category, product.slug)}
                 className="block overflow-hidden rounded-sm bg-[linear-gradient(180deg,#f5f2ea_0%,#e6dece_100%)] p-6"
@@ -286,9 +287,13 @@ export default async function HomePage() {
               >
                 {product.name}
               </Link>
-              <div className="mt-3 text-lg text-slate">{formatCurrency(product.price, profile?.country)}</div>
+              <div className="mt-3 text-lg text-slate">
+                <CurrencyAmount value={product.price} country={profile?.country} />
+              </div>
               {product.compareAtPrice ? (
-                <div className="mt-1 text-base text-slate line-through">{formatCurrency(product.compareAtPrice, profile?.country)}</div>
+                <div className="mt-1 text-base text-slate line-through">
+                  <CurrencyAmount value={product.compareAtPrice} country={profile?.country} />
+                </div>
               ) : null}
               <div className="mt-5 flex flex-col items-center gap-3">
                 <form action={buyNowAction} className="w-full">
@@ -365,21 +370,43 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="mx-auto grid max-w-[1900px] gap-0 bg-white lg:grid-cols-[1.1fr_1fr]">
+      <section className="mx-auto grid max-w-[1900px] gap-0 bg-white lg:grid-cols-[1.05fr_1fr]">
         <div className="flex items-center px-8 py-16 md:px-20">
           <div className="max-w-xl">
             <h2 className="font-serif text-5xl font-semibold leading-tight tracking-[-0.05em] text-navy md:text-6xl">
               Find a Corebed store near you.
             </h2>
-            <Link
-              href="/store-locator"
-              className="mt-10 inline-flex rounded-xl border border-bronze/50 px-10 py-4 text-lg text-navy"
-            >
-              Store Locator
-            </Link>
+            <p className="mt-6 max-w-lg text-base leading-8 text-slate">
+              Visit our current showroom location at {primaryStore.address}, {primaryStore.city}, {primaryStore.state}{" "}
+              {primaryStore.postalCode}. Open the map directly or view the full store detail page.
+            </p>
+            <div className="mt-10 flex flex-wrap gap-4">
+              <Link
+                href={`/store-locator/${primaryStore.slug}`}
+                className="inline-flex rounded-xl bg-ink px-10 py-4 text-lg text-ivory"
+              >
+                Store details
+              </Link>
+              <Link
+                href={primaryStore.mapLink}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex rounded-xl border border-bronze/50 px-10 py-4 text-lg text-navy"
+              >
+                Open map
+              </Link>
+            </div>
           </div>
         </div>
-        <div className="min-h-[420px] bg-[url('https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&w=1600&q=80')] bg-cover bg-center" />
+        <div className="min-h-[420px] overflow-hidden border-l border-ink/10 bg-[#f7f4ed]">
+          <iframe
+            title={`Map for ${primaryStore.address}, ${primaryStore.city}`}
+            src={primaryStore.mapEmbedUrl}
+            className="h-full min-h-[420px] w-full"
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+          />
+        </div>
       </section>
     </main>
   );

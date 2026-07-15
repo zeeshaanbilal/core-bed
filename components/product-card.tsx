@@ -2,8 +2,8 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { addToCartAction, addWishlistAction } from "@/app/actions/store";
+import { CurrencyAmount } from "@/components/currency-amount";
 import { FormSubmitButton } from "@/components/form-submit-button";
-import { formatCurrency } from "@/lib/mock-store";
 import type { ProductRecord } from "@/lib/store-types";
 
 export function ProductCard({ product, country }: { product: ProductRecord; country?: string }) {
@@ -46,9 +46,13 @@ export function ProductCard({ product, country }: { product: ProductRecord; coun
 
         <div className="flex items-end justify-between gap-4">
           <div>
-            <p className="text-2xl font-semibold text-ink">{formatCurrency(product.price, country)}</p>
+            <p className="text-2xl font-semibold text-ink">
+              <CurrencyAmount value={product.price} country={country} />
+            </p>
             {product.compareAtPrice ? (
-              <p className="text-sm text-slate line-through">{formatCurrency(product.compareAtPrice, country)}</p>
+              <p className="text-sm text-slate line-through">
+                <CurrencyAmount value={product.compareAtPrice} country={country} />
+              </p>
             ) : null}
           </div>
           <div className="flex gap-2">

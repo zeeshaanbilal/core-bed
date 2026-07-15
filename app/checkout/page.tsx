@@ -1,11 +1,12 @@
 import Link from "next/link";
 
 import { submitCheckoutAction } from "@/app/actions/store";
+import { CurrencyAmount } from "@/components/currency-amount";
 import { FormSubmitButton } from "@/components/form-submit-button";
 import { StripeEmbeddedCheckout } from "@/components/stripe-embedded-checkout";
 import { getCurrentUser } from "@/lib/auth";
 import { getCartSessionId } from "@/lib/cart-session";
-import { formatCurrency, getCartDetail, getCustomerProfileByEmail, getOrderByPaymentReference } from "@/lib/mock-store";
+import { getCartDetail, getCustomerProfileByEmail, getOrderByPaymentReference } from "@/lib/mock-store";
 import { countryOptions } from "@/lib/site-data";
 import { isStripeConfigured } from "@/lib/supabase/config";
 
@@ -151,21 +152,21 @@ export default async function CheckoutPage({
                     {item.selectedFirmness ? ` / ${item.selectedFirmness}` : ""}
                   </span>
                 </span>
-                <span>{formatCurrency(item.lineTotal, profile?.country)}</span>
+                <span><CurrencyAmount value={item.lineTotal} country={profile?.country} /></span>
               </div>
             ))}
             <div className="border-t border-ink/10 pt-4">
               <div className="flex justify-between">
                 <span>Subtotal</span>
-                <span>{formatCurrency(cart.subtotal, profile?.country)}</span>
+                <span><CurrencyAmount value={cart.subtotal} country={profile?.country} /></span>
               </div>
               <div className="mt-2 flex justify-between">
                 <span>Shipping</span>
-                <span>{cart.shippingFee === 0 ? "Free" : formatCurrency(cart.shippingFee, profile?.country)}</span>
+                <span>{cart.shippingFee === 0 ? "Free" : <CurrencyAmount value={cart.shippingFee} country={profile?.country} />}</span>
               </div>
               <div className="mt-4 flex justify-between text-base font-semibold text-ink">
                 <span>Total</span>
-                <span>{formatCurrency(cart.total, profile?.country)}</span>
+                <span><CurrencyAmount value={cart.total} country={profile?.country} /></span>
               </div>
             </div>
           </div>

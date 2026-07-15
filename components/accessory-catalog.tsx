@@ -5,8 +5,8 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 
 import { addToCartAction, buyNowAction } from "@/app/actions/store";
+import { CurrencyAmount } from "@/components/currency-amount";
 import { FormSubmitButton } from "@/components/form-submit-button";
-import { formatCurrency } from "@/lib/format";
 import type { ProductRecord } from "@/lib/store-types";
 import { ProductZoomModal } from "@/components/product-zoom-modal";
 
@@ -70,12 +70,16 @@ export function AccessoryCatalog({ products, country }: { products: ProductRecor
                         className="text-[1.65rem] font-semibold leading-tight tracking-[-0.06em] text-navy sm:text-[1.95rem]"
                       >
                         {product.name}
-                      </Link>
-                      <div className="mt-3 flex flex-wrap items-center gap-3 text-[1.08rem]">
-                        {product.compareAtPrice ? (
-                          <span className="text-slate line-through">{formatCurrency(product.compareAtPrice, country)}</span>
+                    </Link>
+                    <div className="mt-3 flex flex-wrap items-center gap-3 text-[1.08rem]">
+                      {product.compareAtPrice ? (
+                          <span className="text-slate line-through">
+                            <CurrencyAmount value={product.compareAtPrice} country={country} />
+                          </span>
                         ) : null}
-                        <span className="text-[#ff2d2d]">{formatCurrency(product.price, country)}</span>
+                        <span className="text-[#ff2d2d]">
+                          <CurrencyAmount value={product.price} country={country} />
+                        </span>
                       </div>
                     </div>
                     <div className="flex w-full flex-col gap-3 sm:w-auto">

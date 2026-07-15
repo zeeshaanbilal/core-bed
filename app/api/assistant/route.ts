@@ -22,14 +22,102 @@ function scoreTextMatch(message: string, value: string) {
   return terms.reduce((score, term) => score + (target.includes(term) ? 1 : 0), 0);
 }
 
+function getPathContext(pathname?: string) {
+  if (!pathname) {
+    return {
+      label: "storefront",
+      suggestions: [
+        "Recommend a mattress for back support",
+        "Show cooling pillow options",
+        "What is your delivery and payment flow?",
+        "Find accessories for office comfort"
+      ]
+    };
+  }
+
+  if (pathname.startsWith("/shop")) {
+    return {
+      label: "mattress collection",
+      suggestions: [
+        "Compare soft and hard mattress options",
+        "Which mattress is better for back support?",
+        "Show premium mattress options",
+        "Explain mattress sizes and pricing"
+      ]
+    };
+  }
+
+  if (pathname.startsWith("/pillows")) {
+    return {
+      label: "pillow collection",
+      suggestions: [
+        "Show cooling pillow options",
+        "Which pillow is best for neck pain?",
+        "Compare memory and latex pillows",
+        "Find the softest pillow option"
+      ]
+    };
+  }
+
+  if (pathname.startsWith("/accessories")) {
+    return {
+      label: "accessories collection",
+      suggestions: [
+        "Find accessories for office comfort",
+        "Show posture support accessories",
+        "Recommend travel support products",
+        "Which accessory is best for seat support?"
+      ]
+    };
+  }
+
+  if (pathname.startsWith("/blog")) {
+    return {
+      label: "blog library",
+      suggestions: [
+        "Show buying guides for mattresses",
+        "Find blog posts about back pain",
+        "Recommend pillow care articles",
+        "Show the latest featured articles"
+      ]
+    };
+  }
+
+  if (pathname.startsWith("/checkout")) {
+    return {
+      label: "checkout",
+      suggestions: [
+        "What payment methods are available?",
+        "How does delivery work after payment?",
+        "How do I track my order?",
+        "How can I contact support?"
+      ]
+    };
+  }
+
+  return {
+    label: "storefront",
+    suggestions: [
+      "Recommend a mattress for back support",
+      "Show cooling pillow options",
+      "What is your delivery and payment flow?",
+      "Find accessories for office comfort"
+    ]
+  };
+}
+
 export async function POST(request: NextRequest) {
   const body = (await request.json()) as { message?: string; pathname?: string };
   const message = body.message?.trim() ?? "";
+  const context = getPathContext(body.pathname);
 
-  if (!message) {
+  if (!message || message === "__intro__") {
+    const [products, posts] = await Promise.all([getCatalogProducts(), getBlogPosts()]);
+    const categoryNames = Array.from(new Set(products.map((product) => product.category))).slice(0, 3);
+
     return NextResponse.json({
-      answer: "Ask about mattresses, pillows, accessories, support, payment, delivery, or blog guides.",
-      suggestions: [],
+      answer: `You are in the ${context.label}. I can answer with live catalog and content data across ${categoryNames.join(", ").toLowerCase()}, delivery help, support guidance, and the latest published articles.`,
+      suggestions: context.suggestions,
       links: []
     });
   }
@@ -76,7 +164,7 @@ export async function POST(request: NextRequest) {
   if (rankedProducts.length > 0) {
     const primary = rankedProducts[0].product;
     answerParts.push(
-      `${primary.name} is a ${primary.category.toLowerCase()} option with ${primary.material.toLowerCase()} and ${primary.firmness.toLowerCase()} comfort. It starts from ${primary.price.toFixed(2)} and supports sizes like ${primary.sizes.join(", ")}.`
+      `${primary.name} is a ${primary.category.toLowerCase()} option with ${primary.material.toLowerCase()} materials and ${primary.firmness.toLowerCase()} comfort. It currently starts from ${primary.price.toFixed(2)} and is available in sizes such as ${primary.sizes.join(", ")}.`
     );
     links.push({
       label: primary.name,
@@ -104,7 +192,7 @@ export async function POST(request: NextRequest) {
   }
 
   if (message.toLowerCase().includes("payment")) {
-    answerParts.push("The site supports embedded Stripe card checkout directly on-page, with bank transfer and cash on delivery flow options also present in checkout.");
+    answerParts.push("The site supports embedded Stripe card checkout directly on-page for a faster purchase flow.");
     links.push({ label: "Checkout", href: "/checkout" });
   }
 
@@ -116,7 +204,7 @@ export async function POST(request: NextRequest) {
 
   return NextResponse.json({
     answer: answerParts.join(" "),
-    suggestions: [],
+    suggestions: context.suggestions,
     links: links.slice(0, 4)
   });
 }

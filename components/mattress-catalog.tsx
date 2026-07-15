@@ -4,6 +4,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 
+import { addToCartAction, buyNowAction } from "@/app/actions/store";
+import { FormSubmitButton } from "@/components/form-submit-button";
 import { formatCurrency } from "@/lib/format";
 import type { ProductRecord } from "@/lib/store-types";
 import { ProductZoomModal } from "@/components/product-zoom-modal";
@@ -143,9 +145,38 @@ export function MattressCatalog({ products, country }: { products: ProductRecord
                         )}
                       </p>
                     </div>
-                    <Link href={`/shop/${product.slug}`} className="inline-flex w-full justify-center rounded-md bg-navy px-7 py-3 text-base font-semibold text-white sm:w-auto">
-                      Add to Cart
-                    </Link>
+                    <div className="flex w-full flex-col gap-3 sm:w-auto">
+                      <form action={buyNowAction}>
+                        <input name="productSlug" type="hidden" value={product.slug} />
+                        <input name="selectedSize" type="hidden" value={product.sizes[0] ?? "Standard"} />
+                        <input
+                          name="selectedFirmness"
+                          type="hidden"
+                          value={product.firmnessOptions[0] ?? product.firmness}
+                        />
+                        <input name="quantity" type="hidden" value="1" />
+                        <FormSubmitButton
+                          idleLabel="Shop now"
+                          pendingLabel="Opening checkout..."
+                          className="inline-flex w-full justify-center rounded-md bg-navy px-7 py-3 text-base font-semibold text-white sm:min-w-[180px]"
+                        />
+                      </form>
+                      <form action={addToCartAction}>
+                        <input name="productSlug" type="hidden" value={product.slug} />
+                        <input name="selectedSize" type="hidden" value={product.sizes[0] ?? "Standard"} />
+                        <input
+                          name="selectedFirmness"
+                          type="hidden"
+                          value={product.firmnessOptions[0] ?? product.firmness}
+                        />
+                        <input name="quantity" type="hidden" value="1" />
+                        <FormSubmitButton
+                          idleLabel="Add to cart"
+                          pendingLabel="Adding..."
+                          className="inline-flex w-full justify-center rounded-md border border-navy/20 bg-white px-7 py-3 text-base font-semibold text-navy sm:min-w-[180px]"
+                        />
+                      </form>
+                    </div>
                   </div>
                 </article>
               ))}

@@ -10,6 +10,7 @@ import { createStripeEmbeddedCheckoutSession, isStripeServerReady } from "@/lib/
 import {
   addCartItem,
   addWishlistItem,
+  clearCart,
   createBlogPost,
   createContentEntry,
   createOrderFromCart,
@@ -63,6 +64,28 @@ export async function addToCartAction(formData: FormData) {
   revalidatePath("/pillows");
   revalidatePath("/accessories");
   revalidatePath("/cart");
+}
+
+export async function buyNowAction(formData: FormData) {
+  const sessionId = await ensureCartSessionId();
+
+  await clearCart(sessionId);
+  await addCartItem({
+    sessionId,
+    productSlug: getString(formData, "productSlug"),
+    selectedSize: getString(formData, "selectedSize"),
+    selectedFirmness: getString(formData, "selectedFirmness"),
+    quantity: getNumber(formData, "quantity", 1)
+  });
+
+  revalidatePath("/");
+  revalidatePath("/shop");
+  revalidatePath("/pillows");
+  revalidatePath("/accessories");
+  revalidatePath("/cart");
+  revalidatePath("/checkout");
+
+  redirect("/checkout");
 }
 
 export async function updateCartQuantityAction(formData: FormData) {

@@ -1,12 +1,26 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 
+import { addToCartAction, buyNowAction } from "@/app/actions/store";
+import { FormSubmitButton } from "@/components/form-submit-button";
 import { ProductCard } from "@/components/product-card";
 import { StructuredData } from "@/components/structured-data";
 import { getCurrentUser } from "@/lib/auth";
 import { formatCurrency, getApprovedTestimonialsForHome, getCustomerProfileByEmail, getProducts } from "@/lib/mock-store";
 import { buildBreadcrumbSchema, buildMetadata } from "@/lib/seo";
 import { featureCards, storeLocations, testimonials } from "@/lib/site-data";
+
+function getProductHref(category: string, slug: string) {
+  if (category === "Pillows") {
+    return `/pillows/${slug}`;
+  }
+
+  if (category === "Accessories") {
+    return `/accessories/${slug}`;
+  }
+
+  return `/shop/${slug}`;
+}
 
 export const metadata: Metadata = buildMetadata({
   title: "Corebed Natural Mattress | Premium Mattresses, Pillows and Accessories",
@@ -257,17 +271,57 @@ export default async function HomePage() {
         <div className="mt-12 grid gap-8 lg:grid-cols-4">
           {featuredProducts.map((product) => (
             <div key={product.id} className="text-center">
-              <div className="overflow-hidden rounded-sm bg-[linear-gradient(180deg,#f5f2ea_0%,#e6dece_100%)] p-6">
+              <Link
+                href={getProductHref(product.category, product.slug)}
+                className="block overflow-hidden rounded-sm bg-[linear-gradient(180deg,#f5f2ea_0%,#e6dece_100%)] p-6"
+              >
                 <div
                   className="h-[300px] w-full bg-contain bg-center bg-no-repeat"
                   style={{ backgroundImage: `url(${product.image})` }}
                 />
-              </div>
-              <h3 className="mt-7 text-2xl font-medium tracking-[-0.04em] text-navy">{product.name}</h3>
+              </Link>
+              <Link
+                href={getProductHref(product.category, product.slug)}
+                className="mt-7 block text-2xl font-medium tracking-[-0.04em] text-navy transition hover:text-[#4c6540]"
+              >
+                {product.name}
+              </Link>
               <div className="mt-3 text-lg text-slate">{formatCurrency(product.price, profile?.country)}</div>
               {product.compareAtPrice ? (
                 <div className="mt-1 text-base text-slate line-through">{formatCurrency(product.compareAtPrice, profile?.country)}</div>
               ) : null}
+              <div className="mt-5 flex flex-col items-center gap-3">
+                <form action={buyNowAction} className="w-full">
+                  <input name="productSlug" type="hidden" value={product.slug} />
+                  <input name="selectedSize" type="hidden" value={product.sizes[0] ?? "Standard"} />
+                  <input
+                    name="selectedFirmness"
+                    type="hidden"
+                    value={product.firmnessOptions[0] ?? product.firmness}
+                  />
+                  <input name="quantity" type="hidden" value="1" />
+                  <FormSubmitButton
+                    idleLabel="Shop now"
+                    pendingLabel="Opening checkout..."
+                    className="inline-flex w-full justify-center rounded-full bg-navy px-5 py-3 text-sm font-medium text-white"
+                  />
+                </form>
+                <form action={addToCartAction} className="w-full">
+                  <input name="productSlug" type="hidden" value={product.slug} />
+                  <input name="selectedSize" type="hidden" value={product.sizes[0] ?? "Standard"} />
+                  <input
+                    name="selectedFirmness"
+                    type="hidden"
+                    value={product.firmnessOptions[0] ?? product.firmness}
+                  />
+                  <input name="quantity" type="hidden" value="1" />
+                  <FormSubmitButton
+                    idleLabel="Add to cart"
+                    pendingLabel="Adding..."
+                    className="inline-flex w-full justify-center rounded-full border border-navy/20 bg-white px-5 py-3 text-sm font-medium text-navy"
+                  />
+                </form>
+              </div>
             </div>
           ))}
         </div>

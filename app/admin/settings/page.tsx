@@ -13,9 +13,9 @@ const requiredEnv = [
   "STRIPE_SECRET_KEY",
   "NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY",
   "STRIPE_WEBHOOK_SECRET",
-  "SENDER_API_TOKEN",
-  "SENDER_FROM_EMAIL",
-  "SENDER_FROM_NAME"
+  "RESEND_API_KEY",
+  "RESEND_FROM_EMAIL",
+  "RESEND_FROM_NAME"
 ];
 
 export default async function AdminSettingsPage({
@@ -53,7 +53,7 @@ export default async function AdminSettingsPage({
           </p>
         </article>
         <article className="section-frame rounded-[1.75rem] p-6">
-          <p className="text-xs uppercase tracking-[0.3em] text-bronze">Sender Email</p>
+          <p className="text-xs uppercase tracking-[0.3em] text-bronze">Resend Email</p>
           <h3 className="mt-3 font-serif text-3xl">{areOrderEmailsConfigured() ? "Configured" : "Pending"}</h3>
           <p className="mt-3 text-sm leading-7 text-slate">
             From: {emailConfig.senderFromEmail || "Missing"} {emailConfig.senderFromName ? `(${emailConfig.senderFromName})` : ""}
@@ -69,7 +69,7 @@ export default async function AdminSettingsPage({
           <div>
             <p className="font-serif text-3xl">Send test email</p>
             <p className="mt-3 max-w-2xl text-sm leading-7 text-slate">
-              Is button se hum Sender ka real result check kar sakte hain. Agar fail hota hai to exact reason neeche logs mein
+              Is button se hum Resend ka real result check kar sakte hain. Agar fail hota hai to exact reason neeche logs mein
               surface ho jayega.
             </p>
           </div>
@@ -119,7 +119,7 @@ export default async function AdminSettingsPage({
       <article className="section-frame rounded-[1.75rem] p-6">
         <p className="font-serif text-3xl">Recent email logs</p>
         <p className="mt-3 text-sm leading-7 text-slate">
-          Yehi section exact Sender failure reason show karega, jaise invalid token, sender mismatch, ya rejected domain.
+          Yehi section exact email provider failure reason show karega, jaise invalid API key, from-address mismatch, ya rejected domain.
         </p>
 
         <div className="mt-6 space-y-4">

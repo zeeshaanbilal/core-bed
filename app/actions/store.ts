@@ -513,6 +513,6 @@ export async function sendTestEmailAction(formData: FormData) {
     redirect(`/admin/settings?emailTestSuccess=Test%20email%20sent%20to%20${encodeURIComponent(recipient)}.`);
   }
 
-  const reason = result.reason ?? "Sender test failed.";
+  const reason = result.reason ?? "Resend test failed.";
   redirect(`/admin/settings?emailTestError=${encodeURIComponent(reason)}`);
 }

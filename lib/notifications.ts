@@ -9,7 +9,7 @@ const emailLogPath = path.join(process.cwd(), "data", "email-log.json");
 export type EmailLogEntry = {
   id: string;
   channel: "customer" | "admin" | "test" | "system";
-  provider: "sender";
+  provider: "resend";
   recipient: string;
   subject: string;
   status: "sent" | "failed" | "skipped";
@@ -18,13 +18,13 @@ export type EmailLogEntry = {
   createdAt: string;
 };
 
-function getSenderApiToken() {
-  return process.env.SENDER_API_TOKEN ?? "";
+function getResendApiKey() {
+  return process.env.RESEND_API_KEY ?? "";
 }
 
-function getSenderFromConfig() {
-  const senderEmail = process.env.SENDER_FROM_EMAIL?.trim();
-  const senderName = process.env.SENDER_FROM_NAME?.trim();
+function getResendFromConfig() {
+  const senderEmail = process.env.RESEND_FROM_EMAIL?.trim();
+  const senderName = process.env.RESEND_FROM_NAME?.trim();
 
   return {
     email: senderEmail ?? "",
@@ -32,14 +32,14 @@ function getSenderFromConfig() {
   };
 }
 
-function isSenderReady() {
-  const token = getSenderApiToken();
-  const from = getSenderFromConfig();
+function isResendReady() {
+  const token = getResendApiKey();
+  const from = getResendFromConfig();
   return Boolean(token && from.email);
 }
 
 function isEmailReady() {
-  return isSenderReady();
+  return isResendReady();
 }
 
 function createEmailLogId() {
@@ -67,24 +67,24 @@ async function appendEmailLog(entry: Omit<EmailLogEntry, "id" | "createdAt">) {
   await fs.writeFile(emailLogPath, JSON.stringify([nextEntry, ...logs].slice(0, 50), null, 2));
 }
 
-async function sendViaSender(input: {
+async function sendViaResend(input: {
   to: string | string[];
   subject: string;
   html: string;
   text: string;
 }) {
-  const apiToken = getSenderApiToken();
-  const from = getSenderFromConfig();
+  const apiToken = getResendApiKey();
+  const from = getResendFromConfig();
 
   if (!apiToken || !from.email) {
-    throw new Error("Sender email skipped. Missing SENDER_API_TOKEN or sender from email.");
+    throw new Error("Resend email skipped. Missing RESEND_API_KEY or from email.");
   }
 
   const recipients = Array.isArray(input.to) ? input.to : [input.to];
 
   return Promise.all(
     recipients.map(async (recipient) => {
-      const response = await fetch("https://api.sender.net/v2/message/send", {
+      const response = await fetch("https://api.resend.com/emails", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${apiToken}`,
@@ -92,10 +92,8 @@ async function sendViaSender(input: {
           Accept: "application/json"
         },
         body: JSON.stringify({
-          from,
-          to: {
-            email: recipient
-          },
+          from: `${from.name} <${from.email}>`,
+          to: [recipient],
           subject: input.subject,
           html: input.html,
           text: input.text
@@ -105,7 +103,7 @@ async function sendViaSender(input: {
 
       if (!response.ok) {
         const payload = await response.text();
-        throw new Error(`Sender email failed: ${payload}`);
+        throw new Error(`Resend email failed: ${payload}`);
       }
 
       const payload = await response.json();
@@ -120,11 +118,11 @@ async function sendEmail(input: {
   html: string;
   text: string;
 }) {
-  if (isSenderReady()) {
-    return sendViaSender(input);
+  if (isResendReady()) {
+    return sendViaResend(input);
   }
 
-  console.log("Email skipped. Missing Sender configuration.", input.subject, input.to);
+  console.log("Email skipped. Missing Resend configuration.", input.subject, input.to);
   return { skipped: true };
 }
 
@@ -158,7 +156,7 @@ export async function sendOrderConfirmationEmails(order: OrderRecord) {
       const response = Array.isArray(result) ? result.join("\n") : undefined;
       await appendEmailLog({
         channel: "customer",
-        provider: "sender",
+        provider: "resend",
         recipient: order.customerEmail,
         subject: `Corebed order confirmed - ${order.orderNumber}`,
         status: skipped ? "skipped" : "sent",
@@ -174,7 +172,7 @@ export async function sendOrderConfirmationEmails(order: OrderRecord) {
       console.error(`[email][customer][${order.orderNumber}] ${message}`);
       void appendEmailLog({
         channel: "customer",
-        provider: "sender",
+        provider: "resend",
         recipient: order.customerEmail,
         subject: `Corebed order confirmed - ${order.orderNumber}`,
         status: "failed",
@@ -200,7 +198,7 @@ export async function sendOrderConfirmationEmails(order: OrderRecord) {
             const response = Array.isArray(result) ? result.join("\n") : undefined;
             await appendEmailLog({
               channel: "admin",
-              provider: "sender",
+              provider: "resend",
               recipient: adminEmails.join(", "),
               subject: `New confirmed order - ${order.orderNumber}`,
               status: skipped ? "skipped" : "sent",
@@ -216,7 +214,7 @@ export async function sendOrderConfirmationEmails(order: OrderRecord) {
             console.error(`[email][admin][${order.orderNumber}] ${message}`);
             void appendEmailLog({
               channel: "admin",
-              provider: "sender",
+              provider: "resend",
               recipient: adminEmails.join(", "),
               subject: `New confirmed order - ${order.orderNumber}`,
               status: "failed",
@@ -246,14 +244,14 @@ export function areOrderEmailsConfigured() {
 }
 
 export function getEmailConfigurationSummary() {
-  const from = getSenderFromConfig();
+  const from = getResendFromConfig();
   const adminEmails = getAdminEmails();
 
   return {
-    senderReady: isSenderReady(),
+    senderReady: isResendReady(),
     senderFromEmail: from.email,
     senderFromName: from.name,
-    hasApiToken: Boolean(getSenderApiToken()),
+    hasApiToken: Boolean(getResendApiKey()),
     adminEmails
   };
 }
@@ -270,34 +268,34 @@ export async function sendTestEmail(recipient: string) {
     const result = await sendEmail({
       to: recipient,
       subject,
-      html: "<h1>Corebed email test</h1><p>If you received this, Sender delivery from the website is working.</p>",
-      text: "Corebed email test. If you received this, Sender delivery from the website is working."
+      html: "<h1>Corebed email test</h1><p>If you received this, Resend delivery from the website is working.</p>",
+      text: "Corebed email test. If you received this, Resend delivery from the website is working."
     });
 
     const skipped = "skipped" in Object(result) && Boolean((result as { skipped?: boolean }).skipped);
     const response = Array.isArray(result) ? result.join("\n") : undefined;
 
     await appendEmailLog({
-      channel: "test",
-      provider: "sender",
-      recipient,
-      subject,
-      status: skipped ? "skipped" : "sent",
-      response,
-      error: skipped ? "Sender configuration missing." : undefined
-    });
+        channel: "test",
+        provider: "resend",
+        recipient,
+        subject,
+        status: skipped ? "skipped" : "sent",
+        response,
+        error: skipped ? "Resend configuration missing." : undefined
+      });
 
     return {
       ok: !skipped,
       skipped,
-      reason: skipped ? "Sender configuration missing." : undefined,
+      reason: skipped ? "Resend configuration missing." : undefined,
       summary
     };
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Unknown Sender error";
+    const message = error instanceof Error ? error.message : "Unknown Resend error";
     await appendEmailLog({
       channel: "test",
-      provider: "sender",
+      provider: "resend",
       recipient,
       subject,
       status: "failed",

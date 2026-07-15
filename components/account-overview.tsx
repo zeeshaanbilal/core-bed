@@ -31,7 +31,7 @@ export function AccountOverview({
       <p className="text-xs uppercase tracking-[0.3em] text-bronze">Account</p>
       <h1 className="mt-4 font-serif text-6xl leading-tight">Customer account and service center</h1>
       <p className="mt-6 max-w-3xl text-base leading-8 text-slate">
-        Supabase auth, account access, and the admin entry point are managed here. User accounts, wishlists, orders, and admin roles all connect through this flow.
+        Supabase auth, account access, and the admin entry point are managed here. Every signed-in customer can review and update profile, address, phone, country, and pricing preferences from this page.
       </p>
 
       {!configured ? (
@@ -95,7 +95,7 @@ export function AccountOverview({
             <form action={updateAccountProfileAction} className="section-frame rounded-[1.75rem] p-6 md:col-span-2">
               <p className="font-serif text-3xl">Country and currency preferences</p>
               <p className="mt-3 text-sm leading-7 text-slate">
-                Update your delivery country here. Product listings, cart totals, and checkout pricing will use this market preference.
+                Update your delivery country here. Product listings, cart totals, and checkout pricing will use this market preference, and your saved account details remain editable anytime.
               </p>
 
               <div className="mt-5 grid gap-4 md:grid-cols-2">

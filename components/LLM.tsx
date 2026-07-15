@@ -104,6 +104,8 @@ export default function LLM() {
       return;
     }
 
+    setSuggestions([]);
+
     setMessages((current) => [...current, { role: "user", text: trimmed }]);
     setMessage("");
     setLoading(true);
@@ -129,7 +131,6 @@ export default function LLM() {
           links: payload.links
         }
       ]);
-      setSuggestions(payload.suggestions.length > 0 ? payload.suggestions : fallbackPrompts);
     } catch {
       setMessages((current) => [
         ...current,

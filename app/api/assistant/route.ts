@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { getBlogPosts, getCatalogProducts, getContentEntries } from "@/lib/mock-store";
+import { getAssistantKnowledge } from "@/lib/assistant-knowledge";
+import { getBlogPosts, getCatalogProducts } from "@/lib/mock-store";
+import { storeLocations } from "@/lib/site-data";
 
 function getProductHref(category: string, slug: string) {
   const normalized = category.toLowerCase();
@@ -20,6 +22,10 @@ function scoreTextMatch(message: string, value: string) {
   const terms = Array.from(new Set(message.toLowerCase().split(/\s+/).filter((term) => term.length > 2)));
   const target = value.toLowerCase();
   return terms.reduce((score, term) => score + (target.includes(term) ? 1 : 0), 0);
+}
+
+function includesAny(message: string, terms: string[]) {
+  return terms.some((term) => message.includes(term));
 }
 
 function getPathContext(pathname?: string) {
@@ -110,6 +116,8 @@ export async function POST(request: NextRequest) {
   const body = (await request.json()) as { message?: string; pathname?: string };
   const message = body.message?.trim() ?? "";
   const context = getPathContext(body.pathname);
+  const normalizedMessage = message.toLowerCase();
+  const primaryStore = storeLocations[0];
 
   if (!message || message === "__intro__") {
     const [products, posts] = await Promise.all([getCatalogProducts(), getBlogPosts()]);
@@ -122,11 +130,8 @@ export async function POST(request: NextRequest) {
     });
   }
 
-  const [products, posts, content] = await Promise.all([
-    getCatalogProducts(),
-    getBlogPosts(),
-    getContentEntries()
-  ]);
+  const knowledge = await getAssistantKnowledge();
+  const products = await getCatalogProducts();
 
   const rankedProducts = products
     .map((product) => ({
@@ -140,26 +145,55 @@ export async function POST(request: NextRequest) {
     .sort((left, right) => right.score - left.score)
     .slice(0, 3);
 
-  const rankedPosts = posts
-    .map((post) => ({
-      post,
-      score: scoreTextMatch(message, [post.title, post.excerpt, post.categories.join(" "), post.tags.join(" ")].join(" "))
-    }))
-    .filter((entry) => entry.score > 0)
-    .sort((left, right) => right.score - left.score)
-    .slice(0, 2);
-
-  const rankedContent = content
+  const rankedKnowledge = knowledge
     .map((entry) => ({
       entry,
-      score: scoreTextMatch(message, [entry.title, entry.summary, entry.slug, entry.type].join(" "))
+      score: scoreTextMatch(message, [entry.title, entry.body, entry.kind].join(" "))
     }))
-    .filter((entry) => entry.score > 0)
+    .filter((item) => item.score > 0)
     .sort((left, right) => right.score - left.score)
-    .slice(0, 2);
+    .slice(0, 5);
 
   const answerParts: string[] = [];
   const links: Array<{ label: string; href: string }> = [];
+
+  if (
+    includesAny(normalizedMessage, [
+      "address",
+      "location",
+      "store",
+      "showroom",
+      "where are you",
+      "where located",
+      "visit"
+    ])
+  ) {
+    answerParts.push(
+      `Our main store location is ${primaryStore.address}, ${primaryStore.city}, ${primaryStore.state} ${primaryStore.postalCode}, ${primaryStore.country}. Visits are ${primaryStore.timing.toLowerCase()} and support is available on ${primaryStore.phone}.`
+    );
+    links.push({ label: "Store locator", href: "/store-locator" });
+    links.push({ label: "Store details", href: `/store-locator/${primaryStore.slug}` });
+  }
+
+  if (includesAny(normalizedMessage, ["phone", "call", "whatsapp", "contact number", "number"])) {
+    answerParts.push(`You can reach Corebed support on WhatsApp or phone at ${primaryStore.phone}.`);
+    links.push({ label: "Contact store", href: `/store-locator/${primaryStore.slug}` });
+  }
+
+  if (includesAny(normalizedMessage, ["email", "mail", "contact"])) {
+    answerParts.push("You can contact Corebed by email at contact@corebed.com.");
+    links.push({ label: "Account", href: "/account" });
+  }
+
+  if (includesAny(normalizedMessage, ["hours", "timing", "open", "closing", "appointment"])) {
+    answerParts.push(`The current showroom visit schedule is ${primaryStore.timing}.`);
+    links.push({ label: "Showroom timings", href: `/store-locator/${primaryStore.slug}` });
+  }
+
+  if (includesAny(normalizedMessage, ["track", "order status", "my order"])) {
+    answerParts.push("You can follow your order progress from the track order page once your order reference is available.");
+    links.push({ label: "Track order", href: "/track-order" });
+  }
 
   if (rankedProducts.length > 0) {
     const primary = rankedProducts[0].product;
@@ -172,39 +206,48 @@ export async function POST(request: NextRequest) {
     });
   }
 
-  if (rankedPosts.length > 0) {
-    const primaryPost = rankedPosts[0].post;
-    answerParts.push(`For buying guidance, read "${primaryPost.title}" from the blog.`);
-    links.push({
-      label: "Read guide",
-      href: `/blog/${primaryPost.slug}`
-    });
+  const rankedKnowledgeLinks = rankedKnowledge
+    .filter((item) => item.entry.href)
+    .slice(0, 4)
+    .map((item) => ({
+      label: item.entry.title,
+      href: item.entry.href as string
+    }));
+
+  const contextualEntries = rankedKnowledge
+    .filter((item) => item.entry.kind !== "product")
+    .slice(0, 3);
+
+  if (contextualEntries.length > 0) {
+    answerParts.push(
+      `I also found relevant site context in ${contextualEntries.map((item) => item.entry.title).join(", ")}.`
+    );
   }
 
-  if (rankedContent.length > 0) {
-    answerParts.push(`Related site information is also available in ${rankedContent.map((item) => item.entry.title).join(", ")}.`);
-  }
-
-  if (message.toLowerCase().includes("delivery") || message.toLowerCase().includes("shipping")) {
+  if (includesAny(normalizedMessage, ["delivery", "shipping", "dispatch", "ship"])) {
     answerParts.push("Delivery, store support, and follow-up order help are handled through the checkout, track order, and store locator pages.");
     links.push({ label: "Track order", href: "/track-order" });
     links.push({ label: "Store locator", href: "/store-locator" });
   }
 
-  if (message.toLowerCase().includes("payment")) {
+  if (includesAny(normalizedMessage, ["payment", "pay", "card", "stripe", "checkout"])) {
     answerParts.push("The site supports embedded Stripe card checkout directly on-page for a faster purchase flow.");
     links.push({ label: "Checkout", href: "/checkout" });
   }
 
   if (answerParts.length === 0) {
     answerParts.push(
-      "I can help with mattresses, pillows, accessories, product variants, blog guides, support pages, store locations, and checkout information. Try asking by product type, firmness, material, or a specific need like back support or cooling."
+      "I can help with mattresses, pillows, accessories, pricing, sizes, firmness, store address, delivery, payment, and blog guides. Try asking for a product type, a support need, or store contact details."
     );
+    links.push({ label: "Shop mattresses", href: "/shop" });
+    links.push({ label: "Store locator", href: "/store-locator" });
   }
 
   return NextResponse.json({
     answer: answerParts.join(" "),
     suggestions: context.suggestions,
-    links: links.slice(0, 4)
+    links: [...links, ...rankedKnowledgeLinks]
+      .filter((link, index, current) => current.findIndex((item) => item.href === link.href) === index)
+      .slice(0, 4)
   });
 }

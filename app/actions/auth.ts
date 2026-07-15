@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 
 import { getCurrentUser } from "@/lib/auth";
 import { upsertCustomerProfile } from "@/lib/mock-store";
+import { sendAccountConfirmationEmail } from "@/lib/notifications";
 import { clearAuthCookies, setAuthCookies, signInWithPassword, signUpWithPassword } from "@/lib/supabase/server";
 
 function getString(formData: FormData, key: string) {
@@ -74,6 +75,11 @@ export async function registerAction(formData: FormData) {
       state,
       postalCode,
       country
+    });
+
+    void sendAccountConfirmationEmail({
+      email,
+      customerName: fullName
     });
 
     if (result.access_token && result.refresh_token) {

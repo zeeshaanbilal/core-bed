@@ -8,6 +8,7 @@ import { getCartDetail, getWishlistCount } from "@/lib/mock-store";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import LLM from "@/components/LLM";
+import { ScrollToTop } from "@/components/scroll-to-top";
 import { StructuredData } from "@/components/structured-data";
 import { buildMetadata, buildOrganizationSchema, buildWebSiteSchema, getSiteUrl } from "@/lib/seo";
 
@@ -42,6 +43,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
   return (
     <html lang="en">
       <body className="page-shell font-sans text-ink">
+        <ScrollToTop />
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-CPSPLYDW2L"
           strategy="afterInteractive"

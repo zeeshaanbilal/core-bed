@@ -8,7 +8,7 @@ const emailLogPath = path.join(process.cwd(), "data", "email-log.json");
 
 export type EmailLogEntry = {
   id: string;
-  channel: "customer" | "admin" | "test" | "system";
+  channel: "customer" | "admin" | "account" | "test" | "system";
   provider: "resend";
   recipient: string;
   subject: string;
@@ -132,10 +132,88 @@ type EmailDispatchResult = {
   error?: string;
 };
 
+function escapeHtml(value: string) {
+  return value
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
+}
+
 function renderOrderItems(order: OrderRecord) {
   return order.items
     .map((item) => `<li>${item.name} - ${item.selectedSize}${item.selectedFirmness ? ` / ${item.selectedFirmness}` : ""} x ${item.quantity}</li>`)
     .join("");
+}
+
+export async function sendAccountConfirmationEmail(input: { email: string; customerName?: string }) {
+  const customerName = input.customerName?.trim() || "there";
+  const subject = "Confirm your Corebed account";
+  const html = `
+    <div style="font-family: Arial, sans-serif; color: #2f2a28; line-height: 1.7;">
+      <h1 style="margin-bottom: 12px;">Confirm your Corebed account</h1>
+      <p>Hi ${escapeHtml(customerName)},</p>
+      <p>Welcome to Corebed.</p>
+      <p>Your account has been created successfully and is now ready to use for orders, saved products, and account updates.</p>
+      <p>You can now sign in and continue shopping from the website.</p>
+      <p style="margin-top: 24px;">Corebed<br/>contact@corebed.com</p>
+    </div>
+  `;
+  const text = `Hi ${customerName},
+
+Welcome to Corebed.
+
+Your account has been created successfully and is now ready to use for orders, saved products, and account updates.
+
+You can now sign in and continue shopping from the website.
+
+Corebed
+contact@corebed.com`;
+
+  try {
+    const result = await sendEmail({
+      to: input.email,
+      subject,
+      html,
+      text
+    });
+
+    const skipped = "skipped" in Object(result) && Boolean((result as { skipped?: boolean }).skipped);
+    const response = Array.isArray(result) ? result.join("\n") : undefined;
+
+    await appendEmailLog({
+      channel: "account",
+      provider: "resend",
+      recipient: input.email,
+      subject,
+      status: skipped ? "skipped" : "sent",
+      response,
+      error: skipped ? "Resend configuration missing." : undefined
+    });
+
+    return {
+      ok: !skipped,
+      skipped
+    } satisfies EmailDispatchResult;
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Unknown account email error";
+    console.error(`[email][account][${input.email}] ${message}`);
+    await appendEmailLog({
+      channel: "account",
+      provider: "resend",
+      recipient: input.email,
+      subject,
+      status: "failed",
+      error: message
+    });
+
+    return {
+      ok: false,
+      skipped: false,
+      error: message
+    } satisfies EmailDispatchResult;
+  }
 }
 
 export async function sendOrderConfirmationEmails(order: OrderRecord) {
@@ -144,12 +222,51 @@ export async function sendOrderConfirmationEmails(order: OrderRecord) {
   const itemsText = order.items
     .map((item) => `${item.name} - ${item.selectedSize}${item.selectedFirmness ? ` / ${item.selectedFirmness}` : ""} x ${item.quantity}`)
     .join("\n");
+  const customerSubject = `Your Corebed order ${order.orderNumber} is confirmed`;
+  const adminSubject = `New Corebed order received - ${order.orderNumber}`;
+  const customerName = order.customerName?.trim() || "there";
+  const trackOrderUrl = `${process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") || "http://localhost:3000"}/track-order`;
 
   const customerPromise = sendEmail({
     to: order.customerEmail,
-    subject: `Corebed order confirmed - ${order.orderNumber}`,
-    html: `<h1>Order Confirmed</h1><p>Thank you ${order.customerName}.</p><p>Your order <strong>${order.orderNumber}</strong> has been confirmed.</p><ul>${itemsHtml}</ul><p>Total: PKR ${order.total.toLocaleString("en-PK")}</p>`,
-    text: `Order Confirmed\nOrder: ${order.orderNumber}\n${itemsText}\nTotal: PKR ${order.total.toLocaleString("en-PK")}`
+    subject: customerSubject,
+    html: `
+      <div style="font-family: Arial, sans-serif; color: #2f2a28; line-height: 1.7;">
+        <h1 style="margin-bottom: 12px;">Your order is confirmed</h1>
+        <p>Hi ${escapeHtml(customerName)},</p>
+        <p>Thank you for your order at Corebed.</p>
+        <p>Your order has been confirmed successfully.</p>
+        <p><strong>Order number:</strong> ${escapeHtml(order.orderNumber)}<br/>
+        <strong>Payment status:</strong> ${escapeHtml(order.paymentStatus)}<br/>
+        <strong>Order total:</strong> PKR ${order.total.toLocaleString("en-PK")}<br/>
+        <strong>Delivery country:</strong> ${escapeHtml(order.country || "Not specified")}</p>
+        <p><strong>Items:</strong></p>
+        <ul>${itemsHtml}</ul>
+        <p><a href="${trackOrderUrl}" style="display:inline-block;padding:12px 18px;border-radius:999px;background:#2f2a28;color:#ffffff;text-decoration:none;">Track your order</a></p>
+        <p>If you need help, contact us at contact@corebed.com or WhatsApp +15855029662.</p>
+        <p style="margin-top: 24px;">Corebed</p>
+      </div>
+    `,
+    text: `Hi ${customerName},
+
+Thank you for your order at Corebed.
+
+Your order has been confirmed successfully.
+
+Order number: ${order.orderNumber}
+Payment status: ${order.paymentStatus}
+Order total: PKR ${order.total.toLocaleString("en-PK")}
+Delivery country: ${order.country || "Not specified"}
+
+Items:
+${itemsText}
+
+Track your order:
+${trackOrderUrl}
+
+If you need help, contact us at contact@corebed.com or WhatsApp +15855029662.
+
+Corebed`
   })
     .then(async (result) => {
       const skipped = "skipped" in Object(result) && Boolean((result as { skipped?: boolean }).skipped);
@@ -158,7 +275,7 @@ export async function sendOrderConfirmationEmails(order: OrderRecord) {
         channel: "customer",
         provider: "resend",
         recipient: order.customerEmail,
-        subject: `Corebed order confirmed - ${order.orderNumber}`,
+        subject: customerSubject,
         status: skipped ? "skipped" : "sent",
         response
       });
@@ -174,7 +291,7 @@ export async function sendOrderConfirmationEmails(order: OrderRecord) {
         channel: "customer",
         provider: "resend",
         recipient: order.customerEmail,
-        subject: `Corebed order confirmed - ${order.orderNumber}`,
+        subject: customerSubject,
         status: "failed",
         error: message
       });
@@ -189,9 +306,35 @@ export async function sendOrderConfirmationEmails(order: OrderRecord) {
     adminEmails.length > 0
       ? sendEmail({
           to: adminEmails,
-          subject: `New confirmed order - ${order.orderNumber}`,
-          html: `<h1>New Confirmed Order</h1><p>Customer: ${order.customerName}</p><p>Email: ${order.customerEmail}</p><p>Phone: ${order.customerPhone}</p><p>City: ${order.city}</p><ul>${itemsHtml}</ul><p>Total: PKR ${order.total.toLocaleString("en-PK")}</p>`,
-          text: `New Confirmed Order\nOrder: ${order.orderNumber}\nCustomer: ${order.customerName}\n${itemsText}\nTotal: PKR ${order.total.toLocaleString("en-PK")}`
+          subject: adminSubject,
+          html: `
+            <div style="font-family: Arial, sans-serif; color: #2f2a28; line-height: 1.7;">
+              <h1 style="margin-bottom: 12px;">New Corebed order received</h1>
+              <p><strong>Order number:</strong> ${escapeHtml(order.orderNumber)}</p>
+              <p><strong>Customer:</strong> ${escapeHtml(order.customerName)}<br/>
+              <strong>Email:</strong> ${escapeHtml(order.customerEmail)}<br/>
+              <strong>Phone:</strong> ${escapeHtml(order.customerPhone)}<br/>
+              <strong>City:</strong> ${escapeHtml(order.city)}<br/>
+              <strong>Country:</strong> ${escapeHtml(order.country || "Not specified")}</p>
+              <p><strong>Payment status:</strong> ${escapeHtml(order.paymentStatus)}</p>
+              <ul>${itemsHtml}</ul>
+              <p><strong>Total:</strong> PKR ${order.total.toLocaleString("en-PK")}</p>
+            </div>
+          `,
+          text: `New Corebed order received
+
+Order number: ${order.orderNumber}
+Customer: ${order.customerName}
+Email: ${order.customerEmail}
+Phone: ${order.customerPhone}
+City: ${order.city}
+Country: ${order.country || "Not specified"}
+Payment status: ${order.paymentStatus}
+
+Items:
+${itemsText}
+
+Total: PKR ${order.total.toLocaleString("en-PK")}`
         })
           .then(async (result) => {
             const skipped = "skipped" in Object(result) && Boolean((result as { skipped?: boolean }).skipped);
@@ -200,7 +343,7 @@ export async function sendOrderConfirmationEmails(order: OrderRecord) {
               channel: "admin",
               provider: "resend",
               recipient: adminEmails.join(", "),
-              subject: `New confirmed order - ${order.orderNumber}`,
+              subject: adminSubject,
               status: skipped ? "skipped" : "sent",
               response
             });
@@ -216,7 +359,7 @@ export async function sendOrderConfirmationEmails(order: OrderRecord) {
               channel: "admin",
               provider: "resend",
               recipient: adminEmails.join(", "),
-              subject: `New confirmed order - ${order.orderNumber}`,
+              subject: adminSubject,
               status: "failed",
               error: message
             });

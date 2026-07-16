@@ -1,6 +1,3 @@
-import { sendTestEmailAction } from "@/app/actions/store";
-import { FormSubmitButton } from "@/components/form-submit-button";
-import { getCurrentUser } from "@/lib/auth";
 import { areOrderEmailsConfigured, getEmailConfigurationSummary, getRecentEmailLogs } from "@/lib/notifications";
 import { isStripeConfigured, isSupabaseConfigured } from "@/lib/supabase/config";
 
@@ -23,9 +20,8 @@ export default async function AdminSettingsPage({
 }: {
   searchParams: Promise<{ emailTestSuccess?: string; emailTestError?: string }>;
 }) {
-  const params = await searchParams;
-  const [user, emailConfig, emailLogs] = await Promise.all([
-    getCurrentUser(),
+  await searchParams;
+  const [emailConfig, emailLogs] = await Promise.all([
     Promise.resolve(getEmailConfigurationSummary()),
     getRecentEmailLogs()
   ]);
@@ -65,49 +61,6 @@ export default async function AdminSettingsPage({
       </div>
 
       <article className="section-frame rounded-[1.75rem] p-6">
-        <div className="flex flex-wrap items-start justify-between gap-4">
-          <div>
-            <p className="font-serif text-3xl">Send test email</p>
-            <p className="mt-3 max-w-2xl text-sm leading-7 text-slate">
-              Use this button to verify the live Resend response. If delivery fails, the exact reason will appear in
-              the logs below.
-            </p>
-          </div>
-        </div>
-
-        {params.emailTestSuccess ? (
-          <div className="mt-6 rounded-[1.25rem] border border-[#cfe6b8] bg-[#f4fbeb] p-4 text-sm text-[#476329]">
-            {params.emailTestSuccess}
-          </div>
-        ) : null}
-
-        {params.emailTestError ? (
-          <div className="mt-6 rounded-[1.25rem] border border-[#ffb9b9] bg-[#fff1f1] p-4 text-sm text-[#8a2b2b]">
-            {params.emailTestError}
-          </div>
-        ) : null}
-
-        <form action={sendTestEmailAction} className="mt-6 flex flex-col gap-4 md:flex-row md:items-end">
-          <div className="flex-1">
-            <label className="mb-2 block text-sm font-medium text-ink">Recipient email</label>
-            <input
-              name="recipient"
-              type="email"
-              defaultValue={user?.email ?? emailConfig.adminEmails[0] ?? ""}
-              className="w-full rounded-2xl border border-ink/10 bg-ivory px-4 py-3"
-              placeholder="admin@corebed.com"
-              required
-            />
-          </div>
-          <FormSubmitButton
-            idleLabel="Send test email"
-            pendingLabel="Sending..."
-            className="rounded-full bg-ink px-6 py-3 text-sm text-ivory"
-          />
-        </form>
-      </article>
-
-      <article className="section-frame rounded-[1.75rem] p-6">
         <p className="font-serif text-3xl">Required environment variables</p>
         <ul className="mt-5 space-y-3 text-sm leading-7 text-slate">
           {requiredEnv.map((item) => (
@@ -126,7 +79,7 @@ export default async function AdminSettingsPage({
         <div className="mt-6 space-y-4">
           {emailLogs.length === 0 ? (
             <div className="rounded-[1.25rem] border border-dashed border-ink/10 p-4 text-sm text-slate">
-              No email logs yet. Send a test email to verify the delivery flow.
+              No email logs are available yet.
             </div>
           ) : (
             emailLogs.map((log) => (

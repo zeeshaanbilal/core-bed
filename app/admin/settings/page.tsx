@@ -42,7 +42,7 @@ export default async function AdminSettingsPage({
           <p className="text-xs uppercase tracking-[0.3em] text-bronze">Supabase</p>
           <h3 className="mt-3 font-serif text-3xl">{isSupabaseConfigured() ? "Configured" : "Pending"}</h3>
           <p className="mt-3 text-sm leading-7 text-slate">
-            Auth, admin access control and future database migration scaffolding are now prepared for Supabase.
+            Auth, admin access control, and future database migration scaffolding are prepared for Supabase.
           </p>
         </article>
         <article className="section-frame rounded-[1.75rem] p-6">
@@ -69,8 +69,8 @@ export default async function AdminSettingsPage({
           <div>
             <p className="font-serif text-3xl">Send test email</p>
             <p className="mt-3 max-w-2xl text-sm leading-7 text-slate">
-              Is button se hum Resend ka real result check kar sakte hain. Agar fail hota hai to exact reason neeche logs mein
-              surface ho jayega.
+              Use this button to verify the live Resend response. If delivery fails, the exact reason will appear in
+              the logs below.
             </p>
           </div>
         </div>
@@ -119,13 +119,14 @@ export default async function AdminSettingsPage({
       <article className="section-frame rounded-[1.75rem] p-6">
         <p className="font-serif text-3xl">Recent email logs</p>
         <p className="mt-3 text-sm leading-7 text-slate">
-          Yehi section exact email provider failure reason show karega, jaise invalid API key, from-address mismatch, ya rejected domain.
+          This section shows the exact email provider response, including issues such as an invalid API key, sender
+          mismatch, or a rejected domain.
         </p>
 
         <div className="mt-6 space-y-4">
           {emailLogs.length === 0 ? (
             <div className="rounded-[1.25rem] border border-dashed border-ink/10 p-4 text-sm text-slate">
-              No email logs yet. Ek test email bhej kar flow verify kar lete hain.
+              No email logs yet. Send a test email to verify the delivery flow.
             </div>
           ) : (
             emailLogs.map((log) => (
@@ -133,7 +134,7 @@ export default async function AdminSettingsPage({
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <div>
                     <p className="text-sm font-semibold text-ink">
-                      {log.channel.toUpperCase()} · {log.status.toUpperCase()}
+                      {log.channel.toUpperCase()} | {log.status.toUpperCase()}
                     </p>
                     <p className="mt-1 text-sm text-slate">{log.subject}</p>
                   </div>

@@ -25,7 +25,8 @@ export default async function AdminProductDetailPage({
           <p className="text-xs uppercase tracking-[0.3em] text-bronze">Products / Details</p>
           <h2 className="mt-4 font-serif text-5xl leading-tight">{product.name}</h2>
           <p className="mt-3 text-sm leading-7 text-slate">
-            Full edit surface for this product. Yahan se content, pricing matrix, category aur stock sab update kiya ja sakta hai.
+            This is the full edit surface for the product. Content, pricing matrix, category, and stock can all be
+            updated from here.
           </p>
         </div>
         <div className="flex flex-wrap gap-3">

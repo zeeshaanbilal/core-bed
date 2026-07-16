@@ -31,7 +31,8 @@ export default async function AdminProductsPage({
           <p className="text-xs uppercase tracking-[0.3em] text-bronze">Products</p>
           <h2 className="mt-4 font-serif text-5xl leading-tight">Catalog control panel</h2>
           <p className="mt-3 max-w-3xl text-sm leading-7 text-slate">
-            Pehle category choose karein, phir usi category ki clean listing rows mein dekhein. Har product ka alag detail page hai jahan full data update kiya ja sakta hai.
+            Choose a category first, then review the matching product rows in a clean listing view. Each product has a
+            dedicated detail page where its full data can be updated.
           </p>
         </div>
         <Link

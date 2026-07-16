@@ -18,7 +18,8 @@ export default async function AdminNewProductPage({
           <p className="text-xs uppercase tracking-[0.3em] text-bronze">Products / New</p>
           <h2 className="mt-4 font-serif text-5xl leading-tight">Add a new product</h2>
           <p className="mt-3 max-w-3xl text-sm leading-7 text-slate">
-            Category choose karke new listing create karein. Variant matrix se sizes, hard/soft options, pricing, aur stock sab control hoga.
+            Select a category to create a new listing. The variant matrix controls sizes, soft and hard options, pricing,
+            and stock in one place.
           </p>
         </div>
         <Link

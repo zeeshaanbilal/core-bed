@@ -23,8 +23,8 @@ export default async function WishlistPage() {
       <h1 className="mt-4 font-serif text-6xl leading-tight">Saved products and buying shortlist</h1>
       <p className="mt-6 max-w-3xl text-base leading-8 text-slate">
         {user?.email
-          ? "Yeh wishlist aapke current account ke sath linked hai. Login ke baad saved products har session mein same rahenge."
-          : "Guest mode mein wishlist browser session ke sath save hoti hai. Login karne par items account-specific flow mein shift kiye ja sakte hain."}
+          ? "This wishlist is linked to your current account. Your saved products will stay consistent across sessions."
+          : "In guest mode, the wishlist is saved to the current browser session. After signing in, saved items can move into the account-specific flow."}
       </p>
 
       <div className="mt-10 grid gap-6">

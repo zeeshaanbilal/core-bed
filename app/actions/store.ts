@@ -5,6 +5,8 @@ import { redirect } from "next/navigation";
 
 import { ensureCartSessionId } from "@/lib/cart-session";
 import { getCurrentUser, requireAdminUser } from "@/lib/auth";
+import { getExchangeRates } from "@/lib/exchange-rates";
+import { convertCurrencyValue, getCurrencyConfig } from "@/lib/format";
 import { getSiteUrl } from "@/lib/site-url";
 import { sendTestEmail } from "@/lib/notifications";
 import {
@@ -47,6 +49,10 @@ function getString(formData: FormData, key: string) {
 function getNumber(formData: FormData, key: string, fallback = 0) {
   const value = Number(getString(formData, key));
   return Number.isFinite(value) ? value : fallback;
+}
+
+function toStripeMinorUnitAmount(value: number) {
+  return Math.max(0, Math.round(value * 100));
 }
 
 async function assertAdminUser() {
@@ -144,11 +150,13 @@ export async function submitCheckoutAction(formData: FormData) {
   }
 
   const cart = await getCartDetail(sessionId);
+  const exchangeRates = await getExchangeRates();
 
   if (cart.items.length === 0) {
     redirect("/checkout?error=Your%20cart%20is%20empty.");
   }
 
+  const stripeCurrency = getCurrencyConfig(country).currency.toLowerCase();
   const siteUrl = getSiteUrl();
   const checkoutSession = await createStripeEmbeddedCheckoutSession({
     customerEmail,
@@ -170,13 +178,13 @@ export async function submitCheckoutAction(formData: FormData) {
       ...cart.items.map((item) => ({
         quantity: item.quantity,
         price_data: {
-          currency: "pkr",
+          currency: stripeCurrency,
           product_data: {
             name: item.product.name,
             description: `${item.selectedSize} / ${item.selectedFirmness || item.product.firmness} / ${item.product.category}`,
             images: item.product.gallery.slice(0, 1)
           },
-          unit_amount: Math.round(item.unitPrice * 100)
+          unit_amount: toStripeMinorUnitAmount(convertCurrencyValue(item.unitPrice, country, exchangeRates))
         }
       })),
       ...(cart.shippingFee > 0
@@ -184,11 +192,11 @@ export async function submitCheckoutAction(formData: FormData) {
             {
               quantity: 1,
               price_data: {
-                currency: "pkr",
+                currency: stripeCurrency,
                 product_data: {
                   name: "Shipping"
                 },
-                unit_amount: Math.round(cart.shippingFee * 100)
+                unit_amount: toStripeMinorUnitAmount(convertCurrencyValue(cart.shippingFee, country, exchangeRates))
               }
             }
           ]

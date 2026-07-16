@@ -165,10 +165,10 @@ async function getFormattedOrderTotal(order: OrderRecord) {
 
 export async function sendAccountConfirmationEmail(input: { email: string; customerName?: string }) {
   const customerName = input.customerName?.trim() || "there";
-  const subject = "Confirm your Corebed account";
+  const subject = process.env.RESEND_ACCOUNT_EMAIL_SUBJECT?.trim() || "Your Corebed account is confirmed";
   const html = `
     <div style="font-family: Arial, sans-serif; color: #2f2a28; line-height: 1.7;">
-      <h1 style="margin-bottom: 12px;">Confirm your Corebed account</h1>
+      <h1 style="margin-bottom: 12px;">Your Corebed account is confirmed</h1>
       <p>Hi ${escapeHtml(customerName)},</p>
       <p>Welcome to Corebed.</p>
       <p>Your account has been created successfully and is now ready to use for orders, saved products, and account updates.</p>

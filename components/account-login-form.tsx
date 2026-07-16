@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { loginAction } from "@/app/actions/auth";
 import { FormSubmitButton } from "@/components/form-submit-button";
+import { PasswordInput } from "@/components/password-input";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 
 export function AccountLoginForm({
@@ -42,7 +43,7 @@ export function AccountLoginForm({
         <form action={loginAction} className="mt-8 grid gap-4">
           <input name="redirect" type="hidden" value={redirectTo ?? "/account"} />
           <input className="rounded-2xl border border-ink/10 bg-ivory px-4 py-3" name="email" placeholder="Email" required type="email" />
-          <input className="rounded-2xl border border-ink/10 bg-ivory px-4 py-3" name="password" placeholder="Password" required type="password" />
+          <PasswordInput name="password" placeholder="Password" required autoComplete="current-password" />
           <FormSubmitButton
             idleLabel="Sign in"
             pendingLabel="Signing in..."

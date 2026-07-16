@@ -5,6 +5,7 @@ import Link from "next/link";
 
 import { registerAction } from "@/app/actions/auth";
 import { FormSubmitButton } from "@/components/form-submit-button";
+import { PasswordInput } from "@/components/password-input";
 import { getCurrencyConfig } from "@/lib/format";
 import { countryOptions } from "@/lib/site-data";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
@@ -55,8 +56,8 @@ export function AccountRegisterForm({ error }: { error?: string }) {
                 </option>
               ))}
             </select>
-            <input className="rounded-2xl border border-ink/10 bg-ivory px-4 py-3" name="password" placeholder="Password" required type="password" />
-            <input className="rounded-2xl border border-ink/10 bg-ivory px-4 py-3" name="confirmPassword" placeholder="Confirm password" required type="password" />
+            <PasswordInput name="password" placeholder="Password" required autoComplete="new-password" />
+            <PasswordInput name="confirmPassword" placeholder="Confirm password" required autoComplete="new-password" />
           </div>
           <div className="rounded-[1.25rem] border border-[#dbe8b2] bg-[#f7fbef] p-4 text-sm leading-7 text-slate">
             Preferred market: <span className="font-semibold text-ink">{country}</span>

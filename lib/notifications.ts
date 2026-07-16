@@ -1,6 +1,8 @@
 import { promises as fs } from "fs";
 import path from "path";
 
+import { getExchangeRates } from "@/lib/exchange-rates";
+import { formatCurrency } from "@/lib/format";
 import { getAdminEmails } from "@/lib/supabase/config";
 import type { OrderRecord } from "@/lib/store-types";
 
@@ -56,15 +58,20 @@ async function readEmailLogs() {
 }
 
 async function appendEmailLog(entry: Omit<EmailLogEntry, "id" | "createdAt">) {
-  const logs = await readEmailLogs();
-  const nextEntry: EmailLogEntry = {
-    id: createEmailLogId(),
-    createdAt: new Date().toISOString(),
-    ...entry
-  };
+  try {
+    const logs = await readEmailLogs();
+    const nextEntry: EmailLogEntry = {
+      id: createEmailLogId(),
+      createdAt: new Date().toISOString(),
+      ...entry
+    };
 
-  await fs.mkdir(path.dirname(emailLogPath), { recursive: true });
-  await fs.writeFile(emailLogPath, JSON.stringify([nextEntry, ...logs].slice(0, 50), null, 2));
+    await fs.mkdir(path.dirname(emailLogPath), { recursive: true });
+    await fs.writeFile(emailLogPath, JSON.stringify([nextEntry, ...logs].slice(0, 50), null, 2));
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Unable to persist email log";
+    console.warn(`[email-log] ${message}`);
+  }
 }
 
 async function sendViaResend(input: {
@@ -147,6 +154,15 @@ function renderOrderItems(order: OrderRecord) {
     .join("");
 }
 
+async function getFormattedOrderTotal(order: OrderRecord) {
+  try {
+    const exchangeRates = await getExchangeRates();
+    return formatCurrency(order.total, order.country, exchangeRates);
+  } catch {
+    return formatCurrency(order.total, order.country);
+  }
+}
+
 export async function sendAccountConfirmationEmail(input: { email: string; customerName?: string }) {
   const customerName = input.customerName?.trim() || "there";
   const subject = "Confirm your Corebed account";
@@ -226,6 +242,7 @@ export async function sendOrderConfirmationEmails(order: OrderRecord) {
   const adminSubject = `New Corebed order received - ${order.orderNumber}`;
   const customerName = order.customerName?.trim() || "there";
   const trackOrderUrl = `${process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") || "http://localhost:3000"}/track-order`;
+  const formattedTotal = await getFormattedOrderTotal(order);
 
   const customerPromise = sendEmail({
     to: order.customerEmail,
@@ -238,7 +255,7 @@ export async function sendOrderConfirmationEmails(order: OrderRecord) {
         <p>Your order has been confirmed successfully.</p>
         <p><strong>Order number:</strong> ${escapeHtml(order.orderNumber)}<br/>
         <strong>Payment status:</strong> ${escapeHtml(order.paymentStatus)}<br/>
-        <strong>Order total:</strong> PKR ${order.total.toLocaleString("en-PK")}<br/>
+        <strong>Order total:</strong> ${escapeHtml(formattedTotal)}<br/>
         <strong>Delivery country:</strong> ${escapeHtml(order.country || "Not specified")}</p>
         <p><strong>Items:</strong></p>
         <ul>${itemsHtml}</ul>
@@ -255,7 +272,7 @@ Your order has been confirmed successfully.
 
 Order number: ${order.orderNumber}
 Payment status: ${order.paymentStatus}
-Order total: PKR ${order.total.toLocaleString("en-PK")}
+Order total: ${formattedTotal}
 Delivery country: ${order.country || "Not specified"}
 
 Items:
@@ -318,7 +335,7 @@ Corebed`
               <strong>Country:</strong> ${escapeHtml(order.country || "Not specified")}</p>
               <p><strong>Payment status:</strong> ${escapeHtml(order.paymentStatus)}</p>
               <ul>${itemsHtml}</ul>
-              <p><strong>Total:</strong> PKR ${order.total.toLocaleString("en-PK")}</p>
+              <p><strong>Total:</strong> ${escapeHtml(formattedTotal)}</p>
             </div>
           `,
           text: `New Corebed order received
@@ -334,7 +351,7 @@ Payment status: ${order.paymentStatus}
 Items:
 ${itemsText}
 
-Total: PKR ${order.total.toLocaleString("en-PK")}`
+Total: ${formattedTotal}`
         })
           .then(async (result) => {
             const skipped = "skipped" in Object(result) && Boolean((result as { skipped?: boolean }).skipped);

@@ -55,8 +55,8 @@ export default async function CheckoutSuccessPage({
           <Link href="/shop" className="rounded-full border border-ink/15 px-5 py-3 text-sm">
             Continue shopping
           </Link>
-          <Link href="/admin/orders" className="rounded-full bg-ink px-5 py-3 text-sm text-ivory">
-            View admin orders
+          <Link href="/track-order" className="rounded-full bg-ink px-5 py-3 text-sm text-ivory">
+            Track your order
           </Link>
         </div>
       </div>

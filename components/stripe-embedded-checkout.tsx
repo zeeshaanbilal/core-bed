@@ -48,6 +48,7 @@ export function StripeEmbeddedCheckout({
 }) {
   const hostRef = useRef<HTMLDivElement | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let mounted = true;
@@ -67,8 +68,12 @@ export function StripeEmbeddedCheckout({
         });
 
         embeddedCheckout.mount(hostRef.current);
+        if (mounted) {
+          setLoading(false);
+        }
       } catch (mountError) {
         setError(mountError instanceof Error ? mountError.message : "Unable to load Stripe checkout");
+        setLoading(false);
       }
     }
 
@@ -84,5 +89,17 @@ export function StripeEmbeddedCheckout({
     return <p className="rounded-2xl border border-[#ffb9b9] bg-[#fff1f1] p-4 text-sm text-[#8a2b2b]">{error}</p>;
   }
 
-  return <div ref={hostRef} className="min-h-[620px]" />;
+  return (
+    <div className="relative min-h-[620px]">
+      {loading ? (
+        <div className="absolute inset-0 z-10 flex items-center justify-center rounded-[1.25rem] bg-[#faf7f1]/85">
+          <div className="text-center">
+            <div className="mx-auto h-10 w-10 animate-spin rounded-full border-4 border-ink/10 border-t-ink" />
+            <p className="mt-4 text-sm text-slate">Loading secure card form...</p>
+          </div>
+        </div>
+      ) : null}
+      <div ref={hostRef} className="min-h-[620px]" />
+    </div>
+  );
 }

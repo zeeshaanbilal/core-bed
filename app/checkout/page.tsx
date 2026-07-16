@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Script from "next/script";
 
 import { submitCheckoutAction } from "@/app/actions/store";
 import { CurrencyAmount } from "@/components/currency-amount";
@@ -31,6 +32,7 @@ export default async function CheckoutPage({
 
   return (
     <main className="mx-auto max-w-7xl px-6 py-16">
+      <Script src="https://js.stripe.com/v3/" strategy="afterInteractive" />
       <div className="grid gap-10 lg:grid-cols-[1.05fr_0.95fr]">
         <section>
           <p className="text-xs uppercase tracking-[0.3em] text-bronze">Checkout</p>

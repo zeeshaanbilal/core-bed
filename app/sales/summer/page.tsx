@@ -4,6 +4,7 @@ import { SalesLanding } from "@/components/sales-landing";
 import { getCurrentUser } from "@/lib/auth";
 import { getExchangeRates } from "@/lib/exchange-rates";
 import { getAccessories, getCustomerProfileByEmail, getPillows, getProducts } from "@/lib/mock-store";
+import { getSalesPageSetup, resolveSaleProducts } from "@/lib/page-setup";
 import { buildMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = buildMetadata({
@@ -16,14 +17,16 @@ export const metadata: Metadata = buildMetadata({
 
 export default async function SummerSalePage() {
   const user = await getCurrentUser();
-  const [products, pillows, accessories, exchangeRates, profile] = await Promise.all([
+  const [products, pillows, accessories, exchangeRates, profile, setup] = await Promise.all([
     getProducts(),
     getPillows(),
     getAccessories(),
     getExchangeRates(),
-    user?.email ? getCustomerProfileByEmail(user.email) : Promise.resolve(null)
+    user?.email ? getCustomerProfileByEmail(user.email) : Promise.resolve(null),
+    getSalesPageSetup("summer")
   ]);
-  const saleProducts = [products[0], products[1], pillows[0], accessories[0]].filter(Boolean);
+  const fallbackProducts = [products[0], products[1], pillows[0], accessories[0]].filter(Boolean);
+  const saleProducts = resolveSaleProducts([...products, ...pillows, ...accessories], setup.productSlugs, fallbackProducts);
 
-  return <SalesLanding season="summer" products={saleProducts} exchangeRates={exchangeRates} country={profile?.country} />;
+  return <SalesLanding season="summer" products={saleProducts} exchangeRates={exchangeRates} country={profile?.country} content={setup} />;
 }

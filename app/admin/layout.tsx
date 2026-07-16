@@ -8,7 +8,7 @@ const adminNav = [
   { href: "/admin", label: "Dashboard" },
   { href: "/admin/products", label: "Products" },
   { href: "/admin/orders", label: "Orders" },
-  { href: "/admin/content", label: "Content" },
+  { href: "/admin/content", label: "Page setup" },
   { href: "/admin/blog", label: "Blog" },
   { href: "/admin/testimonials", label: "Feedback" },
   { href: "/admin/settings", label: "Settings" }

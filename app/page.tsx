@@ -8,6 +8,7 @@ import { StructuredData } from "@/components/structured-data";
 import { getCurrentUser } from "@/lib/auth";
 import { getExchangeRates } from "@/lib/exchange-rates";
 import { getApprovedTestimonialsForHome, getCustomerProfileByEmail, getProducts } from "@/lib/mock-store";
+import { getHomePageSetup } from "@/lib/page-setup";
 import { buildBreadcrumbSchema, buildMetadata } from "@/lib/seo";
 import { featureCards, storeLocations, testimonials } from "@/lib/site-data";
 
@@ -23,6 +24,11 @@ function getProductHref(category: string, slug: string) {
   return `/shop/${slug}`;
 }
 
+function renderStars(rating: number) {
+  const safeRating = Math.max(1, Math.min(5, Math.round(rating)));
+  return `${"★".repeat(safeRating)}${"☆".repeat(5 - safeRating)}`;
+}
+
 export const metadata: Metadata = buildMetadata({
   title: "Corebed Natural Mattress | Premium Mattresses, Pillows and Accessories",
   description:
@@ -30,85 +36,25 @@ export const metadata: Metadata = buildMetadata({
   path: "/"
 });
 
-const categoryCards = [
-  {
-    title: "Mattresses",
-    href: "/shop",
-    image:
-      "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1200&q=80",
-    align: "left"
-  },
-  {
-    title: "Pillows",
-    href: "/pillows",
-    image:
-      "https://images.unsplash.com/photo-1582582429416-47f8f35f1c47?auto=format&fit=crop&w=1200&q=80",
-    align: "center"
-  },
-  {
-    title: "Accessories",
-    href: "/accessories",
-    image:
-      "https://images.unsplash.com/photo-1517705008128-361805f42e86?auto=format&fit=crop&w=1200&q=80",
-    align: "right"
-  }
-];
-
-const servicePoints = [
-  {
-    title: "Contactless delivery",
-    body: "Free, safe delivery with every order, no matter how big or small.",
-    icon: "▣"
-  },
-  {
-    title: "15-years warranty",
-    body: "Long-term comfort backed by a simple and clear support promise.",
-    icon: "◔"
-  },
-  {
-    title: "Highest hygiene standards",
-    body: "Your mattress stays protected from finishing to final delivery.",
-    icon: "◌"
-  }
-];
-
-const articleCards = [
-  {
-    slug: "summer-sale-live-massively-discounted-deals-on-diamond-supreme-foam",
-    title: "Summer sale and cooler sleep deals",
-    image:
-      "https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=1200&q=80"
-  },
-  {
-    slug: "which-pillow-is-best-for-a-stiff-neck-expert-recommendations",
-    title: "How to sleep cool in hot weather",
-    image:
-      "https://images.unsplash.com/photo-1505693537694-cd1d132d7d82?auto=format&fit=crop&w=1200&q=80"
-  },
-  {
-    slug: "where-to-buy-high-quality-mattresses-in-pakistan-2026-buyers-guide",
-    title: "The most trusted mattress buying guide",
-    image:
-      "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1200&q=80&sat=-15"
-  }
-];
-
 export default async function HomePage() {
   const user = await getCurrentUser();
-  const [allProducts, approvedTestimonials, profile, exchangeRates] = await Promise.all([
+  const [allProducts, approvedTestimonials, profile, exchangeRates, homeSetup] = await Promise.all([
     getProducts(),
     getApprovedTestimonialsForHome(),
     user?.email ? getCustomerProfileByEmail(user.email) : Promise.resolve(null),
-    getExchangeRates()
+    getExchangeRates(),
+    getHomePageSetup()
   ]);
+
   const featuredProducts = allProducts.filter((product) => product.status === "active").slice(0, 4);
   const liveTestimonials =
     approvedTestimonials.length > 0
       ? approvedTestimonials.map((item) => ({
           author: `${item.customerName}, ${item.customerCity}`,
-          quote: item.body
+          quote: item.body,
+          rating: item.rating
         }))
-      : testimonials;
+      : testimonials.map((item) => ({ ...item, rating: 5 }));
   const repeatedTestimonials = [...liveTestimonials, ...liveTestimonials];
   const primaryStore = storeLocations[0];
 
@@ -119,20 +65,25 @@ export default async function HomePage() {
           { name: "Home", path: "/" }
         ])}
       />
+
       <section className="mx-auto grid min-h-[680px] max-w-[1900px] gap-0 bg-white lg:grid-cols-[0.58fr_1.22fr]">
         <div className="flex items-center justify-center px-10 py-20 md:px-16 lg:justify-end">
           <div className="w-full max-w-[420px]">
             <p className="text-[clamp(4rem,11vw,7.8rem)] font-semibold uppercase leading-[0.92] tracking-[-0.08em] text-navy">
-              Summer
+              {homeSetup.saleLineOne}
             </p>
             <p className="mt-2 text-[clamp(4.5rem,13vw,9.2rem)] font-bold uppercase leading-[0.88] tracking-[-0.08em] text-navy">
-              Sale
+              {homeSetup.saleLineTwo}
             </p>
             <div className="mt-10 flex items-end gap-2 text-bronze">
-              <span className="text-[clamp(5rem,12vw,8rem)] font-bold leading-none tracking-[-0.08em]">15</span>
+              <span className="text-[clamp(5rem,12vw,8rem)] font-bold leading-none tracking-[-0.08em]">
+                {homeSetup.discountValue}
+              </span>
               <div className="pb-3">
                 <span className="text-6xl font-light">%</span>
-                <p className="mt-1 text-2xl font-semibold uppercase tracking-[-0.04em]">Off</p>
+                <p className="mt-1 text-2xl font-semibold uppercase tracking-[-0.04em]">
+                  {homeSetup.discountSuffix}
+                </p>
               </div>
             </div>
           </div>
@@ -145,11 +96,14 @@ export default async function HomePage() {
             <div className="relative w-full max-w-5xl">
               <div className="absolute -top-8 left-[6%] hidden h-24 w-24 rounded-sm bg-white/90 shadow-soft md:block" />
               <div className="absolute -top-2 right-[6%] hidden h-24 w-24 rounded-sm bg-white/90 shadow-soft md:block" />
-              <div className="mx-auto h-[410px] max-w-4xl rounded-[2.4rem_2.4rem_1.2rem_1.2rem] border border-white/60 bg-[linear-gradient(180deg,#ffffff_0%,#faf8f2_62%,#f0ece3_100%)] shadow-[0_45px_90px_rgba(47,42,40,0.18)]">
-                <div className="mx-auto mt-10 h-[90px] w-[72%] rounded-[999px] bg-[linear-gradient(180deg,#fbfaf7_0%,#eee8dc_100%)] shadow-[inset_0_-10px_30px_rgba(47,42,40,0.06)]" />
-                <div className="mt-8 h-[150px] rounded-b-[1rem] bg-[linear-gradient(180deg,#4b4644_0%,#2f2a28_100%)] px-10 py-8 text-white">
-                  <p className="text-5xl font-semibold tracking-[-0.06em]">CoreSleep Calm</p>
-                  <p className="mt-2 text-lg text-white/86">clean support for quieter bedrooms</p>
+              <div className="mx-auto max-w-4xl overflow-hidden rounded-[2.4rem] border border-white/60 bg-[linear-gradient(180deg,#ffffff_0%,#faf8f2_62%,#f0ece3_100%)] shadow-[0_45px_90px_rgba(47,42,40,0.18)]">
+                <div
+                  className="h-[300px] w-full bg-cover bg-center md:h-[360px]"
+                  style={{ backgroundImage: `url(${homeSetup.heroImageUrl})` }}
+                />
+                <div className="bg-[linear-gradient(180deg,#4b4644_0%,#2f2a28_100%)] px-8 py-8 text-white md:px-10">
+                  <p className="text-4xl font-semibold tracking-[-0.06em] md:text-5xl">{homeSetup.heroCardTitle}</p>
+                  <p className="mt-2 text-base text-white/86 md:text-lg">{homeSetup.heroCardSubtitle}</p>
                 </div>
               </div>
               <div className="absolute -bottom-7 left-1/2 h-9 w-[90%] -translate-x-1/2 rounded-full bg-[#2f2a28]/20 blur-xl" />
@@ -168,7 +122,7 @@ export default async function HomePage() {
           </p>
         </div>
         <div className="mt-12 grid gap-5 lg:grid-cols-3">
-          {categoryCards.map((card) => (
+          {homeSetup.categoryCards.map((card) => (
             <Link
               key={card.title}
               href={card.href}
@@ -222,18 +176,14 @@ export default async function HomePage() {
             loop
             muted
             playsInline
-            poster="https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1600&q=80"
+            poster={homeSetup.videoPosterUrl}
           >
-            <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4" />
+            <source src={homeSetup.videoUrl} type="video/mp4" />
           </video>
           <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(47,42,40,0.54)_0%,rgba(47,42,40,0.16)_36%,rgba(47,42,40,0.08)_100%)]" />
           <div className="absolute left-6 top-6 max-w-3xl text-white md:left-10 md:top-8">
-            <p className="text-3xl font-semibold tracking-[-0.06em] md:text-4xl">
-              Cooling comfort technology made simple
-            </p>
-            <p className="mt-3 max-w-xl text-sm leading-7 text-white/88">
-              A muted product story section that feels modern without turning the homepage into a noisy promo reel.
-            </p>
+            <p className="text-3xl font-semibold tracking-[-0.06em] md:text-4xl">{homeSetup.videoTitle}</p>
+            <p className="mt-3 max-w-xl text-sm leading-7 text-white/88">{homeSetup.videoBody}</p>
           </div>
         </div>
       </section>
@@ -250,10 +200,8 @@ export default async function HomePage() {
                   key={`${testimonial.author}-${index}`}
                   className="w-[340px] flex-none rounded-[1.5rem] bg-white p-8 shadow-[0_20px_50px_rgba(47,42,40,0.08)] md:w-[420px]"
                 >
-                  <p className="text-lg tracking-[0.18em] text-navy">★★★★★</p>
-                  <p className="mt-8 text-[1.65rem] leading-[1.6] tracking-[-0.04em] text-slate">
-                    {testimonial.quote}
-                  </p>
+                  <p className="text-lg tracking-[0.18em] text-navy">{renderStars(testimonial.rating)}</p>
+                  <p className="mt-8 text-[1.65rem] leading-[1.6] tracking-[-0.04em] text-slate">{testimonial.quote}</p>
                   <p className="mt-8 text-2xl font-semibold tracking-[-0.04em] text-navy">
                     {testimonial.author.split(",")[0]}
                   </p>
@@ -338,8 +286,8 @@ export default async function HomePage() {
         <div className="min-h-[520px] bg-[url('https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1800&q=80')] bg-cover bg-center" />
         <div className="flex min-h-[520px] items-end bg-[linear-gradient(180deg,#544e4b_0%,#2f2a28_100%)] p-10 text-white md:p-14">
           <div>
-              <p className="text-6xl font-light tracking-[0.28em] text-[#dfe8d0]">Z Z Z</p>
-              <p className="mt-8 text-2xl font-light text-white/82">with</p>
+            <p className="text-6xl font-light tracking-[0.28em] text-[#dfe8d0]">Z Z Z</p>
+            <p className="mt-8 text-2xl font-light text-white/82">with</p>
             <h2 className="mt-2 max-w-sm font-serif text-5xl font-semibold tracking-[-0.06em]">
               Gel-Infused Foam
             </h2>
@@ -352,12 +300,9 @@ export default async function HomePage() {
           Sleep tips and advice to improve your sleep
         </h2>
         <div className="mt-12 grid gap-6 lg:grid-cols-3">
-          {articleCards.map((article) => (
+          {homeSetup.articleCards.map((article) => (
             <Link key={article.title} href={`/blog/${article.slug}`} className="relative block min-h-[420px] overflow-hidden rounded-[1.5rem]">
-              <div
-                className="absolute inset-0 bg-cover bg-center"
-                style={{ backgroundImage: `url(${article.image})` }}
-              />
+              <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${article.image})` }} />
               <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(47,42,40,0.05)_0%,rgba(47,42,40,0.76)_100%)]" />
               <div className="absolute inset-x-0 bottom-0 p-6 text-white">
                 <h3 className="max-w-md text-4xl font-semibold leading-tight tracking-[-0.05em]">{article.title}</h3>

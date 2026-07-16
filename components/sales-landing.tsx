@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { CurrencyAmount } from "@/components/currency-amount";
+import type { SalesPageSetup } from "@/lib/page-setup";
 import type { ExchangeRates } from "@/lib/format";
 import type { ProductRecord } from "@/lib/store-types";
 
@@ -48,32 +49,34 @@ export function SalesLanding({
   season,
   products,
   exchangeRates,
-  country
+  country,
+  content
 }: {
   season: SalesSeason;
   products: ProductRecord[];
   exchangeRates?: ExchangeRates;
   country?: string;
+  content?: SalesPageSetup;
 }) {
-  const content = seasonalContent[season];
+  const contentBlock = content ?? seasonalContent[season];
 
   return (
     <main className="mx-auto max-w-7xl px-6 py-12">
       <section className="overflow-hidden rounded-[2rem] bg-[linear-gradient(135deg,#fbfaf7_0%,#f1ecdf_52%,#e6dece_100%)] shadow-[0_24px_80px_rgba(47,42,40,0.12)]">
         <div className="grid items-center gap-0 lg:grid-cols-[0.9fr_1.1fr]">
           <div className="px-8 py-14 md:px-12">
-            <p className="text-xs uppercase tracking-[0.36em] text-bronze">{content.eyebrow}</p>
+            <p className="text-xs uppercase tracking-[0.36em] text-bronze">{contentBlock.eyebrow}</p>
             <h1 className="mt-5 font-serif text-6xl font-semibold leading-[0.94] tracking-[-0.07em] text-navy">
-              {content.title}
+              {contentBlock.title}
             </h1>
-            <p className="mt-6 max-w-xl text-base leading-8 text-slate">{content.body}</p>
+            <p className="mt-6 max-w-xl text-base leading-8 text-slate">{contentBlock.body}</p>
             <div className="mt-8 inline-flex rounded-full bg-navy px-5 py-3 text-sm font-semibold text-white">
-              {content.accent}
+              {contentBlock.accent}
             </div>
           </div>
           <div
             className="min-h-[420px] bg-cover bg-center"
-            style={{ backgroundImage: `url(${content.image})` }}
+            style={{ backgroundImage: `url(${contentBlock.image})` }}
           />
         </div>
       </section>

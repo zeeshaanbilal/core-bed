@@ -7,6 +7,12 @@ import { ensureCartSessionId } from "@/lib/cart-session";
 import { getCurrentUser, requireAdminUser } from "@/lib/auth";
 import { getSiteUrl } from "@/lib/site-url";
 import { sendTestEmail } from "@/lib/notifications";
+import {
+  parseDelimitedArticleCards,
+  parseDelimitedCategoryCards,
+  saveHomePageSetup,
+  saveSalesPageSetup
+} from "@/lib/page-setup";
 import { createStripeEmbeddedCheckoutSession, isStripeServerReady } from "@/lib/stripe";
 import {
   addCartItem,
@@ -373,6 +379,50 @@ export async function deleteContentAction(formData: FormData) {
   await deleteContentEntry(getString(formData, "id"));
   revalidatePath("/guides");
   revalidatePath("/faq");
+  revalidatePath("/admin/content");
+}
+
+export async function updateHomePageSetupAction(formData: FormData) {
+  await assertAdminUser();
+
+  await saveHomePageSetup({
+    saleLineOne: getString(formData, "saleLineOne") || "Summer",
+    saleLineTwo: getString(formData, "saleLineTwo") || "Sale",
+    discountValue: getString(formData, "discountValue") || "15",
+    discountSuffix: getString(formData, "discountSuffix") || "Off",
+    heroImageUrl: getString(formData, "heroImageUrl"),
+    heroCardTitle: getString(formData, "heroCardTitle"),
+    heroCardSubtitle: getString(formData, "heroCardSubtitle"),
+    videoPosterUrl: getString(formData, "videoPosterUrl"),
+    videoUrl: getString(formData, "videoUrl"),
+    videoTitle: getString(formData, "videoTitle"),
+    videoBody: getString(formData, "videoBody"),
+    categoryCards: parseDelimitedCategoryCards(getString(formData, "categoryCardsData")),
+    articleCards: parseDelimitedArticleCards(getString(formData, "articleCardsData"))
+  });
+
+  revalidatePath("/");
+  revalidatePath("/admin/content");
+}
+
+export async function updateSalesPageSetupAction(formData: FormData) {
+  await assertAdminUser();
+
+  const season = getString(formData, "season") === "winter" ? "winter" : "summer";
+
+  await saveSalesPageSetup(season, {
+    eyebrow: getString(formData, "eyebrow"),
+    title: getString(formData, "title"),
+    body: getString(formData, "body"),
+    accent: getString(formData, "accent"),
+    image: getString(formData, "image"),
+    productSlugs: getString(formData, "productSlugs")
+      .split(",")
+      .map((item) => item.trim())
+      .filter(Boolean)
+  });
+
+  revalidatePath(`/sales/${season}`);
   revalidatePath("/admin/content");
 }
 

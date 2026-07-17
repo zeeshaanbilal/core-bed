@@ -881,76 +881,98 @@ async function getOrCreateCart(sessionId: string) {
 }
 
 export async function getCart(sessionId: string): Promise<CartRecord> {
-  const cart = await prisma.cart.findUnique({
-    where: { sessionId },
-    include: {
-      items: {
+  return safeStoreRead(
+    `getCart:${sessionId}`,
+    {
+      sessionId,
+      items: [],
+      updatedAt: new Date().toISOString()
+    } satisfies CartRecord,
+    async () => {
+      const cart = await prisma.cart.findUnique({
+        where: { sessionId },
         include: {
-          variant: true
+          items: {
+            include: {
+              variant: true
+            }
+          }
         }
-      }
-    }
-  });
+      });
 
-  return {
-    sessionId,
-    items:
-      cart?.items.map((item) => ({
-        id: item.id,
-        productSlug: item.variantId,
-        quantity: item.quantity,
-        selectedSize: item.variant.size,
-        unitPrice: toNumber(item.unitPriceSnapshot)
-      })) ?? [],
-    updatedAt: cart?.updatedAt.toISOString() ?? new Date().toISOString()
-  };
+      return {
+        sessionId,
+        items:
+          cart?.items.map((item) => ({
+            id: item.id,
+            productSlug: item.variantId,
+            quantity: item.quantity,
+            selectedSize: item.variant.size,
+            unitPrice: toNumber(item.unitPriceSnapshot)
+          })) ?? [],
+        updatedAt: cart?.updatedAt.toISOString() ?? new Date().toISOString()
+      };
+    }
+  );
 }
 
 export async function getCartDetail(sessionId: string) {
-  const cart = await prisma.cart.findUnique({
-    where: { sessionId },
-    include: {
-      items: {
+  return safeStoreRead(
+    `getCartDetail:${sessionId}`,
+    {
+      sessionId,
+      items: [],
+      subtotal: 0,
+      shippingFee: 0,
+      total: 0
+    },
+    async () => {
+      const cart = await prisma.cart.findUnique({
+        where: { sessionId },
         include: {
-          variant: {
+          items: {
             include: {
-              product: {
-                include: productInclude
+              variant: {
+                include: {
+                  product: {
+                    include: productInclude
+                  }
+                }
               }
             }
           }
         }
-      }
-    }
-  });
+      });
 
-  const items =
-    cart?.items.map((item) => {
-      const product = toProductRecord(item.variant.product);
-      const unitPrice = toNumber(item.unitPriceSnapshot);
+      const items =
+        cart?.items.map((item) => {
+          const product = toProductRecord(item.variant.product);
+          const unitPrice = toNumber(item.unitPriceSnapshot);
+
+          return {
+            id: item.id,
+            productSlug: product.slug,
+            quantity: item.quantity,
+            selectedSize: item.variant.size,
+            selectedFirmness: item.variant.firmness,
+            unitPrice,
+            product,
+            lineTotal: unitPrice * item.quantity
+          };
+        }) ?? [];
+
+      const subtotal = items.reduce((total, item) => total + item.lineTotal, 0);
+      const shippingFee = subtotal > 1500 ? 0 : items.length > 0 ? 65 : 0;
 
       return {
-        id: item.id,
-        productSlug: product.slug,
-        quantity: item.quantity,
-        selectedSize: item.variant.size,
-        selectedFirmness: item.variant.firmness,
-        unitPrice,
-        product,
-        lineTotal: unitPrice * item.quantity
+        sessionId,
+        items,
+        subtotal,
+        shippingFee,
+        total: subtotal + shippingFee
       };
-    }) ?? [];
-
-  const subtotal = items.reduce((total, item) => total + item.lineTotal, 0);
-  const shippingFee = subtotal > 1500 ? 0 : items.length > 0 ? 65 : 0;
-
-  return {
-    sessionId,
-    items,
-    subtotal,
-    shippingFee,
-    total: subtotal + shippingFee
-  };
+    }
+  );
 }
 
 export async function addCartItem(input: {

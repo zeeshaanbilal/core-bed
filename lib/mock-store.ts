@@ -31,6 +31,15 @@ const productInclude = {
   }
 } satisfies Prisma.ProductInclude;
 
+async function safeStoreRead<T>(label: string, fallback: T, query: () => Promise<T>): Promise<T> {
+  try {
+    return await query();
+  } catch (error) {
+    console.error(`[mock-store] ${label} failed`, error);
+    return fallback;
+  }
+}
+
 function getFilePath(fileName: string) {
   return path.join(dataDir, fileName);
 }
@@ -548,15 +557,17 @@ function toOrderRecord(
 }
 
 async function getProductsByCategorySlug(categorySlug: string) {
-  const products = await prisma.product.findMany({
-    where: { category: { slug: categorySlug } },
-    include: productInclude,
-    orderBy: { createdAt: "desc" }
+  return safeStoreRead(`getProductsByCategorySlug:${categorySlug}`, [] as ProductRecord[], async () => {
+    const products = await prisma.product.findMany({
+      where: { category: { slug: categorySlug } },
+      include: productInclude,
+      orderBy: { createdAt: "desc" }
+    });
+
+    const normalizedProducts = await Promise.all(products.map((product) => ensureMattressVariantsReady(product)));
+
+    return normalizedProducts.filter(isProductEntity).map(toProductRecord).sort((left, right) => right.price - left.price);
   });
-
-  const normalizedProducts = await Promise.all(products.map((product) => ensureMattressVariantsReady(product)));
-
-  return normalizedProducts.filter(isProductEntity).map(toProductRecord).sort((left, right) => right.price - left.price);
 }
 
 async function getProductEntityBySlug(slug: string) {
@@ -583,103 +594,129 @@ export async function getAccessories() {
 }
 
 export async function getCatalogProducts() {
-  const products = await prisma.product.findMany({
-    include: productInclude,
-    orderBy: { createdAt: "desc" }
+  return safeStoreRead("getCatalogProducts", [] as ProductRecord[], async () => {
+    const products = await prisma.product.findMany({
+      include: productInclude,
+      orderBy: { createdAt: "desc" }
+    });
+
+    const normalizedProducts = await Promise.all(products.map((product) => ensureMattressVariantsReady(product)));
+
+    return normalizedProducts.filter(isProductEntity).map(toProductRecord).sort((left, right) => right.price - left.price);
   });
-
-  const normalizedProducts = await Promise.all(products.map((product) => ensureMattressVariantsReady(product)));
-
-  return normalizedProducts.filter(isProductEntity).map(toProductRecord).sort((left, right) => right.price - left.price);
 }
 
 export async function getCatalogProductBySlug(slug: string) {
-  const product = await getProductEntityBySlug(slug);
-  const normalizedProduct = await ensureMattressVariantsReady(product);
+  return safeStoreRead(`getCatalogProductBySlug:${slug}`, null as ProductRecord | null, async () => {
+    const product = await getProductEntityBySlug(slug);
+    const normalizedProduct = await ensureMattressVariantsReady(product);
 
-  return normalizedProduct ? toProductRecord(normalizedProduct) : null;
+    return normalizedProduct ? toProductRecord(normalizedProduct) : null;
+  });
 }
 
 export async function getFeaturedProducts() {
-  const products = await prisma.product.findMany({
-    where: { featured: true, status: ProductStatus.ACTIVE },
-    include: productInclude,
-    orderBy: { createdAt: "desc" },
-    take: 3
+  return safeStoreRead("getFeaturedProducts", [] as ProductRecord[], async () => {
+    const products = await prisma.product.findMany({
+      where: { featured: true, status: ProductStatus.ACTIVE },
+      include: productInclude,
+      orderBy: { createdAt: "desc" },
+      take: 3
+    });
+
+    const normalizedProducts = await Promise.all(products.map((product) => ensureMattressVariantsReady(product)));
+
+    return normalizedProducts.filter(isProductEntity).map(toProductRecord);
   });
-
-  const normalizedProducts = await Promise.all(products.map((product) => ensureMattressVariantsReady(product)));
-
-  return normalizedProducts.filter(isProductEntity).map(toProductRecord);
 }
 
 export async function getProductBySlug(slug: string) {
-  const product = await ensureMattressVariantsReady(await getProductEntityBySlug(slug));
-  return product?.category.slug === "mattresses" ? toProductRecord(product) : undefined;
+  return safeStoreRead(`getProductBySlug:${slug}`, undefined, async () => {
+    const product = await ensureMattressVariantsReady(await getProductEntityBySlug(slug));
+    return product?.category.slug === "mattresses" ? toProductRecord(product) : undefined;
+  });
 }
 
 export async function getProductSlugs() {
-  const products = await prisma.product.findMany({
-    where: { category: { slug: "mattresses" } },
-    select: { slug: true }
-  });
+  return safeStoreRead("getProductSlugs", [] as string[], async () => {
+    const products = await prisma.product.findMany({
+      where: { category: { slug: "mattresses" } },
+      select: { slug: true }
+    });
 
-  return products.map((product) => product.slug);
+    return products.map((product) => product.slug);
+  });
 }
 
 export async function getPillowBySlug(slug: string) {
-  const product = await ensureMattressVariantsReady(await getProductEntityBySlug(slug));
-  return product?.category.slug === "pillows" ? toProductRecord(product) : undefined;
+  return safeStoreRead(`getPillowBySlug:${slug}`, undefined, async () => {
+    const product = await ensureMattressVariantsReady(await getProductEntityBySlug(slug));
+    return product?.category.slug === "pillows" ? toProductRecord(product) : undefined;
+  });
 }
 
 export async function getPillowSlugs() {
-  const products = await prisma.product.findMany({
-    where: { category: { slug: "pillows" } },
-    select: { slug: true }
-  });
+  return safeStoreRead("getPillowSlugs", [] as string[], async () => {
+    const products = await prisma.product.findMany({
+      where: { category: { slug: "pillows" } },
+      select: { slug: true }
+    });
 
-  return products.map((product) => product.slug);
+    return products.map((product) => product.slug);
+  });
 }
 
 export async function getAccessoryBySlug(slug: string) {
-  const product = await ensureMattressVariantsReady(await getProductEntityBySlug(slug));
-  return product?.category.slug === "accessories" ? toProductRecord(product) : undefined;
+  return safeStoreRead(`getAccessoryBySlug:${slug}`, undefined, async () => {
+    const product = await ensureMattressVariantsReady(await getProductEntityBySlug(slug));
+    return product?.category.slug === "accessories" ? toProductRecord(product) : undefined;
+  });
 }
 
 export async function getAccessorySlugs() {
-  const products = await prisma.product.findMany({
-    where: { category: { slug: "accessories" } },
-    select: { slug: true }
-  });
+  return safeStoreRead("getAccessorySlugs", [] as string[], async () => {
+    const products = await prisma.product.findMany({
+      where: { category: { slug: "accessories" } },
+      select: { slug: true }
+    });
 
-  return products.map((product) => product.slug);
+    return products.map((product) => product.slug);
+  });
 }
 
 export async function getContentEntries() {
-  const entries = await prisma.contentEntry.findMany({
-    orderBy: { createdAt: "desc" }
-  });
+  return safeStoreRead("getContentEntries", [] as ContentRecord[], async () => {
+    const entries = await prisma.contentEntry.findMany({
+      orderBy: { createdAt: "desc" }
+    });
 
-  return entries.map(toContentRecord);
+    return entries.map(toContentRecord);
+  });
 }
 
 export async function getBlogPosts() {
-  const posts = await prisma.post.findMany({
-    where: { status: ContentStatus.ACTIVE },
-    orderBy: { publishedAt: "desc" }
-  });
+  return safeStoreRead("getBlogPosts", [] as BlogPostRecord[], async () => {
+    const posts = await prisma.post.findMany({
+      where: { status: ContentStatus.ACTIVE },
+      orderBy: { publishedAt: "desc" }
+    });
 
-  return posts.map(toBlogPostRecord);
+    return posts.map(toBlogPostRecord);
+  });
 }
 
 export async function getBlogPostBySlug(slug: string) {
-  const post = await prisma.post.findUnique({ where: { slug } });
-  return post ? toBlogPostRecord(post) : undefined;
+  return safeStoreRead(`getBlogPostBySlug:${slug}`, undefined, async () => {
+    const post = await prisma.post.findUnique({ where: { slug } });
+    return post ? toBlogPostRecord(post) : undefined;
+  });
 }
 
 export async function getBlogPostSlugs() {
-  const posts = await prisma.post.findMany({ select: { slug: true } });
-  return posts.map((post) => post.slug);
+  return safeStoreRead("getBlogPostSlugs", [] as string[], async () => {
+    const posts = await prisma.post.findMany({ select: { slug: true } });
+    return posts.map((post) => post.slug);
+  });
 }
 
 export async function getCustomerProfileByEmail(email: string) {
@@ -1378,47 +1415,51 @@ export async function createTestimonial(input: {
 }
 
 export async function getApprovedTestimonialsForHome() {
-  const reviews = await prisma.review.findMany({
-    where: {
-      status: "APPROVED",
-      featuredOnHome: true
-    },
-    include: {
-      product: {
-        select: { id: true, slug: true, title: true }
+  return safeStoreRead("getApprovedTestimonialsForHome", [] as TestimonialRecord[], async () => {
+    const reviews = await prisma.review.findMany({
+      where: {
+        status: "APPROVED",
+        featuredOnHome: true
       },
-      user: {
-        select: { name: true }
-      }
-    },
-    orderBy: { createdAt: "desc" },
-    take: 8
-  });
+      include: {
+        product: {
+          select: { id: true, slug: true, title: true }
+        },
+        user: {
+          select: { name: true }
+        }
+      },
+      orderBy: { createdAt: "desc" },
+      take: 8
+    });
 
-  return reviews.map(toTestimonialRecord);
+    return reviews.map(toTestimonialRecord);
+  });
 }
 
 export async function getApprovedTestimonialsForProduct(productSlug: string) {
-  const reviews = await prisma.review.findMany({
-    where: {
-      status: "APPROVED",
-      product: {
-        slug: productSlug
-      }
-    },
-    include: {
-      product: {
-        select: { id: true, slug: true, title: true }
+  return safeStoreRead(`getApprovedTestimonialsForProduct:${productSlug}`, [] as TestimonialRecord[], async () => {
+    const reviews = await prisma.review.findMany({
+      where: {
+        status: "APPROVED",
+        product: {
+          slug: productSlug
+        }
       },
-      user: {
-        select: { name: true }
-      }
-    },
-    orderBy: { createdAt: "desc" },
-    take: 6
-  });
+      include: {
+        product: {
+          select: { id: true, slug: true, title: true }
+        },
+        user: {
+          select: { name: true }
+        }
+      },
+      orderBy: { createdAt: "desc" },
+      take: 6
+    });
 
-  return reviews.map(toTestimonialRecord);
+    return reviews.map(toTestimonialRecord);
+  });
 }
 
 export async function getTestimonialsForAdmin() {

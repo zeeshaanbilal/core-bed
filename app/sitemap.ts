@@ -4,14 +4,9 @@ import { getAccessorySlugs, getBlogPostSlugs, getPillowSlugs, getProductSlugs } 
 import { getSiteUrl } from "@/lib/seo";
 import { storeLocations } from "@/lib/site-data";
 
-export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [productSlugs, pillowSlugs, accessorySlugs, blogSlugs] = await Promise.all([
-    getProductSlugs(),
-    getPillowSlugs(),
-    getAccessorySlugs(),
-    getBlogPostSlugs()
-  ]);
+export const dynamic = "force-dynamic";
 
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const siteUrl = getSiteUrl();
   const staticRoutes = [
     "",
@@ -29,6 +24,22 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/sales/summer",
     "/sales/winter"
   ];
+
+  let productSlugs: string[] = [];
+  let pillowSlugs: string[] = [];
+  let accessorySlugs: string[] = [];
+  let blogSlugs: string[] = [];
+
+  try {
+    [productSlugs, pillowSlugs, accessorySlugs, blogSlugs] = await Promise.all([
+      getProductSlugs(),
+      getPillowSlugs(),
+      getAccessorySlugs(),
+      getBlogPostSlugs()
+    ]);
+  } catch (error) {
+    console.error("[sitemap] failed to load dynamic slugs", error);
+  }
 
   return [
     ...staticRoutes.map((route) => ({

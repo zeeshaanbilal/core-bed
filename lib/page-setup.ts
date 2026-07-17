@@ -175,19 +175,29 @@ function normalizeSalesSetup(
 }
 
 export async function getHomePageSetup() {
-  const setting = await prisma.setting.findUnique({
-    where: { key: HOME_PAGE_KEY }
-  });
+  try {
+    const setting = await prisma.setting.findUnique({
+      where: { key: HOME_PAGE_KEY }
+    });
 
-  return normalizeHomeSetup((setting?.valueJson as Partial<HomePageSetup> | null) ?? null);
+    return normalizeHomeSetup((setting?.valueJson as Partial<HomePageSetup> | null) ?? null);
+  } catch (error) {
+    console.error("[page-setup] getHomePageSetup failed", error);
+    return normalizeHomeSetup(null);
+  }
 }
 
 export async function getSalesPageSetup(season: "summer" | "winter") {
-  const setting = await prisma.setting.findUnique({
-    where: { key: salesPageKey(season) }
-  });
+  try {
+    const setting = await prisma.setting.findUnique({
+      where: { key: salesPageKey(season) }
+    });
 
-  return normalizeSalesSetup(season, (setting?.valueJson as Partial<SalesPageSetup> | null) ?? null);
+    return normalizeSalesSetup(season, (setting?.valueJson as Partial<SalesPageSetup> | null) ?? null);
+  } catch (error) {
+    console.error(`[page-setup] getSalesPageSetup failed for ${season}`, error);
+    return normalizeSalesSetup(season, null);
+  }
 }
 
 export async function saveHomePageSetup(input: HomePageSetup) {

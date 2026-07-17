@@ -2,7 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { requireAdminUser } from "@/lib/auth";
-import { isStripeConfigured, isSupabaseConfigured } from "@/lib/supabase/config";
+import { getStripeConfigurationSummary, isSupabaseConfigured } from "@/lib/supabase/config";
 
 const adminNav = [
   { href: "/admin", label: "Dashboard" },
@@ -16,6 +16,7 @@ const adminNav = [
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const user = await requireAdminUser();
+  const stripe = getStripeConfigurationSummary();
 
   if (!user) {
     redirect("/account/login?redirect=/admin");
@@ -35,7 +36,8 @@ export default async function AdminLayout({ children }: { children: React.ReactN
 
           <div className="mt-6 space-y-3 rounded-[1.25rem] bg-[#f8f4ec] p-4 text-sm text-slate">
             <p>Supabase: {isSupabaseConfigured() ? "Live auth connected" : "Waiting for env keys"}</p>
-            <p>Stripe: {isStripeConfigured() ? "Secret key detected" : "Waiting for key"}</p>
+            <p>Stripe checkout: {stripe.readyForLiveCheckout ? "Ready" : "Waiting for Stripe keys"}</p>
+            <p>Stripe webhook: {stripe.webhookSecretPresent ? "Secret detected" : "Waiting for webhook secret"}</p>
           </div>
 
           <nav className="mt-8 grid gap-3">

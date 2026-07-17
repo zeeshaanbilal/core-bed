@@ -1,5 +1,5 @@
 import { areOrderEmailsConfigured, getEmailConfigurationSummary, getRecentEmailLogs } from "@/lib/notifications";
-import { isStripeConfigured, isSupabaseConfigured } from "@/lib/supabase/config";
+import { getStripeConfigurationSummary, isSupabaseConfigured } from "@/lib/supabase/config";
 
 const requiredEnv = [
   "NEXT_PUBLIC_SUPABASE_URL",
@@ -21,6 +21,7 @@ export default async function AdminSettingsPage({
   searchParams: Promise<{ emailTestSuccess?: string; emailTestError?: string }>;
 }) {
   await searchParams;
+  const stripe = getStripeConfigurationSummary();
   const [emailConfig, emailLogs] = await Promise.all([
     Promise.resolve(getEmailConfigurationSummary()),
     getRecentEmailLogs()
@@ -43,10 +44,16 @@ export default async function AdminSettingsPage({
         </article>
         <article className="section-frame rounded-[1.75rem] p-6">
           <p className="text-xs uppercase tracking-[0.3em] text-bronze">Stripe</p>
-          <h3 className="mt-3 font-serif text-3xl">{isStripeConfigured() ? "Configured" : "Pending"}</h3>
+          <h3 className="mt-3 font-serif text-3xl">{stripe.readyForLiveCheckout ? "Configured" : "Pending"}</h3>
           <p className="mt-3 text-sm leading-7 text-slate">
-            Checkout already exposes Stripe as the primary payment path. Add live keys and webhook handling next.
+            Secure card checkout is already wired inside the website. Add live keys and the webhook secret to complete the live payment path.
           </p>
+          <div className="mt-4 space-y-2 text-sm text-slate">
+            <p>Secret key: {stripe.secretKeyPresent ? "Detected" : "Missing"}</p>
+            <p>Publishable key: {stripe.publishableKeyPresent ? "Detected" : "Missing"}</p>
+            <p>Webhook secret: {stripe.webhookSecretPresent ? "Detected" : "Missing"}</p>
+            <p className="break-all">Webhook URL: {stripe.webhookUrl}</p>
+          </div>
         </article>
         <article className="section-frame rounded-[1.75rem] p-6">
           <p className="text-xs uppercase tracking-[0.3em] text-bronze">Resend Email</p>
@@ -62,11 +69,18 @@ export default async function AdminSettingsPage({
 
       <article className="section-frame rounded-[1.75rem] p-6">
         <p className="font-serif text-3xl">Required environment variables</p>
+        <p className="mt-3 text-sm leading-7 text-slate">
+          Add these in Vercel for the Production environment. Stripe uses the same key names in local and live environments;
+          only the values change from test to live.
+        </p>
         <ul className="mt-5 space-y-3 text-sm leading-7 text-slate">
           {requiredEnv.map((item) => (
             <li key={item}>{item}</li>
           ))}
         </ul>
+        <div className="mt-6 rounded-[1.25rem] border border-ink/10 bg-[#f8f4ec] p-4 text-sm leading-7 text-slate">
+          Setup guide saved at <span className="font-medium text-ink">docs/STRIPE_LIVE_SETUP.md</span>
+        </div>
       </article>
 
       <article className="section-frame rounded-[1.75rem] p-6">

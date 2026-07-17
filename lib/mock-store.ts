@@ -1357,8 +1357,9 @@ export async function getAdminDashboardStats() {
   return {
     revenue: orders.reduce((total, order) => total + order.total, 0),
     orderCount: orders.length,
+    productCount: products.length,
     lowStockCount: products.filter((product) => product.inventory <= 6).length,
-    draftContentCount: content.filter((entry) => entry.status === "draft").length
+    publishedContentCount: content.filter((entry) => entry.status === "active").length
   };
 }
 

@@ -881,6 +881,14 @@ async function getOrCreateCart(sessionId: string) {
 }
 
 export async function getCart(sessionId: string): Promise<CartRecord> {
+  if (!sessionId || sessionId === "demo-session") {
+    return {
+      sessionId: sessionId || "demo-session",
+      items: [],
+      updatedAt: new Date().toISOString()
+    };
+  }
+
   return safeStoreRead(
     `getCart:${sessionId}`,
     {
@@ -917,6 +925,16 @@ export async function getCart(sessionId: string): Promise<CartRecord> {
 }
 
 export async function getCartDetail(sessionId: string) {
+  if (!sessionId || sessionId === "demo-session") {
+    return {
+      sessionId: sessionId || "demo-session",
+      items: [],
+      subtotal: 0,
+      shippingFee: 0,
+      total: 0
+    };
+  }
+
   return safeStoreRead(
     `getCartDetail:${sessionId}`,
     {

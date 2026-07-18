@@ -97,23 +97,29 @@ export function AdminProductForm({
           placeholder="Badge"
           required
         />
-        <input
-          className="rounded-2xl border border-ink/10 bg-white px-4 py-3"
-          defaultValue={adminPrice}
-          name="price"
-          placeholder="Fallback base price (USD)"
-          required
-          step="0.01"
-          type="number"
-        />
-        <input
-          className="rounded-2xl border border-ink/10 bg-white px-4 py-3"
-          defaultValue={adminCompareAtPrice}
-          name="compareAtPrice"
-          placeholder="Fallback compare-at price (USD)"
-          step="0.01"
-          type="number"
-        />
+        <label className="space-y-2">
+          <span className="block text-sm font-medium text-ink">Live sale price (USD)</span>
+          <input
+            className="w-full rounded-2xl border border-ink/10 bg-white px-4 py-3"
+            defaultValue={adminPrice}
+            name="price"
+            placeholder="Example: 4.97"
+            required
+            step="0.01"
+            type="number"
+          />
+        </label>
+        <label className="space-y-2">
+          <span className="block text-sm font-medium text-ink">Compare-at / original price (USD)</span>
+          <input
+            className="w-full rounded-2xl border border-ink/10 bg-white px-4 py-3"
+            defaultValue={adminCompareAtPrice}
+            name="compareAtPrice"
+            placeholder="Example: 5.36"
+            step="0.01"
+            type="number"
+          />
+        </label>
         <input
           className="rounded-2xl border border-ink/10 bg-white px-4 py-3"
           defaultValue={product?.firmnessOptions.join(", ") || product?.firmness || ""}
@@ -195,8 +201,9 @@ export function AdminProductForm({
           <option value="active">Active</option>
         </select>
         <div className="rounded-2xl border border-[#dfe8d7] bg-[#f7fbf3] px-4 py-3 text-sm leading-6 text-slate">
-          Admin pricing is entered in USD. If you leave the matrix unchanged, the live variant rows regenerate from the
-          fallback USD price, sizes, comfort options, and stock when you save.
+          Admin pricing is entered in USD. Set the live sale price in the first field and the higher original
+          compare-at price in the second field. If you leave the matrix unchanged, the live variant rows regenerate
+          from these values, sizes, comfort options, and stock when you save.
         </div>
         <textarea
           className="min-h-44 rounded-2xl border border-ink/10 bg-white px-4 py-3 md:col-span-2"

@@ -57,7 +57,7 @@ export default async function AdminProductDetailPage({
           <p className="mt-2 font-serif text-3xl text-ink">{product.category}</p>
         </article>
         <article className="section-frame rounded-[1.5rem] p-5">
-          <p className="text-sm text-slate">Live base price</p>
+          <p className="text-sm text-slate">Live sale price</p>
           <p className="mt-2 font-serif text-3xl text-ink">{liveUsdPrice}</p>
         </article>
         <article className="section-frame rounded-[1.5rem] p-5">

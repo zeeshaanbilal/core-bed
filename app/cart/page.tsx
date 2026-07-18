@@ -7,6 +7,7 @@ import { getCurrentUser } from "@/lib/auth";
 import { getCartSessionId } from "@/lib/cart-session";
 import { getExchangeRates } from "@/lib/exchange-rates";
 import { getCartDetail, getCustomerProfileByEmail } from "@/lib/mock-store";
+import { getVisitorCountry } from "@/lib/visitor-country";
 
 export default async function CartPage() {
   const sessionId = await getCartSessionId();
@@ -16,6 +17,7 @@ export default async function CartPage() {
     user?.email ? getCustomerProfileByEmail(user.email) : Promise.resolve(null),
     getExchangeRates()
   ]);
+  const marketCountry = await getVisitorCountry(profile?.country);
 
   return (
     <main className="mx-auto max-w-7xl px-6 py-16">
@@ -44,13 +46,13 @@ export default async function CartPage() {
                       <h2 className="mt-2 font-serif text-3xl">{item.product.name}</h2>
                       <p className="mt-2 text-sm text-slate">{item.product.description}</p>
                       <p className="mt-3 text-sm text-slate">
-                        Unit price: <CurrencyAmount value={item.unitPrice} country={profile?.country} exchangeRates={exchangeRates} />
+                        Unit price: <CurrencyAmount value={item.unitPrice} country={marketCountry} exchangeRates={exchangeRates} />
                       </p>
                     </div>
 
                     <div className="flex flex-col items-start gap-3 md:items-end">
                       <p className="text-xl font-semibold">
-                        <CurrencyAmount value={item.lineTotal} country={profile?.country} exchangeRates={exchangeRates} />
+                        <CurrencyAmount value={item.lineTotal} country={marketCountry} exchangeRates={exchangeRates} />
                       </p>
                       <div className="flex gap-3">
                         <form action={updateCartQuantityAction} className="flex items-center gap-3">
@@ -96,16 +98,16 @@ export default async function CartPage() {
           <div className="mt-6 space-y-4 text-sm text-slate">
             <div className="flex justify-between">
               <span>Subtotal</span>
-              <span><CurrencyAmount value={cart.subtotal} country={profile?.country} exchangeRates={exchangeRates} /></span>
+              <span><CurrencyAmount value={cart.subtotal} country={marketCountry} exchangeRates={exchangeRates} /></span>
             </div>
             <div className="flex justify-between">
               <span>Shipping</span>
-              <span>{cart.shippingFee === 0 ? "Free" : <CurrencyAmount value={cart.shippingFee} country={profile?.country} exchangeRates={exchangeRates} />}</span>
+              <span>{cart.shippingFee === 0 ? "Free" : <CurrencyAmount value={cart.shippingFee} country={marketCountry} exchangeRates={exchangeRates} />}</span>
             </div>
             <div className="border-t border-ink/10 pt-4">
               <div className="flex justify-between text-base font-semibold text-ink">
                 <span>Estimated total</span>
-                <span><CurrencyAmount value={cart.total} country={profile?.country} exchangeRates={exchangeRates} /></span>
+                <span><CurrencyAmount value={cart.total} country={marketCountry} exchangeRates={exchangeRates} /></span>
               </div>
             </div>
           </div>

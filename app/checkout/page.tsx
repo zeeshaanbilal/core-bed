@@ -11,6 +11,7 @@ import { getExchangeRates } from "@/lib/exchange-rates";
 import { getCartDetail, getCustomerProfileByEmail, getOrderByPaymentReference } from "@/lib/mock-store";
 import { countryOptions } from "@/lib/site-data";
 import { isStripeConfigured } from "@/lib/supabase/config";
+import { getVisitorCountry } from "@/lib/visitor-country";
 
 export default async function CheckoutPage({
   searchParams
@@ -26,6 +27,7 @@ export default async function CheckoutPage({
     params.payment_reference ? getOrderByPaymentReference(params.payment_reference) : Promise.resolve(null),
     getExchangeRates()
   ]);
+  const marketCountry = await getVisitorCountry(profile?.country);
   const stripeReady = isStripeConfigured();
   const publishableKey = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY ?? "";
   const showEmbeddedCheckout = params.embedded === "1" && Boolean(stripeOrder?.paymentClientSecret && publishableKey);
@@ -112,7 +114,7 @@ export default async function CheckoutPage({
                   <input className="rounded-2xl border border-ink/10 bg-ivory px-4 py-3" defaultValue={profile?.city || ""} name="city" placeholder="City" required />
                   <input className="rounded-2xl border border-ink/10 bg-ivory px-4 py-3" defaultValue={profile?.state || ""} name="state" placeholder="State / Province" />
                   <input className="rounded-2xl border border-ink/10 bg-ivory px-4 py-3" defaultValue={profile?.postalCode || ""} name="postalCode" placeholder="Postal code" />
-                  <select className="rounded-2xl border border-ink/10 bg-ivory px-4 py-3" defaultValue={profile?.country || "Pakistan"} name="country" required>
+                  <select className="rounded-2xl border border-ink/10 bg-ivory px-4 py-3" defaultValue={marketCountry} name="country" required>
                     {countryOptions.map((country) => (
                       <option key={country} value={country}>
                         {country}
@@ -156,21 +158,21 @@ export default async function CheckoutPage({
                     {item.selectedFirmness ? ` / ${item.selectedFirmness}` : ""}
                   </span>
                 </span>
-                <span><CurrencyAmount value={item.lineTotal} country={profile?.country} exchangeRates={exchangeRates} /></span>
+                <span><CurrencyAmount value={item.lineTotal} country={marketCountry} exchangeRates={exchangeRates} /></span>
               </div>
             ))}
             <div className="border-t border-ink/10 pt-4">
               <div className="flex justify-between">
                 <span>Subtotal</span>
-                <span><CurrencyAmount value={cart.subtotal} country={profile?.country} exchangeRates={exchangeRates} /></span>
+                <span><CurrencyAmount value={cart.subtotal} country={marketCountry} exchangeRates={exchangeRates} /></span>
               </div>
               <div className="mt-2 flex justify-between">
                 <span>Shipping</span>
-                <span>{cart.shippingFee === 0 ? "Free" : <CurrencyAmount value={cart.shippingFee} country={profile?.country} exchangeRates={exchangeRates} />}</span>
+                <span>{cart.shippingFee === 0 ? "Free" : <CurrencyAmount value={cart.shippingFee} country={marketCountry} exchangeRates={exchangeRates} />}</span>
               </div>
               <div className="mt-4 flex justify-between text-base font-semibold text-ink">
                 <span>Total</span>
-                <span><CurrencyAmount value={cart.total} country={profile?.country} exchangeRates={exchangeRates} /></span>
+                <span><CurrencyAmount value={cart.total} country={marketCountry} exchangeRates={exchangeRates} /></span>
               </div>
             </div>
           </div>

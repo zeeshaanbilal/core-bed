@@ -11,6 +11,7 @@ import { getApprovedTestimonialsForHome, getCustomerProfileByEmail, getProducts 
 import { getHomePageSetup } from "@/lib/page-setup";
 import { buildBreadcrumbSchema, buildMetadata } from "@/lib/seo";
 import { featureCards, storeLocations, testimonials } from "@/lib/site-data";
+import { getVisitorCountry } from "@/lib/visitor-country";
 
 function getProductHref(category: string, slug: string) {
   if (category === "Pillows") {
@@ -45,6 +46,7 @@ export default async function HomePage() {
     getExchangeRates(),
     getHomePageSetup()
   ]);
+  const marketCountry = await getVisitorCountry(profile?.country);
 
   const featuredProducts = allProducts.filter((product) => product.status === "active").slice(0, 4);
   const liveTestimonials =
@@ -238,11 +240,11 @@ export default async function HomePage() {
                 {product.name}
               </Link>
               <div className="mt-3 text-lg text-slate">
-                <CurrencyAmount value={product.price} country={profile?.country} exchangeRates={exchangeRates} />
+                <CurrencyAmount value={product.price} country={marketCountry} exchangeRates={exchangeRates} />
               </div>
               {product.compareAtPrice ? (
                 <div className="mt-1 text-base text-slate line-through">
-                  <CurrencyAmount value={product.compareAtPrice} country={profile?.country} exchangeRates={exchangeRates} />
+                  <CurrencyAmount value={product.compareAtPrice} country={marketCountry} exchangeRates={exchangeRates} />
                 </div>
               ) : null}
               <div className="mt-5 flex flex-col items-center gap-3">

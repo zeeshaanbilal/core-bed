@@ -8,6 +8,7 @@ import { getCartSessionId } from "@/lib/cart-session";
 import { getExchangeRates } from "@/lib/exchange-rates";
 import { getApprovedTestimonialsForProduct, getCustomerProfileByEmail, getProducts, getProductBySlug, isProductWishlisted } from "@/lib/mock-store";
 import { buildBreadcrumbSchema, buildMetadata, buildProductSchema } from "@/lib/seo";
+import { getVisitorCountry } from "@/lib/visitor-country";
 
 export const dynamic = "force-dynamic";
 
@@ -52,6 +53,7 @@ export default async function ProductDetailPage({
     user?.email ? getCustomerProfileByEmail(user.email) : Promise.resolve(null),
     getExchangeRates()
   ]);
+  const marketCountry = await getVisitorCountry(profile?.country);
 
   if (!product) {
     notFound();
@@ -63,7 +65,7 @@ export default async function ProductDetailPage({
     <>
       <StructuredData
         data={[
-          buildProductSchema(product, `/shop/${product.slug}`, profile?.country),
+          buildProductSchema(product, `/shop/${product.slug}`, marketCountry),
           buildBreadcrumbSchema([
             { name: "Home", path: "/" },
             { name: "Mattresses", path: "/shop" },
@@ -79,7 +81,7 @@ export default async function ProductDetailPage({
         relatedProducts={relatedProducts}
         isWishlisted={wishlisted}
         testimonials={testimonials}
-        country={profile?.country}
+        country={marketCountry}
         exchangeRates={exchangeRates}
       />
     </>

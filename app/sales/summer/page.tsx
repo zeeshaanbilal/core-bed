@@ -6,6 +6,7 @@ import { getExchangeRates } from "@/lib/exchange-rates";
 import { getAccessories, getCustomerProfileByEmail, getPillows, getProducts } from "@/lib/mock-store";
 import { getSalesPageSetup, resolveSaleProducts } from "@/lib/page-setup";
 import { buildMetadata } from "@/lib/seo";
+import { getVisitorCountry } from "@/lib/visitor-country";
 
 export const metadata: Metadata = buildMetadata({
   title: "Corebed Summer Sale | Mattress, Pillow and Accessory Offers",
@@ -25,8 +26,9 @@ export default async function SummerSalePage() {
     user?.email ? getCustomerProfileByEmail(user.email) : Promise.resolve(null),
     getSalesPageSetup("summer")
   ]);
+  const marketCountry = await getVisitorCountry(profile?.country);
   const fallbackProducts = [products[0], products[1], pillows[0], accessories[0]].filter(Boolean);
   const saleProducts = resolveSaleProducts([...products, ...pillows, ...accessories], setup.productSlugs, fallbackProducts);
 
-  return <SalesLanding season="summer" products={saleProducts} exchangeRates={exchangeRates} country={profile?.country} content={setup} />;
+  return <SalesLanding season="summer" products={saleProducts} exchangeRates={exchangeRates} country={marketCountry} content={setup} />;
 }

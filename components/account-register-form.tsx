@@ -10,9 +10,15 @@ import { getCurrencyConfig } from "@/lib/format";
 import { countryOptions } from "@/lib/site-data";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 
-export function AccountRegisterForm({ error }: { error?: string }) {
+export function AccountRegisterForm({
+  error,
+  defaultCountry = "Pakistan"
+}: {
+  error?: string;
+  defaultCountry?: string;
+}) {
   const configured = isSupabaseConfigured();
-  const [country, setCountry] = useState("Pakistan");
+  const [country, setCountry] = useState(defaultCountry);
   const currency = getCurrencyConfig(country).currency;
 
   return (

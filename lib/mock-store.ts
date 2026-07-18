@@ -563,7 +563,7 @@ async function getProductsByCategorySlug(categorySlug: string) {
 
     const normalizedProducts = await Promise.all(products.map((product) => ensureMattressVariantsReady(product)));
 
-    return normalizedProducts.filter(isProductEntity).map(toProductRecord).sort((left, right) => right.price - left.price);
+    return normalizedProducts.filter(isProductEntity).map(toProductRecord);
   });
 }
 
@@ -599,7 +599,7 @@ export async function getCatalogProducts() {
 
     const normalizedProducts = await Promise.all(products.map((product) => ensureMattressVariantsReady(product)));
 
-    return normalizedProducts.filter(isProductEntity).map(toProductRecord).sort((left, right) => right.price - left.price);
+    return normalizedProducts.filter(isProductEntity).map(toProductRecord);
   });
 }
 

@@ -7,6 +7,7 @@ import { getCurrentUser } from "@/lib/auth";
 import { getCartSessionId } from "@/lib/cart-session";
 import { getExchangeRates } from "@/lib/exchange-rates";
 import { getCustomerProfileByEmail, getWishlist, getWishlistByUserEmail } from "@/lib/mock-store";
+import { getVisitorCountry } from "@/lib/visitor-country";
 
 export default async function WishlistPage() {
   const sessionId = await getCartSessionId();
@@ -16,6 +17,7 @@ export default async function WishlistPage() {
     user?.email ? getCustomerProfileByEmail(user.email) : Promise.resolve(null),
     getExchangeRates()
   ]);
+  const marketCountry = await getVisitorCountry(profile?.country);
 
   return (
     <main className="mx-auto max-w-7xl px-6 py-16">
@@ -45,7 +47,7 @@ export default async function WishlistPage() {
               </div>
               <div className="flex flex-wrap gap-3">
                 <p className="self-center text-lg font-semibold">
-                  <CurrencyAmount value={product.price} country={profile?.country} exchangeRates={exchangeRates} />
+                  <CurrencyAmount value={product.price} country={marketCountry} exchangeRates={exchangeRates} />
                 </p>
                 <form action={addToCartAction}>
                   <input name="productSlug" type="hidden" value={product.slug} />

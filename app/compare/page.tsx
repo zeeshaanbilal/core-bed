@@ -5,6 +5,7 @@ import { getCurrentUser } from "@/lib/auth";
 import { getExchangeRates } from "@/lib/exchange-rates";
 import { getCustomerProfileByEmail, getProducts } from "@/lib/mock-store";
 import { buildMetadata } from "@/lib/seo";
+import { getVisitorCountry } from "@/lib/visitor-country";
 
 export const metadata: Metadata = buildMetadata({
   title: "Compare Corebed Mattresses | Firmness, Materials and Pricing",
@@ -21,6 +22,7 @@ export default async function ComparePage() {
     getExchangeRates(),
     user?.email ? getCustomerProfileByEmail(user.email) : Promise.resolve(null)
   ]);
+  const marketCountry = await getVisitorCountry(profile?.country);
   const products = allProducts.slice(0, 4);
 
   return (
@@ -52,7 +54,7 @@ export default async function ComparePage() {
                   <td className="px-6 py-5 text-sm text-slate">{product.firmness}</td>
                   <td className="px-6 py-5 text-sm text-slate">{product.material}</td>
                   <td className="px-6 py-5 text-sm font-semibold text-ink">
-                    <CurrencyAmount value={product.price} country={profile?.country} exchangeRates={exchangeRates} />
+                    <CurrencyAmount value={product.price} country={marketCountry} exchangeRates={exchangeRates} />
                   </td>
                   <td className="px-6 py-5 text-sm text-slate">{product.inventory}</td>
                 </tr>

@@ -1,4 +1,5 @@
 import { AccountRegisterForm } from "@/components/account-register-form";
+import { getVisitorCountry } from "@/lib/visitor-country";
 
 export default async function AccountRegisterPage({
   searchParams
@@ -6,5 +7,6 @@ export default async function AccountRegisterPage({
   searchParams: Promise<{ error?: string }>;
 }) {
   const params = await searchParams;
-  return <AccountRegisterForm error={params.error} />;
+  const defaultCountry = await getVisitorCountry();
+  return <AccountRegisterForm error={params.error} defaultCountry={defaultCountry} />;
 }

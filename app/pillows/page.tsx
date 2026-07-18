@@ -5,6 +5,7 @@ import { getCurrentUser } from "@/lib/auth";
 import { getExchangeRates } from "@/lib/exchange-rates";
 import { getCustomerProfileByEmail, getPillows } from "@/lib/mock-store";
 import { buildMetadata } from "@/lib/seo";
+import { getVisitorCountry } from "@/lib/visitor-country";
 
 export const metadata: Metadata = buildMetadata({
   title: "Corebed Pillows | Cooling, Memory and Support Pillows",
@@ -21,10 +22,11 @@ export default async function PillowsPage() {
     user?.email ? getCustomerProfileByEmail(user.email) : Promise.resolve(null),
     getExchangeRates()
   ]);
+  const marketCountry = await getVisitorCountry(profile?.country);
 
   return (
     <main>
-      <PillowCatalog products={pillows} country={profile?.country} exchangeRates={exchangeRates} />
+      <PillowCatalog products={pillows} country={marketCountry} exchangeRates={exchangeRates} />
     </main>
   );
 }

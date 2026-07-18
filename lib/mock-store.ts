@@ -257,20 +257,17 @@ function parseVariantMatrix(
     fallback.sizes.forEach((size) => {
       firmnessList.forEach((firmness, index) => {
         const variantIndex = variants.length;
-        const originalPrice =
-          fallback.compareAtPrice && fallback.compareAtPrice > fallback.price
-            ? fallback.compareAtPrice
-            : fallback.price;
-        const salePrice =
-          fallback.compareAtPrice && fallback.compareAtPrice > fallback.price ? fallback.price : undefined;
+        const livePrice = fallback.price;
+        const compareAtPrice =
+          fallback.compareAtPrice && fallback.compareAtPrice > fallback.price ? fallback.compareAtPrice : undefined;
 
         variants.push({
           sku: buildVariantSku(fallback.slug, `${size}-${firmness}`, fallback.productId, variantIndex),
           size,
           firmness,
           height: "Standard",
-          price: originalPrice,
-          compareAtPrice: salePrice,
+          price: livePrice,
+          compareAtPrice,
           stock: baseStock + (variantIndex < extra ? 1 : 0)
         });
       });
@@ -294,8 +291,8 @@ function parseVariantMatrix(
       size,
       firmness,
       height,
-      price: compareAtPrice ?? actualPrice,
-      compareAtPrice: compareAtPrice ? actualPrice : undefined,
+      price: actualPrice,
+      compareAtPrice,
       stock
     } satisfies Omit<ProductVariantRecord, "id">;
   });

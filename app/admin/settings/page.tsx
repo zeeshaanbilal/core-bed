@@ -49,6 +49,12 @@ export default async function AdminSettingsPage({
             Secure card checkout is already wired inside the website. Add live keys and the webhook secret to complete the live payment path.
           </p>
           <div className="mt-4 space-y-2 text-sm text-slate">
+            <p>
+              Mode:{" "}
+              <span className="font-medium text-ink">
+                {stripe.mode === "live" ? "Live" : stripe.mode === "test" ? "Test" : "Mixed / verify keys"}
+              </span>
+            </p>
             <p>Secret key: {stripe.secretKeyPresent ? "Detected" : "Missing"}</p>
             <p>Publishable key: {stripe.publishableKeyPresent ? "Detected" : "Missing"}</p>
             <p>Webhook secret: {stripe.webhookSecretPresent ? "Detected" : "Missing"}</p>

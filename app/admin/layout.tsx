@@ -38,6 +38,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
             <p>Supabase: {isSupabaseConfigured() ? "Live auth connected" : "Waiting for env keys"}</p>
             <p>Stripe checkout: {stripe.readyForLiveCheckout ? "Ready" : "Waiting for Stripe keys"}</p>
             <p>Stripe webhook: {stripe.webhookSecretPresent ? "Secret detected" : "Waiting for webhook secret"}</p>
+            <p>Stripe mode: {stripe.mode === "live" ? "Live" : stripe.mode === "test" ? "Test" : "Mixed / verify keys"}</p>
           </div>
 
           <nav className="mt-8 grid gap-3">

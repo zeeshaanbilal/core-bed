@@ -75,13 +75,11 @@ export function PillowCatalog({
                       {product.name}
                     </Link>
                     <div className="mt-3 flex flex-wrap items-center gap-3 text-[1.08rem]">
-                      <span className="text-slate line-through">
-                        <CurrencyAmount
-                          value={product.compareAtPrice ?? product.price + 1200}
-                          country={country}
-                          exchangeRates={exchangeRates}
-                        />
-                      </span>
+                      {product.compareAtPrice ? (
+                        <span className="text-slate line-through">
+                          <CurrencyAmount value={product.compareAtPrice} country={country} exchangeRates={exchangeRates} />
+                        </span>
+                      ) : null}
                       <span className="text-[#ff2d2d]">
                         <CurrencyAmount value={product.price} country={country} exchangeRates={exchangeRates} />
                       </span>

@@ -101,6 +101,28 @@ async function assertAdminUser() {
   }
 }
 
+function revalidateProductSurfaces(category: string, slug: string) {
+  revalidatePath("/");
+  revalidatePath("/shop");
+  revalidatePath("/pillows");
+  revalidatePath("/accessories");
+  revalidatePath("/sales");
+  revalidatePath("/sales/summer");
+  revalidatePath("/sales/winter");
+  revalidatePath("/admin");
+  revalidatePath("/admin/products");
+
+  const normalizedCategory = category.trim().toLowerCase();
+
+  if (normalizedCategory === "mattresses") {
+    revalidatePath(`/shop/${slug}`);
+  } else if (normalizedCategory === "pillows") {
+    revalidatePath(`/pillows/${slug}`);
+  } else if (normalizedCategory === "accessories") {
+    revalidatePath(`/accessories/${slug}`);
+  }
+}
+
 export async function addToCartAction(formData: FormData) {
   const sessionId = await ensureCartSessionId();
   await addCartItem({
@@ -328,8 +350,7 @@ export async function createProductAction(formData: FormData) {
     inventory: getNumber(formData, "inventory", 0)
   });
 
-  revalidatePath("/shop");
-  revalidatePath("/admin/products");
+  revalidateProductSurfaces(category, createdProduct.slug);
   redirect(`/admin/products/${createdProduct.slug}`);
 }
 
@@ -374,11 +395,7 @@ export async function updateProductAction(formData: FormData) {
     inventory: getNumber(formData, "inventory", 0)
   });
 
-  revalidatePath("/");
-  revalidatePath("/shop");
-  revalidatePath("/pillows");
-  revalidatePath("/accessories");
-  revalidatePath("/admin/products");
+  revalidateProductSurfaces(updatedProduct.category, updatedProduct.slug);
   redirect(`/admin/products/${updatedProduct.slug}`);
 }
 

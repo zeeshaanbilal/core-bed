@@ -146,16 +146,16 @@ export function MattressCatalog({
                       >
                         {product.name}
                       </Link>
-                      <p className="mt-2 text-[1.1rem] text-slate">
-                        <CurrencyAmount value={product.price} country={country} exchangeRates={exchangeRates} /> -{" "}
-                        <CurrencyAmount
-                          value={
-                            product.compareAtPrice ? Math.max(product.compareAtPrice, product.price + 1200) : product.price + 2400
-                          }
-                          country={country}
-                          exchangeRates={exchangeRates}
-                        />
-                      </p>
+                      <div className="mt-2 flex flex-wrap items-center gap-3 text-[1.1rem]">
+                        {product.compareAtPrice ? (
+                          <span className="text-slate line-through">
+                            <CurrencyAmount value={product.compareAtPrice} country={country} exchangeRates={exchangeRates} />
+                          </span>
+                        ) : null}
+                        <span className="text-slate">
+                          <CurrencyAmount value={product.price} country={country} exchangeRates={exchangeRates} />
+                        </span>
+                      </div>
                     </div>
                     <div className="flex w-full flex-col gap-3 sm:w-auto">
                       <form action={buyNowAction}>

@@ -4,7 +4,7 @@ export default async function AdminDashboardPage() {
   const stats = await getAdminDashboardStats();
   const adminSummary = [
     { label: "Orders", value: String(stats.orderCount), note: "Live orders stored in the database." },
-    { label: "Revenue", value: formatCurrency(stats.revenue), note: "Calculated from confirmed order totals." },
+    { label: "Revenue", value: formatCurrency(stats.revenue), note: "Calculated only from paid live Stripe orders." },
     { label: "Products", value: String(stats.productCount), note: "Active catalog items currently available in the store." },
     { label: "Low stock", value: String(stats.lowStockCount), note: "Items at or below 6 units that need restock attention." },
     { label: "Published content", value: String(stats.publishedContentCount), note: "Guides, policies, and support pages currently live." }

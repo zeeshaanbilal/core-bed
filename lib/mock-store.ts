@@ -1372,8 +1372,16 @@ export async function getAdminDashboardStats() {
     getContentEntries()
   ]);
 
+  const liveRevenue = orders
+    .filter(
+      (order) =>
+        order.paymentStatus.toLowerCase() === "paid" &&
+        order.paymentReference.toLowerCase().startsWith("cs_live_")
+    )
+    .reduce((total, order) => total + order.total, 0);
+
   return {
-    revenue: orders.reduce((total, order) => total + order.total, 0),
+    revenue: liveRevenue,
     orderCount: orders.length,
     productCount: products.length,
     lowStockCount: products.filter((product) => product.inventory <= 6).length,

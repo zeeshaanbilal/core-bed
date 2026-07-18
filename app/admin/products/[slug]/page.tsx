@@ -4,7 +4,9 @@ import { notFound } from "next/navigation";
 import { deleteProductAction, updateProductAction } from "@/app/actions/store";
 import { AdminProductForm } from "@/components/admin-product-form";
 import { FormSubmitButton } from "@/components/form-submit-button";
-import { formatCurrency, getCatalogProductBySlug } from "@/lib/mock-store";
+import { getExchangeRates } from "@/lib/exchange-rates";
+import { convertCurrencyValue, formatCurrency } from "@/lib/format";
+import { getCatalogProductBySlug } from "@/lib/mock-store";
 
 export default async function AdminProductDetailPage({
   params
@@ -12,11 +14,13 @@ export default async function AdminProductDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const product = await getCatalogProductBySlug(slug);
+  const [product, exchangeRates] = await Promise.all([getCatalogProductBySlug(slug), getExchangeRates()]);
 
   if (!product) {
     notFound();
   }
+
+  const liveUsdPrice = formatCurrency(convertCurrencyValue(product.price, "United States", exchangeRates), "United States");
 
   return (
     <div className="space-y-8">
@@ -53,8 +57,8 @@ export default async function AdminProductDetailPage({
           <p className="mt-2 font-serif text-3xl text-ink">{product.category}</p>
         </article>
         <article className="section-frame rounded-[1.5rem] p-5">
-          <p className="text-sm text-slate">Live price</p>
-          <p className="mt-2 font-serif text-3xl text-ink">{formatCurrency(product.price)}</p>
+          <p className="text-sm text-slate">Live base price</p>
+          <p className="mt-2 font-serif text-3xl text-ink">{liveUsdPrice}</p>
         </article>
         <article className="section-frame rounded-[1.5rem] p-5">
           <p className="text-sm text-slate">Inventory</p>
@@ -68,6 +72,7 @@ export default async function AdminProductDetailPage({
 
       <AdminProductForm
         action={updateProductAction}
+        exchangeRates={exchangeRates}
         hiddenId={product.id}
         product={product}
         submitLabel="Save product changes"

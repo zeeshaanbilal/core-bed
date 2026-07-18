@@ -6,7 +6,7 @@ import { redirect } from "next/navigation";
 import { ensureCartSessionId } from "@/lib/cart-session";
 import { getCurrentUser, requireAdminUser } from "@/lib/auth";
 import { getExchangeRates } from "@/lib/exchange-rates";
-import { convertCurrencyValue, getCurrencyConfig } from "@/lib/format";
+import { convertCurrencyValue, convertFromCurrencyValue, getCurrencyConfig } from "@/lib/format";
 import { getSiteUrl } from "@/lib/site-url";
 import { sendTestEmail } from "@/lib/notifications";
 import {
@@ -49,6 +49,45 @@ function getString(formData: FormData, key: string) {
 function getNumber(formData: FormData, key: string, fallback = 0) {
   const value = Number(getString(formData, key));
   return Number.isFinite(value) ? value : fallback;
+}
+
+async function getAdminUsdToPkrRates() {
+  const exchangeRates = await getExchangeRates();
+
+  return {
+    exchangeRates,
+    usdToPkr: convertFromCurrencyValue(1, "United States", exchangeRates)
+  };
+}
+
+function convertAdminUsdToPkr(value: number, usdToPkr: number) {
+  if (!Number.isFinite(value) || value <= 0 || !Number.isFinite(usdToPkr) || usdToPkr <= 0) {
+    return 0;
+  }
+
+  return Number((value * usdToPkr).toFixed(2));
+}
+
+function convertAdminVariantMatrixToPkr(variantMatrix: string, usdToPkr: number) {
+  return variantMatrix
+    .split("\n")
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .map((line) => {
+      const [sizeRaw, firmnessRaw, priceRaw, compareAtRaw, stockRaw, heightRaw] = line.split("|").map((item) => item.trim());
+      const price = convertAdminUsdToPkr(Number(priceRaw), usdToPkr);
+      const compareAt = convertAdminUsdToPkr(Number(compareAtRaw), usdToPkr);
+
+      return [
+        sizeRaw || "Standard",
+        firmnessRaw || "Standard",
+        price > 0 ? String(price) : "",
+        compareAt > 0 ? String(compareAt) : "",
+        stockRaw || "0",
+        heightRaw || "Standard"
+      ].join("|");
+    })
+    .join("\n");
 }
 
 function toStripeMinorUnitAmount(value: number) {
@@ -253,6 +292,8 @@ export async function createProductAction(formData: FormData) {
   await assertAdminUser();
   const slug = getString(formData, "slug");
   const category = getString(formData, "category");
+  const { usdToPkr } = await getAdminUsdToPkrRates();
+  const variantMatrix = convertAdminVariantMatrixToPkr(getString(formData, "variantMatrix"), usdToPkr);
 
   const createdProduct = await createProduct({
     slug,
@@ -260,8 +301,8 @@ export async function createProductAction(formData: FormData) {
     category,
     description: getString(formData, "description"),
     longDescription: getString(formData, "longDescription"),
-    price: getNumber(formData, "price", 0),
-    compareAtPrice: getNumber(formData, "compareAtPrice", 0),
+    price: convertAdminUsdToPkr(getNumber(formData, "price", 0), usdToPkr),
+    compareAtPrice: convertAdminUsdToPkr(getNumber(formData, "compareAtPrice", 0), usdToPkr),
     badge: getString(formData, "badge"),
     firmness: getString(formData, "firmness"),
     material: getString(formData, "material"),
@@ -280,10 +321,10 @@ export async function createProductAction(formData: FormData) {
       .filter(Boolean),
     firmnessOptions: [],
     variants: [],
-    variantMatrix: getString(formData, "variantMatrix"),
+    variantMatrix,
     support: getString(formData, "support"),
     feel: getString(formData, "feel"),
-    status: getString(formData, "status") === "active" ? "active" : "draft",
+    status: getString(formData, "status") === "draft" ? "draft" : "active",
     inventory: getNumber(formData, "inventory", 0)
   });
 
@@ -294,6 +335,11 @@ export async function createProductAction(formData: FormData) {
 
 export async function updateProductAction(formData: FormData) {
   await assertAdminUser();
+  const { usdToPkr } = await getAdminUsdToPkrRates();
+  const submittedVariantMatrix = getString(formData, "variantMatrix");
+  const originalVariantMatrix = getString(formData, "originalVariantMatrix");
+  const shouldRegenerateVariants = submittedVariantMatrix === originalVariantMatrix;
+  const variantMatrix = shouldRegenerateVariants ? "" : convertAdminVariantMatrixToPkr(submittedVariantMatrix, usdToPkr);
 
   const updatedProduct = await updateProduct(getString(formData, "id"), {
     slug: getString(formData, "slug"),
@@ -301,8 +347,8 @@ export async function updateProductAction(formData: FormData) {
     category: getString(formData, "category"),
     description: getString(formData, "description"),
     longDescription: getString(formData, "longDescription"),
-    price: getNumber(formData, "price", 0),
-    compareAtPrice: getNumber(formData, "compareAtPrice", 0),
+    price: convertAdminUsdToPkr(getNumber(formData, "price", 0), usdToPkr),
+    compareAtPrice: convertAdminUsdToPkr(getNumber(formData, "compareAtPrice", 0), usdToPkr),
     badge: getString(formData, "badge"),
     firmness: getString(formData, "firmness"),
     material: getString(formData, "material"),
@@ -321,10 +367,10 @@ export async function updateProductAction(formData: FormData) {
       .filter(Boolean),
     firmnessOptions: [],
     variants: [],
-    variantMatrix: getString(formData, "variantMatrix"),
+    variantMatrix,
     support: getString(formData, "support"),
     feel: getString(formData, "feel"),
-    status: getString(formData, "status") === "active" ? "active" : "draft",
+    status: getString(formData, "status") === "draft" ? "draft" : "active",
     inventory: getNumber(formData, "inventory", 0)
   });
 

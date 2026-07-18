@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { createProductAction } from "@/app/actions/store";
 import { AdminProductForm } from "@/components/admin-product-form";
+import { getExchangeRates } from "@/lib/exchange-rates";
 
 export default async function AdminNewProductPage({
   searchParams
@@ -10,6 +11,7 @@ export default async function AdminNewProductPage({
 }) {
   const params = await searchParams;
   const category = params.category ?? "Mattresses";
+  const exchangeRates = await getExchangeRates();
 
   return (
     <div className="space-y-8">
@@ -33,6 +35,7 @@ export default async function AdminNewProductPage({
       <AdminProductForm
         action={createProductAction}
         defaultCategory={category}
+        exchangeRates={exchangeRates}
         submitLabel="Create product"
         pendingLabel="Saving..."
       />

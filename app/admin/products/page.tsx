@@ -2,7 +2,9 @@ import Link from "next/link";
 
 import { deleteProductAction } from "@/app/actions/store";
 import { FormSubmitButton } from "@/components/form-submit-button";
-import { formatCurrency, getCatalogProducts } from "@/lib/mock-store";
+import { getExchangeRates } from "@/lib/exchange-rates";
+import { convertCurrencyValue, formatCurrency } from "@/lib/format";
+import { getCatalogProducts } from "@/lib/mock-store";
 
 const categoryFilters = [
   { slug: "all", label: "All products", match: null as string | null },
@@ -18,7 +20,7 @@ export default async function AdminProductsPage({
 }) {
   const params = await searchParams;
   const activeCategory = params.category ?? "all";
-  const products = await getCatalogProducts();
+  const [products, exchangeRates] = await Promise.all([getCatalogProducts(), getExchangeRates()]);
   const activeFilter = categoryFilters.find((item) => item.slug === activeCategory) ?? categoryFilters[0];
   const filteredProducts = activeFilter.match
     ? products.filter((product) => product.category === activeFilter.match)
@@ -109,9 +111,11 @@ export default async function AdminProductsPage({
                   </td>
                   <td className="px-6 py-5 text-sm text-slate">{product.category}</td>
                   <td className="px-6 py-5 text-sm text-slate">
-                    <p>{formatCurrency(product.price)}</p>
+                    <p>{formatCurrency(convertCurrencyValue(product.price, "United States", exchangeRates), "United States")}</p>
                     {product.compareAtPrice ? (
-                      <p className="text-xs text-slate line-through">{formatCurrency(product.compareAtPrice)}</p>
+                      <p className="text-xs text-slate line-through">
+                        {formatCurrency(convertCurrencyValue(product.compareAtPrice, "United States", exchangeRates), "United States")}
+                      </p>
                     ) : null}
                   </td>
                   <td className="px-6 py-5 text-sm text-slate">{product.inventory}</td>

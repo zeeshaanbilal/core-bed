@@ -52,6 +52,22 @@ export function convertCurrencyValue(value: number, country?: string, rates?: Ex
   return value * exchangeRate;
 }
 
+export function convertFromCurrencyValue(value: number, country?: string, rates?: ExchangeRates) {
+  const { currency } = getCurrencyConfig(country);
+
+  if (!rates || currency === BASE_CURRENCY) {
+    return value;
+  }
+
+  const exchangeRate = rates[currency];
+
+  if (typeof exchangeRate !== "number" || !Number.isFinite(exchangeRate) || exchangeRate <= 0) {
+    return value;
+  }
+
+  return value / exchangeRate;
+}
+
 export function formatCurrency(value: number, country?: string, rates?: ExchangeRates) {
   const { locale, currency } = getCurrencyConfig(country);
   const normalizedValue = convertCurrencyValue(value, country, rates);

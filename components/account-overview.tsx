@@ -2,25 +2,27 @@ import Link from "next/link";
 
 import { logoutAction, updateAccountProfileAction } from "@/app/actions/auth";
 import { FormSubmitButton } from "@/components/form-submit-button";
-import { getCurrencyConfig } from "@/lib/format";
+import { formatCurrency, getCurrencyConfig } from "@/lib/format";
 import { countryOptions } from "@/lib/site-data";
 import type { SupabaseAuthUser } from "@/lib/supabase/server";
 import { accountLinks } from "@/lib/site-data";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
-import type { CustomerProfileRecord } from "@/lib/store-types";
+import type { CustomerProfileRecord, OrderRecord } from "@/lib/store-types";
 
 export function AccountOverview({
   error,
   success,
   user,
   isAdmin,
-  profile
+  profile,
+  orders
 }: {
   error?: string;
   success?: string;
   user: SupabaseAuthUser | null;
   isAdmin: boolean;
   profile: CustomerProfileRecord | null;
+  orders: OrderRecord[];
 }) {
   const configured = isSupabaseConfigured();
   const preferredCountry = profile?.country || "Pakistan";
@@ -126,6 +128,70 @@ export function AccountOverview({
                 />
               </div>
             </form>
+
+            <section className="section-frame rounded-[1.75rem] p-6 md:col-span-2">
+              <div className="flex flex-wrap items-start justify-between gap-4">
+                <div>
+                  <p className="font-serif text-3xl">Order history</p>
+                  <p className="mt-3 text-sm leading-7 text-slate">
+                    Every order placed with this email stays visible here, so you can reopen tracking from your account anytime.
+                  </p>
+                </div>
+                <Link href="/track-order" className="rounded-full border border-ink/10 px-5 py-3 text-sm text-navy">
+                  Open tracking
+                </Link>
+              </div>
+
+              <div className="mt-6 space-y-4">
+                {orders.length > 0 ? (
+                  orders.map((order) => (
+                    <article key={order.id} className="rounded-[1.25rem] border border-ink/10 bg-white p-5">
+                      <div className="flex flex-wrap items-start justify-between gap-4">
+                        <div>
+                          <p className="text-xs uppercase tracking-[0.22em] text-bronze">{order.orderNumber}</p>
+                          <h3 className="mt-2 text-xl font-semibold text-ink">
+                            {order.items.map((item) => item.name).join(", ")}
+                          </h3>
+                          <p className="mt-2 text-sm text-slate">
+                            {new Date(order.createdAt).toLocaleDateString("en-US", {
+                              year: "numeric",
+                              month: "long",
+                              day: "numeric"
+                            })}{" "}
+                            · {order.customerType === "guest" ? "Guest checkout" : "Account order"}
+                          </p>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-sm uppercase tracking-[0.18em] text-slate/70">{order.orderStatus}</p>
+                          <p className="mt-2 text-xl font-semibold text-ink">
+                            {formatCurrency(order.total, order.country || preferredCountry)}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="mt-4 flex flex-wrap gap-3">
+                        <Link
+                          href={`/track-order?order=${encodeURIComponent(order.orderNumber)}`}
+                          className="rounded-full bg-navy px-5 py-3 text-sm text-white"
+                        >
+                          Track this order
+                        </Link>
+                        <span className="rounded-full border border-ink/10 px-4 py-3 text-sm text-slate">
+                          Payment: {order.paymentStatus}
+                        </span>
+                        <span className="rounded-full border border-ink/10 px-4 py-3 text-sm text-slate">
+                          Shipping: {order.shippingStatus || "order_received"}
+                        </span>
+                      </div>
+                    </article>
+                  ))
+                ) : (
+                  <div className="rounded-[1.25rem] border border-dashed border-ink/15 bg-[#fcfaf5] p-5 text-sm leading-7 text-slate">
+                    No order history is linked to this account yet. Once you place an order with this email, it will appear here automatically.
+                  </div>
+                )}
+              </div>
+            </section>
 
             {accountLinks.map((item) => (
               <Link key={item.href} href={item.href} className="section-frame rounded-[1.75rem] p-6">

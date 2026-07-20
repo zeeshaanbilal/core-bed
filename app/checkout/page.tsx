@@ -54,6 +54,12 @@ export default async function CheckoutPage({
             </div>
           ) : null}
 
+          {!user && !showEmbeddedCheckout ? (
+            <div className="mt-6 rounded-[1.25rem] border border-[#d6e6bf] bg-[#f7fbef] p-4 text-sm leading-7 text-[#51643a]">
+              You can complete this order as a guest. For saved order history and faster tracking later, create an account before checkout or use the same email when you sign up afterward.
+            </div>
+          ) : null}
+
           {cart.items.length === 0 && !showEmbeddedCheckout ? (
             <div className="section-frame mt-10 rounded-[1.75rem] p-8">
               <p className="text-sm leading-7 text-slate">

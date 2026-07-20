@@ -34,6 +34,7 @@ export default async function AdminOrdersPage() {
           <thead className="bg-ink text-ivory">
             <tr>
               <th className="px-6 py-4 text-sm font-medium">Order</th>
+              <th className="px-6 py-4 text-sm font-medium">Customer</th>
               <th className="px-6 py-4 text-sm font-medium">Order status</th>
               <th className="px-6 py-4 text-sm font-medium">City</th>
               <th className="px-6 py-4 text-sm font-medium">Total</th>
@@ -43,7 +44,7 @@ export default async function AdminOrdersPage() {
           <tbody>
             {orders.length === 0 ? (
               <tr className="border-t border-ink/10">
-                <td className="px-6 py-5 text-sm text-slate" colSpan={5}>
+                <td className="px-6 py-5 text-sm text-slate" colSpan={6}>
                   No orders yet. Complete checkout once to populate this table.
                 </td>
               </tr>
@@ -53,18 +54,33 @@ export default async function AdminOrdersPage() {
                   <td className="px-6 py-5 text-sm text-slate">
                     <div className="space-y-1">
                       <div className="font-medium text-ink">{order.orderNumber}</div>
-                      <div className="text-xs uppercase tracking-[0.22em] text-slate/70">{order.paymentMethod.replaceAll("_", " ")}</div>
+                      <div className="text-xs uppercase tracking-[0.22em] text-slate/70">
+                        {order.paymentMethod.replaceAll("_", " ")}
+                      </div>
                     </div>
                   </td>
                   <td className="px-6 py-5 text-sm text-slate">
-                    <span className={`inline-flex rounded-full px-3 py-1 text-xs font-medium uppercase tracking-[0.18em] ${getStatusTone(order.orderStatus)}`}>
+                    <div className="space-y-1">
+                      <div className="font-medium text-ink">{order.customerName || "Guest customer"}</div>
+                      <div className="text-xs">{order.customerEmail}</div>
+                      <div className="text-xs uppercase tracking-[0.18em] text-slate/70">
+                        {order.customerType === "guest" ? "Guest checkout" : "Account order"}
+                      </div>
+                    </div>
+                  </td>
+                  <td className="px-6 py-5 text-sm text-slate">
+                    <span
+                      className={`inline-flex rounded-full px-3 py-1 text-xs font-medium uppercase tracking-[0.18em] ${getStatusTone(order.orderStatus)}`}
+                    >
                       {order.orderStatus}
                     </span>
                   </td>
                   <td className="px-6 py-5 text-sm text-slate">{order.city}</td>
-                  <td className="px-6 py-5 text-sm text-slate">{formatCurrency(order.total)}</td>
+                  <td className="px-6 py-5 text-sm text-slate">{formatCurrency(order.total, order.country)}</td>
                   <td className="px-6 py-5 text-sm text-slate">
-                    <span className={`inline-flex rounded-full px-3 py-1 text-xs font-medium uppercase tracking-[0.18em] ${getStatusTone(order.paymentStatus)}`}>
+                    <span
+                      className={`inline-flex rounded-full px-3 py-1 text-xs font-medium uppercase tracking-[0.18em] ${getStatusTone(order.paymentStatus)}`}
+                    >
                       {order.paymentStatus}
                     </span>
                   </td>
@@ -86,7 +102,10 @@ export default async function AdminOrdersPage() {
                   <p className="text-xs uppercase tracking-[0.28em] text-bronze">Update order</p>
                   <h3 className="mt-3 font-serif text-3xl text-ink">{order.orderNumber}</h3>
                   <p className="mt-2 text-sm text-slate">
-                    {order.customerName} · {order.customerEmail}
+                    {order.customerName || "Guest customer"} · {order.customerEmail}
+                  </p>
+                  <p className="mt-2 text-xs uppercase tracking-[0.22em] text-slate/70">
+                    {order.customerType === "guest" ? "Guest checkout · no linked account history" : "Linked to customer account"}
                   </p>
                 </div>
 
@@ -140,6 +159,30 @@ export default async function AdminOrdersPage() {
                     ))}
                   </select>
                 </label>
+              </div>
+
+              <div className="mt-6 grid gap-4 md:grid-cols-2">
+                <div className="rounded-[1.25rem] border border-ink/10 bg-[#fcfaf5] p-4 text-sm leading-7 text-slate">
+                  <p className="text-xs uppercase tracking-[0.22em] text-bronze">Shipping address</p>
+                  <p className="mt-3 font-medium text-ink">{order.customerName || "Guest customer"}</p>
+                  <p>{order.addressLine1 || order.address || "Address not captured"}</p>
+                  {order.addressLine2 ? <p>{order.addressLine2}</p> : null}
+                  <p>{[order.city, order.state, order.postalCode].filter(Boolean).join(", ")}</p>
+                  <p>{order.country || "Pakistan"}</p>
+                </div>
+
+                <div className="rounded-[1.25rem] border border-ink/10 bg-[#fcfaf5] p-4 text-sm leading-7 text-slate">
+                  <p className="text-xs uppercase tracking-[0.22em] text-bronze">Contact and notes</p>
+                  <p className="mt-3">
+                    <span className="font-medium text-ink">Phone:</span> {order.customerPhone || "Not provided"}
+                  </p>
+                  <p>
+                    <span className="font-medium text-ink">Email:</span> {order.customerEmail}
+                  </p>
+                  <p>
+                    <span className="font-medium text-ink">Notes:</span> {order.notes || "No delivery note added"}
+                  </p>
+                </div>
               </div>
             </form>
           ))}

@@ -123,11 +123,14 @@ export type OrderRecord = {
   id: string;
   orderNumber: string;
   sessionId: string;
+  customerType: "account" | "guest";
+  linkedAccountEmail?: string;
   customerName: string;
   customerEmail: string;
   customerPhone: string;
   city: string;
   address: string;
+  addressLine1?: string;
   addressLine2?: string;
   state?: string;
   postalCode?: string;

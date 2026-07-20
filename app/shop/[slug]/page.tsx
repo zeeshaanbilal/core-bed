@@ -6,7 +6,14 @@ import { StructuredData } from "@/components/structured-data";
 import { getCurrentUser } from "@/lib/auth";
 import { getCartSessionId } from "@/lib/cart-session";
 import { getExchangeRates } from "@/lib/exchange-rates";
-import { getApprovedTestimonialsForProduct, getCustomerProfileByEmail, getProducts, getProductBySlug, isProductWishlisted } from "@/lib/mock-store";
+import {
+  getApprovedTestimonialsForProduct,
+  getCustomerProfileByEmail,
+  getProducts,
+  getProductBySlug,
+  hasPurchasedProduct,
+  isProductWishlisted
+} from "@/lib/mock-store";
 import { buildBreadcrumbSchema, buildMetadata, buildProductSchema } from "@/lib/seo";
 import { getVisitorCountry } from "@/lib/visitor-country";
 
@@ -45,13 +52,14 @@ export default async function ProductDetailPage({
   const { slug } = await params;
   const sessionId = await getCartSessionId();
   const user = await getCurrentUser();
-  const [product, products, wishlisted, testimonials, profile, exchangeRates] = await Promise.all([
+  const [product, products, wishlisted, testimonials, profile, exchangeRates, canSubmitFeedback] = await Promise.all([
     getProductBySlug(slug),
     getProducts(),
     isProductWishlisted({ productSlug: slug, sessionId, userEmail: user?.email }),
     getApprovedTestimonialsForProduct(slug),
     user?.email ? getCustomerProfileByEmail(user.email) : Promise.resolve(null),
-    getExchangeRates()
+    getExchangeRates(),
+    user?.email ? hasPurchasedProduct({ email: user.email, productSlug: slug }) : Promise.resolve(false)
   ]);
   const marketCountry = await getVisitorCountry(profile?.country);
 
@@ -81,6 +89,14 @@ export default async function ProductDetailPage({
         relatedProducts={relatedProducts}
         isWishlisted={wishlisted}
         testimonials={testimonials}
+        canSubmitFeedback={canSubmitFeedback}
+        feedbackRequirementMessage={
+          canSubmitFeedback
+            ? "Thanks for purchasing this product. Your feedback will be submitted for admin review before it appears publicly."
+            : user?.email
+              ? "Feedback opens after this product has been purchased on your account."
+              : "Sign in with the account used for purchase to leave verified product feedback."
+        }
         country={marketCountry}
         exchangeRates={exchangeRates}
       />

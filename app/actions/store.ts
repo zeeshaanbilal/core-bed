@@ -29,6 +29,7 @@ import {
   deleteContentEntry,
   deleteProduct,
   getCartDetail,
+  hasPurchasedProduct,
   moderateTestimonial,
   removeCartItem,
   removeWishlistItem,
@@ -182,6 +183,7 @@ export async function removeCartItemAction(formData: FormData) {
 
 export async function submitCheckoutAction(formData: FormData) {
   const sessionId = await ensureCartSessionId();
+  const user = await getCurrentUser();
   const paymentMethod: PaymentMethod = "stripe_card";
   const customerName = getString(formData, "customerName");
   const customerEmail = getString(formData, "customerEmail");
@@ -194,17 +196,19 @@ export async function submitCheckoutAction(formData: FormData) {
   const country = getString(formData, "country") || "Pakistan";
   const notes = getString(formData, "notes");
 
-  await upsertCustomerProfile({
-    email: customerEmail,
-    name: customerName,
-    phone: customerPhone,
-    addressLine1,
-    addressLine2,
-    city,
-    state,
-    postalCode,
-    country
-  });
+  if (user?.email) {
+    await upsertCustomerProfile({
+      email: user.email,
+      name: customerName,
+      phone: customerPhone,
+      addressLine1,
+      addressLine2,
+      city,
+      state,
+      postalCode,
+      country
+    });
+  }
 
   if (!isStripeServerReady()) {
     redirect("/checkout?error=Stripe%20is%20not%20configured%20yet.%20Add%20live%20keys%20to%20enable%20card%20checkout.");
@@ -286,7 +290,9 @@ export async function submitCheckoutAction(formData: FormData) {
     paymentClientSecret: checkoutSession.client_secret,
     paymentStatus: checkoutSession.payment_status || "unpaid",
     orderStatus: "PENDING",
-    clearCart: false
+    clearCart: false,
+    customerType: user?.email ? "account" : "guest",
+    linkedUserEmail: user?.email
   });
 
   revalidatePath("/admin");
@@ -582,6 +588,19 @@ export async function submitTestimonialAction(formData: FormData) {
   const productSlug = getString(formData, "productSlug");
   const returnTo = getString(formData, "returnTo");
 
+  if (!user?.email) {
+    redirect(`${returnTo || `/shop/${productSlug}`}?review=signin_required`);
+  }
+
+  const canReview = await hasPurchasedProduct({
+    email: user.email,
+    productSlug
+  });
+
+  if (!canReview) {
+    redirect(`${returnTo || `/shop/${productSlug}`}?review=purchase_required`);
+  }
+
   await createTestimonial({
     productSlug,
     customerName: getString(formData, "customerName"),
@@ -601,6 +620,8 @@ export async function submitTestimonialAction(formData: FormData) {
   if (returnTo) {
     redirect(`${returnTo}?review=submitted`);
   }
+
+  redirect(`/shop/${productSlug}?review=submitted`);
 }
 
 export async function moderateTestimonialAction(formData: FormData) {

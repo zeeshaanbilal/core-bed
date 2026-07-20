@@ -18,6 +18,8 @@ export function ProductDetailView({
   relatedProducts,
   isWishlisted,
   testimonials,
+  canSubmitFeedback,
+  feedbackRequirementMessage,
   country,
   exchangeRates
 }: {
@@ -28,6 +30,8 @@ export function ProductDetailView({
   relatedProducts: ProductRecord[];
   isWishlisted: boolean;
   testimonials: TestimonialRecord[];
+  canSubmitFeedback: boolean;
+  feedbackRequirementMessage: string;
   country?: string;
   exchangeRates?: ExchangeRates;
 }) {
@@ -228,18 +232,25 @@ export function ProductDetailView({
 
       <section className="mt-12 rounded-[1.75rem] border border-ink/10 bg-white p-8">
         <h3 className="text-3xl font-semibold tracking-[-0.04em] text-navy">Leave your feedback</h3>
-        <form action={submitTestimonialAction} className="mt-6 grid gap-4 md:grid-cols-2">
-          <input name="productSlug" type="hidden" value={product.slug} />
-          <input name="returnTo" type="hidden" value={returnPath} />
-          <input className="rounded-2xl border border-ink/10 bg-ivory px-4 py-3" name="customerName" placeholder="Your name" required />
-          <input className="rounded-2xl border border-ink/10 bg-ivory px-4 py-3" name="customerCity" placeholder="Your city" required />
-          <input className="rounded-2xl border border-ink/10 bg-ivory px-4 py-3" max="5" min="1" name="rating" placeholder="Rating 1-5" required type="number" />
-          <input className="rounded-2xl border border-ink/10 bg-ivory px-4 py-3" name="title" placeholder="Short headline" />
-          <textarea className="min-h-32 rounded-2xl border border-ink/10 bg-ivory px-4 py-3 md:col-span-2" name="body" placeholder="Share your product experience" required />
-          <div className="md:col-span-2">
-            <FormSubmitButton idleLabel="Submit feedback" pendingLabel="Submitting..." className="rounded-full bg-ink px-5 py-3 text-sm text-ivory" />
+        <p className="mt-3 text-sm leading-7 text-slate">{feedbackRequirementMessage}</p>
+        {canSubmitFeedback ? (
+          <form action={submitTestimonialAction} className="mt-6 grid gap-4 md:grid-cols-2">
+            <input name="productSlug" type="hidden" value={product.slug} />
+            <input name="returnTo" type="hidden" value={returnPath} />
+            <input className="rounded-2xl border border-ink/10 bg-ivory px-4 py-3" name="customerName" placeholder="Your name" required />
+            <input className="rounded-2xl border border-ink/10 bg-ivory px-4 py-3" name="customerCity" placeholder="Your city" required />
+            <input className="rounded-2xl border border-ink/10 bg-ivory px-4 py-3" max="5" min="1" name="rating" placeholder="Rating 1-5" required type="number" />
+            <input className="rounded-2xl border border-ink/10 bg-ivory px-4 py-3" name="title" placeholder="Short headline" />
+            <textarea className="min-h-32 rounded-2xl border border-ink/10 bg-ivory px-4 py-3 md:col-span-2" name="body" placeholder="Share your product experience" required />
+            <div className="md:col-span-2">
+              <FormSubmitButton idleLabel="Submit feedback" pendingLabel="Submitting..." className="rounded-full bg-ink px-5 py-3 text-sm text-ivory" />
+            </div>
+          </form>
+        ) : (
+          <div className="mt-6 rounded-[1.25rem] border border-dashed border-ink/15 bg-[#fcfaf5] p-5 text-sm leading-7 text-slate">
+            Feedback is available only for customers who purchased this specific product using their account email.
           </div>
-        </form>
+        )}
       </section>
 
       {relatedProducts.length ? (

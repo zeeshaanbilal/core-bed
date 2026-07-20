@@ -504,11 +504,14 @@ function toOrderRecord(
     id: order.id,
     orderNumber: order.orderNumber,
     sessionId: snapshot.sessionId ?? "",
+    customerType: snapshot.customerType === "guest" ? "guest" : "account",
+    linkedAccountEmail: snapshot.linkedAccountEmail ?? "",
     customerName: snapshot.customerName ?? "",
     customerEmail: snapshot.customerEmail ?? "",
     customerPhone: snapshot.customerPhone ?? "",
     city: snapshot.city ?? "",
     address: snapshot.address ?? "",
+    addressLine1: snapshot.addressLine1 ?? "",
     addressLine2: snapshot.addressLine2 ?? "",
     state: snapshot.state ?? "",
     postalCode: snapshot.postalCode ?? "",
@@ -1109,6 +1112,27 @@ export async function clearCart(sessionId: string) {
   });
 }
 
+export async function getOrdersByUserEmail(email: string) {
+  const normalizedEmail = email.trim().toLowerCase();
+  const orders = await getOrders();
+
+  return orders.filter((order) => {
+    const customerEmail = order.customerEmail.trim().toLowerCase();
+    const linkedAccountEmail = order.linkedAccountEmail?.trim().toLowerCase() ?? "";
+    return customerEmail === normalizedEmail || linkedAccountEmail === normalizedEmail;
+  });
+}
+
+export async function hasPurchasedProduct(input: { email: string; productSlug: string }) {
+  const normalizedEmail = input.email.trim().toLowerCase();
+  const normalizedSlug = input.productSlug.trim().toLowerCase();
+  const orders = await getOrdersByUserEmail(normalizedEmail);
+
+  return orders.some((order) =>
+    order.items.some((item) => item.productSlug.trim().toLowerCase() === normalizedSlug)
+  );
+}
+
 export async function createOrderFromCart(input: {
   sessionId: string;
   customerName: string;
@@ -1127,6 +1151,8 @@ export async function createOrderFromCart(input: {
   paymentStatus?: string;
   orderStatus?: "PENDING" | "PAID" | "PROCESSING";
   clearCart?: boolean;
+  customerType?: "account" | "guest";
+  linkedUserEmail?: string;
 }) {
   const cart = await getCartDetail(input.sessionId);
 
@@ -1146,7 +1172,7 @@ export async function createOrderFromCart(input: {
         ? `bank_${Math.random().toString(36).slice(2, 10)}`
         : `cod_${Math.random().toString(36).slice(2, 10)}`);
   const user = await prisma.user.findUnique({
-    where: { email: input.customerEmail.toLowerCase() }
+    where: { email: (input.linkedUserEmail ?? input.customerEmail).toLowerCase() }
   });
 
   const order = await prisma.order.create({
@@ -1171,7 +1197,9 @@ export async function createOrderFromCart(input: {
         postalCode: input.postalCode ?? "",
         country: input.country,
         notes: input.notes,
-        sessionId: input.sessionId
+        sessionId: input.sessionId,
+        customerType: input.customerType ?? (user?.id ? "account" : "guest"),
+        linkedAccountEmail: input.linkedUserEmail?.toLowerCase() ?? ""
       },
       items: {
         create: cart.items.map((item) => ({

@@ -74,8 +74,8 @@ export function SiteHeader({
   return (
     <header ref={wrapperRef} className="sticky top-0 z-40 border-b border-ink/10 bg-ivory/95 backdrop-blur">
       <div className="border-b border-ink/8 bg-[#f7f9fc]">
-        <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-2 text-[11px] text-slate sm:px-6 sm:text-[13px]">
-          <div className="flex items-center gap-3 sm:gap-6">
+        <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-x-4 gap-y-2 px-4 py-2 text-[11px] text-slate sm:px-6 sm:text-[13px]">
+          <div className="flex min-w-0 items-center gap-3 sm:gap-6">
             <Link href="/track-order" className="transition hover:text-navy">
               Track Order
             </Link>
@@ -83,8 +83,8 @@ export function SiteHeader({
               Wishlist
             </Link>
           </div>
-          <div className="flex items-center gap-3 sm:gap-6">
-            <span>WhatsApp: +15855029662</span>
+          <div className="flex min-w-0 flex-wrap items-center justify-end gap-3 sm:gap-6">
+            <span className="whitespace-nowrap">WhatsApp: +15855029662</span>
             <span className="hidden sm:inline">contact@corebed.com</span>
             <Link href="/store-locator" className="hidden transition hover:text-navy sm:inline">
               Stores
@@ -93,13 +93,13 @@ export function SiteHeader({
         </div>
       </div>
 
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4 sm:px-6 sm:py-5">
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-4 sm:px-6 sm:gap-4 sm:py-5">
         <Link href="/" className="flex items-center">
           <Image
             src={corebedLogo}
             alt="Corebed Natural Mattress"
             priority
-            className="h-auto w-[140px] object-contain sm:w-[180px] md:w-[240px]"
+            className="h-auto w-[126px] object-contain sm:w-[180px] md:w-[240px]"
           />
         </Link>
 
@@ -199,7 +199,7 @@ export function SiteHeader({
               </div>
             ) : null}
           </div>
-          <Link href="/cart" className="rounded-full bg-navy px-4 py-3 text-sm font-semibold text-ivory sm:px-5">
+          <Link href="/cart" className="rounded-full bg-navy px-3 py-3 text-sm font-semibold text-ivory sm:px-5">
             Cart {cartCount > 0 ? `(${cartCount})` : ""}
           </Link>
         </div>

@@ -64,7 +64,7 @@ export function ProductDetailView({
   const returnPath = `${backHref}/${product.slug}`;
 
   return (
-    <main className="mx-auto max-w-7xl px-6 py-12">
+    <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-10 lg:py-12">
       <div className="mb-8 flex items-center gap-3 text-sm text-slate">
         <Link href="/" className="text-navy">
           Home
@@ -77,17 +77,20 @@ export function ProductDetailView({
         <span>{product.name}</span>
       </div>
 
-      <section className="grid gap-10 lg:grid-cols-[1.18fr_0.82fr]">
+      <section className="grid gap-8 lg:grid-cols-[1.18fr_0.82fr] lg:gap-10">
         <div>
           <div className="relative overflow-hidden rounded-[1.5rem] bg-white">
-            <div className="h-[720px] w-full bg-contain bg-center bg-no-repeat" style={{ backgroundImage: `url(${activeImage})` }} />
+            <div
+              className="h-[320px] w-full bg-contain bg-center bg-no-repeat sm:h-[460px] lg:h-[720px]"
+              style={{ backgroundImage: `url(${activeImage})` }}
+            />
           </div>
 
-          <div className="mt-6 flex gap-5">
+          <div className="mt-4 flex flex-wrap gap-3 sm:mt-6 sm:gap-5">
             {gallery.map((image, index) => (
               <button
                 key={`${image}-${index}`}
-                className={`relative h-24 w-24 overflow-hidden rounded-xl border ${activeImage === image ? "border-navy" : "border-transparent"} bg-white`}
+                className={`relative h-20 w-20 overflow-hidden rounded-xl border ${activeImage === image ? "border-navy" : "border-transparent"} bg-white sm:h-24 sm:w-24`}
                 onClick={() => setActiveImage(image)}
                 type="button"
               >
@@ -99,10 +102,10 @@ export function ProductDetailView({
 
         <div className="space-y-7">
           <div>
-            <h1 className="text-5xl font-semibold tracking-[-0.06em] text-navy">{product.name}</h1>
-            <div className="mt-5 flex flex-wrap items-center gap-3 text-[1.9rem]">
+            <h1 className="text-4xl font-semibold tracking-[-0.06em] text-navy sm:text-5xl">{product.name}</h1>
+            <div className="mt-4 flex flex-wrap items-center gap-3 text-[1.7rem] sm:mt-5 sm:text-[1.9rem]">
               {activeCompareAt ? (
-                <span className="text-xl text-slate line-through">
+                <span className="text-lg text-slate line-through sm:text-xl">
                   <CurrencyAmount value={activeCompareAt} country={country} exchangeRates={exchangeRates} />
                 </span>
               ) : null}
@@ -110,7 +113,9 @@ export function ProductDetailView({
                 <CurrencyAmount value={activePrice} country={country} exchangeRates={exchangeRates} />
               </span>
             </div>
-            <p className="mt-3 text-sm text-slate">SKU: {selectedVariant?.sku ?? "Custom"} | Stock: {selectedVariant?.stock ?? product.inventory}</p>
+            <p className="mt-3 break-words text-sm text-slate">
+              SKU: {selectedVariant?.sku ?? "Custom"} | Stock: {selectedVariant?.stock ?? product.inventory}
+            </p>
           </div>
 
           <div className="space-y-5">
@@ -150,8 +155,8 @@ export function ProductDetailView({
               </div>
             </div>
 
-            <div className="flex flex-wrap gap-4">
-              <div className="flex h-[58px] items-center rounded-md border border-ink/15 bg-white">
+            <div className="flex flex-col gap-4 sm:flex-row sm:flex-wrap">
+              <div className="flex h-[58px] w-full items-center rounded-md border border-ink/15 bg-white sm:w-auto">
                 <button className="flex h-full w-14 items-center justify-center text-2xl text-navy" onClick={() => setQuantity((current) => Math.max(1, current - 1))} type="button">
                   -
                 </button>
@@ -161,19 +166,23 @@ export function ProductDetailView({
                 </button>
               </div>
 
-              <form action={addToCartAction}>
+              <form action={addToCartAction} className="w-full sm:w-auto">
                 <input name="productSlug" type="hidden" value={product.slug} />
                 <input name="quantity" type="hidden" value={String(quantity)} />
                 <input name="selectedSize" type="hidden" value={selectedSize} />
                 <input name="selectedFirmness" type="hidden" value={selectedFirmness} />
-                <FormSubmitButton idleLabel="ADD TO CART" pendingLabel="ADDING..." className="min-h-[58px] min-w-[250px] rounded-md bg-navy px-10 text-base font-semibold text-white" />
+                <FormSubmitButton
+                  idleLabel="ADD TO CART"
+                  pendingLabel="ADDING..."
+                  className="min-h-[58px] w-full rounded-md bg-navy px-8 text-base font-semibold text-white sm:min-w-[250px] sm:w-auto sm:px-10"
+                />
               </form>
 
-              <form action={isWishlisted ? removeWishlistAction : addWishlistAction}>
+              <form action={isWishlisted ? removeWishlistAction : addWishlistAction} className="w-full sm:w-auto">
                 <input name="productSlug" type="hidden" value={product.slug} />
                 <input name="returnTo" type="hidden" value={returnPath} />
                 <button
-                  className={`flex h-[58px] w-[58px] items-center justify-center rounded-md border text-3xl ${
+                  className={`flex h-[58px] w-full items-center justify-center rounded-md border text-3xl sm:w-[58px] ${
                     isWishlisted ? "border-navy bg-navy text-white" : "border-ink/15 bg-white text-slate"
                   }`}
                   type="submit"
@@ -192,8 +201,8 @@ export function ProductDetailView({
               </p>
             </div>
             <div className="grid border-t border-ink/10 text-sm text-slate md:grid-cols-3">
-              <div className="border-b border-ink/10 px-5 py-4 md:border-b-0 md:border-r">WhatsApp: +15855029662</div>
-              <div className="border-b border-ink/10 px-5 py-4 md:border-b-0 md:border-r">Call: +15855029662</div>
+              <div className="break-words border-b border-ink/10 px-5 py-4 md:border-b-0 md:border-r">WhatsApp: +15855029662</div>
+              <div className="break-words border-b border-ink/10 px-5 py-4 md:border-b-0 md:border-r">Call: +15855029662</div>
               <div className="break-all px-5 py-4">Email: contact@corebed.com</div>
             </div>
           </div>
@@ -214,7 +223,9 @@ export function ProductDetailView({
 
       <section className="mt-20">
         <div className="flex flex-wrap items-end justify-between gap-4">
-          <h2 className="text-5xl font-semibold tracking-[-0.05em] text-navy">Customer feedback for this product</h2>
+          <h2 className="text-3xl font-semibold tracking-[-0.05em] text-navy sm:text-4xl lg:text-5xl">
+            Customer feedback for this product
+          </h2>
         </div>
         <div className="mt-10 space-y-4">
           {testimonials.length > 0 ? (
@@ -255,16 +266,21 @@ export function ProductDetailView({
 
       {relatedProducts.length ? (
         <section className="mt-20">
-          <h2 className="text-center text-5xl font-semibold tracking-[-0.05em] text-navy">YOU MAY ALSO LIKE</h2>
+          <h2 className="text-center text-3xl font-semibold tracking-[-0.05em] text-navy sm:text-4xl lg:text-5xl">
+            YOU MAY ALSO LIKE
+          </h2>
           <div className="mt-10 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
             {relatedProducts.map((related) => (
               <article key={related.id}>
                 <Link href={`${backHref}/${related.slug}`} className="block overflow-hidden rounded-sm bg-[#f4f0e7]">
-                  <div className="h-[340px] w-full bg-cover bg-center bg-no-repeat" style={{ backgroundImage: `url(${related.image})` }} />
+                  <div
+                    className="h-[260px] w-full bg-cover bg-center bg-no-repeat sm:h-[320px] lg:h-[340px]"
+                    style={{ backgroundImage: `url(${related.image})` }}
+                  />
                 </Link>
-                <div className="mt-6 flex items-start justify-between gap-4">
+                <div className="mt-6 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                   <div>
-                    <Link href={`${backHref}/${related.slug}`} className="block text-[2rem] font-semibold leading-tight tracking-[-0.05em] text-navy">
+                    <Link href={`${backHref}/${related.slug}`} className="block text-[1.7rem] font-semibold leading-tight tracking-[-0.05em] text-navy sm:text-[2rem]">
                       {related.name}
                     </Link>
                     <div className="mt-3 flex flex-wrap items-center gap-3 text-lg">
@@ -278,7 +294,7 @@ export function ProductDetailView({
                       </span>
                     </div>
                   </div>
-                  <Link href={`${backHref}/${related.slug}`} className="rounded-md bg-navy px-6 py-3 text-sm font-semibold text-white">
+                  <Link href={`${backHref}/${related.slug}`} className="inline-flex w-full justify-center rounded-md bg-navy px-6 py-3 text-sm font-semibold text-white sm:w-auto">
                     Add to Cart
                   </Link>
                 </div>

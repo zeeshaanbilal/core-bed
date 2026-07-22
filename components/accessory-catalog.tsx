@@ -60,7 +60,7 @@ export function AccessoryCatalog({
                       onClick={() => setZoomState({ image: product.gallery[0] ?? product.image, title: product.name })}
                       type="button"
                     >
-                      <span className="absolute right-5 top-5 z-10 rounded-full bg-white/14 px-3 py-2 text-xs uppercase tracking-[0.22em] text-navy opacity-0 transition group-hover:opacity-100">
+                      <span className="absolute right-5 top-5 z-10 hidden rounded-full bg-white/14 px-3 py-2 text-xs uppercase tracking-[0.22em] text-navy opacity-0 transition group-hover:opacity-100 md:block">
                         Zoom
                       </span>
                       <Image

@@ -67,12 +67,12 @@ export function MattressCatalog({
               </span>
             </div>
           </div>
-          <div className="relative overflow-hidden rounded-[1.75rem] border border-white/80 bg-[linear-gradient(180deg,#ffffff_0%,#f3f0e8_100%)] p-6 shadow-[0_24px_50px_rgba(47,42,40,0.08)]">
+          <div className="relative overflow-hidden rounded-[1.75rem] border border-white/80 bg-[linear-gradient(180deg,#ffffff_0%,#f3f0e8_100%)] p-5 shadow-[0_24px_50px_rgba(47,42,40,0.08)] sm:p-6">
             <div className="absolute inset-x-8 top-8 h-32 rounded-[2rem] bg-[radial-gradient(circle_at_center,rgba(151,185,110,0.2),transparent_68%)] blur-2xl" />
             <div className="relative">
               <p className="text-xs uppercase tracking-[0.32em] text-bronze">Featured Range</p>
               <div className="mt-4 grid gap-6 lg:grid-cols-[1.15fr_0.85fr] lg:items-end">
-                <div className="relative min-h-[260px] overflow-hidden rounded-[1.5rem] bg-[linear-gradient(180deg,#f8f6ef_0%,#ece5d9_100%)]">
+                <div className="relative min-h-[220px] overflow-hidden rounded-[1.5rem] bg-[linear-gradient(180deg,#f8f6ef_0%,#ece5d9_100%)] sm:min-h-[260px]">
                   <Image
                     alt="Corebed mattress collection hero"
                     fill
@@ -126,7 +126,7 @@ export function MattressCatalog({
                       <span className="absolute bottom-5 right-5 z-10 rounded-md bg-navy px-4 py-2 text-sm font-semibold text-white">
                         15% OFF
                       </span>
-                      <span className="absolute right-5 top-5 z-10 rounded-full bg-white/16 px-3 py-2 text-xs uppercase tracking-[0.22em] text-white opacity-0 transition group-hover:opacity-100">
+                      <span className="absolute right-5 top-5 z-10 hidden rounded-full bg-white/16 px-3 py-2 text-xs uppercase tracking-[0.22em] text-white opacity-0 transition group-hover:opacity-100 md:block">
                         Zoom
                       </span>
                       <Image

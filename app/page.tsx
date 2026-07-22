@@ -69,20 +69,20 @@ export default async function HomePage() {
       />
 
       <section className="mx-auto grid min-h-[680px] max-w-[1900px] gap-0 bg-white lg:grid-cols-[0.58fr_1.22fr]">
-        <div className="flex items-center justify-center px-10 py-20 md:px-16 lg:justify-end">
-          <div className="w-full max-w-[420px]">
-            <p className="text-[clamp(4rem,11vw,7.8rem)] font-semibold uppercase leading-[0.92] tracking-[-0.08em] text-navy">
+        <div className="flex items-center justify-center px-6 py-14 sm:px-8 md:px-12 md:py-16 lg:justify-end lg:px-16 lg:py-20">
+          <div className="w-full max-w-[460px] overflow-visible">
+            <p className="pr-2 text-[clamp(3.4rem,10vw,7.4rem)] font-semibold uppercase leading-[0.88] tracking-[-0.09em] text-navy">
               {homeSetup.saleLineOne}
             </p>
-            <p className="mt-2 text-[clamp(4.5rem,13vw,9.2rem)] font-bold uppercase leading-[0.88] tracking-[-0.08em] text-navy">
+            <p className="mt-2 pr-2 text-[clamp(3.8rem,12vw,8.8rem)] font-bold uppercase leading-[0.84] tracking-[-0.09em] text-navy">
               {homeSetup.saleLineTwo}
             </p>
-            <div className="mt-10 flex items-end gap-2 text-bronze">
-              <span className="text-[clamp(5rem,12vw,8rem)] font-bold leading-none tracking-[-0.08em]">
+            <div className="mt-8 flex items-end gap-2 text-bronze md:mt-10">
+              <span className="text-[clamp(4.4rem,11vw,8rem)] font-bold leading-none tracking-[-0.08em]">
                 {homeSetup.discountValue}
               </span>
-              <div className="pb-3">
-                <span className="text-6xl font-light">%</span>
+              <div className="pb-2 md:pb-3">
+                <span className="text-5xl font-light sm:text-6xl">%</span>
                 <p className="mt-1 text-2xl font-semibold uppercase tracking-[-0.04em]">
                   {homeSetup.discountSuffix}
                 </p>
@@ -90,22 +90,22 @@ export default async function HomePage() {
             </div>
           </div>
         </div>
-        <div className="relative min-h-[520px] overflow-hidden bg-[linear-gradient(130deg,#f7f5ef_0%,#efe9df_52%,#e0d8ca_100%)]">
+        <div className="relative min-h-[420px] overflow-hidden bg-[linear-gradient(130deg,#f7f5ef_0%,#efe9df_52%,#e0d8ca_100%)] sm:min-h-[520px]">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_28%,rgba(151,185,110,0.22),transparent_24%),radial-gradient(circle_at_70%_58%,rgba(255,255,255,0.38),transparent_36%),radial-gradient(circle_at_82%_24%,rgba(63,58,57,0.06),transparent_20%)]" />
           <div className="absolute left-[52%] top-[17%] h-[380px] w-[380px] rounded-full bg-[#97b96e]/10 blur-3xl" />
           <div className="absolute left-[14%] top-[70%] h-[180px] w-[180px] rounded-full bg-white/40 blur-3xl" />
-          <div className="relative flex h-full items-end justify-center px-8 pb-12 pt-16">
+          <div className="relative flex h-full items-end justify-center px-4 pb-8 pt-10 sm:px-6 sm:pb-10 sm:pt-12 md:px-8 md:pb-12 md:pt-16">
             <div className="relative w-full max-w-5xl">
               <div className="absolute -top-8 left-[6%] hidden h-24 w-24 rounded-sm bg-white/90 shadow-soft md:block" />
               <div className="absolute -top-2 right-[6%] hidden h-24 w-24 rounded-sm bg-white/90 shadow-soft md:block" />
-              <div className="mx-auto max-w-4xl overflow-hidden rounded-[2.4rem] border border-white/60 bg-[linear-gradient(180deg,#ffffff_0%,#faf8f2_62%,#f0ece3_100%)] shadow-[0_45px_90px_rgba(47,42,40,0.18)]">
+              <div className="mx-auto max-w-4xl overflow-hidden rounded-[1.75rem] border border-white/60 bg-[linear-gradient(180deg,#ffffff_0%,#faf8f2_62%,#f0ece3_100%)] shadow-[0_45px_90px_rgba(47,42,40,0.18)] sm:rounded-[2.4rem]">
                 <div
-                  className="h-[300px] w-full bg-cover bg-center md:h-[360px]"
+                  className="h-[220px] w-full bg-cover bg-center sm:h-[280px] md:h-[360px]"
                   style={{ backgroundImage: `url(${homeSetup.heroImageUrl})` }}
                 />
-                <div className="bg-[linear-gradient(180deg,#4b4644_0%,#2f2a28_100%)] px-8 py-8 text-white md:px-10">
-                  <p className="text-4xl font-semibold tracking-[-0.06em] md:text-5xl">{homeSetup.heroCardTitle}</p>
-                  <p className="mt-2 text-base text-white/86 md:text-lg">{homeSetup.heroCardSubtitle}</p>
+                <div className="bg-[linear-gradient(180deg,#4b4644_0%,#2f2a28_100%)] px-5 py-5 text-white sm:px-6 sm:py-6 md:px-10 md:py-8">
+                  <p className="text-3xl font-semibold tracking-[-0.06em] sm:text-4xl md:text-5xl">{homeSetup.heroCardTitle}</p>
+                  <p className="mt-2 text-sm text-white/86 sm:text-base md:text-lg">{homeSetup.heroCardSubtitle}</p>
                 </div>
               </div>
               <div className="absolute -bottom-7 left-1/2 h-9 w-[90%] -translate-x-1/2 rounded-full bg-[#2f2a28]/20 blur-xl" />
@@ -123,12 +123,12 @@ export default async function HomePage() {
             Minimal, cleaner product storytelling with just the categories that matter most right now.
           </p>
         </div>
-        <div className="mt-12 grid gap-5 lg:grid-cols-3">
+        <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {homeSetup.categoryCards.map((card) => (
             <Link
               key={card.title}
               href={card.href}
-              className="group relative min-h-[500px] overflow-hidden rounded-sm bg-[linear-gradient(180deg,#f4f1ea_0%,#e6dfd2_100%)] p-10 text-white"
+              className="group relative min-h-[360px] overflow-hidden rounded-sm bg-[linear-gradient(180deg,#f4f1ea_0%,#e6dfd2_100%)] p-6 text-white sm:min-h-[440px] sm:p-8 lg:min-h-[500px] lg:p-10"
             >
               <div
                 className="absolute inset-x-0 bottom-0 top-0 bg-cover bg-bottom bg-no-repeat opacity-100 transition duration-500 group-hover:scale-[1.03]"
@@ -136,8 +136,8 @@ export default async function HomePage() {
               />
               <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(63,58,57,0.05)_0%,rgba(63,58,57,0.16)_55%,rgba(47,42,40,0.32)_100%)]" />
               <div className="relative z-10 text-center">
-                <h3 className="text-5xl font-light tracking-[-0.06em] text-white md:text-6xl">{card.title}</h3>
-                <span className="mt-7 inline-flex rounded-full border border-white/70 px-10 py-4 text-lg font-medium uppercase tracking-[-0.04em] text-white">
+                <h3 className="text-4xl font-light tracking-[-0.06em] text-white sm:text-5xl md:text-6xl">{card.title}</h3>
+                <span className="mt-6 inline-flex rounded-full border border-white/70 px-8 py-3 text-base font-medium uppercase tracking-[-0.04em] text-white sm:mt-7 sm:px-10 sm:py-4 sm:text-lg">
                   Shop Now
                 </span>
               </div>
@@ -174,7 +174,7 @@ export default async function HomePage() {
         <div className="relative mx-auto max-w-[1900px]">
           <video
             autoPlay
-            className="h-[640px] w-full object-cover"
+            className="h-[420px] w-full object-cover sm:h-[520px] lg:h-[640px]"
             loop
             muted
             playsInline
@@ -183,9 +183,9 @@ export default async function HomePage() {
             <source src={homeSetup.videoUrl} type="video/mp4" />
           </video>
           <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(47,42,40,0.54)_0%,rgba(47,42,40,0.16)_36%,rgba(47,42,40,0.08)_100%)]" />
-          <div className="absolute left-6 top-6 max-w-3xl text-white md:left-10 md:top-8">
-            <p className="text-3xl font-semibold tracking-[-0.06em] md:text-4xl">{homeSetup.videoTitle}</p>
-            <p className="mt-3 max-w-xl text-sm leading-7 text-white/88">{homeSetup.videoBody}</p>
+          <div className="absolute left-4 top-4 max-w-3xl text-white sm:left-6 sm:top-6 md:left-10 md:top-8">
+            <p className="text-2xl font-semibold tracking-[-0.06em] sm:text-3xl md:text-4xl">{homeSetup.videoTitle}</p>
+            <p className="mt-3 max-w-xl text-xs leading-6 text-white/88 sm:text-sm sm:leading-7">{homeSetup.videoBody}</p>
           </div>
         </div>
       </section>
@@ -301,13 +301,13 @@ export default async function HomePage() {
         <h2 className="text-center font-serif text-4xl font-semibold tracking-[-0.05em] text-navy md:text-5xl">
           Sleep tips and advice to improve your sleep
         </h2>
-        <div className="mt-12 grid gap-6 lg:grid-cols-3">
+        <div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {homeSetup.articleCards.map((article) => (
             <Link key={article.title} href={`/blog/${article.slug}`} className="relative block min-h-[420px] overflow-hidden rounded-[1.5rem]">
               <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${article.image})` }} />
               <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(47,42,40,0.05)_0%,rgba(47,42,40,0.76)_100%)]" />
-              <div className="absolute inset-x-0 bottom-0 p-6 text-white">
-                <h3 className="max-w-md text-4xl font-semibold leading-tight tracking-[-0.05em]">{article.title}</h3>
+              <div className="absolute inset-x-0 bottom-0 p-5 text-white sm:p-6">
+                <h3 className="max-w-md text-3xl font-semibold leading-tight tracking-[-0.05em] sm:text-4xl">{article.title}</h3>
               </div>
             </Link>
           ))}
@@ -320,9 +320,9 @@ export default async function HomePage() {
       </section>
 
       <section className="mx-auto grid max-w-[1900px] gap-0 bg-white lg:grid-cols-[1.05fr_1fr]">
-        <div className="flex items-center px-8 py-16 md:px-20">
+        <div className="flex items-center px-6 py-12 sm:px-8 md:px-12 lg:px-20 lg:py-16">
           <div className="max-w-xl">
-            <h2 className="font-serif text-5xl font-semibold leading-tight tracking-[-0.05em] text-navy md:text-6xl">
+            <h2 className="font-serif text-4xl font-semibold leading-tight tracking-[-0.05em] text-navy sm:text-5xl md:text-6xl">
               Find a Corebed store near you.
             </h2>
             <p className="mt-6 max-w-lg text-base leading-8 text-slate">

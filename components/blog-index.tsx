@@ -39,11 +39,11 @@ export function BlogIndex({ posts }: { posts: BlogPostRecord[] }) {
   const pagedPosts = filteredPosts.slice((page - 1) * POSTS_PER_PAGE, page * POSTS_PER_PAGE);
 
   return (
-    <main className="mx-auto max-w-7xl px-6 py-14">
+    <main className="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-14">
       <div className="flex flex-col gap-8 lg:flex-row lg:items-start lg:justify-between">
         <div>
           <p className="text-xs uppercase tracking-[0.3em] text-bronze">Editorial</p>
-          <h1 className="mt-4 font-serif text-6xl font-semibold tracking-[-0.06em] text-navy">Blog</h1>
+          <h1 className="mt-4 font-serif text-4xl font-semibold tracking-[-0.06em] text-navy sm:text-5xl lg:text-6xl">Blog</h1>
         </div>
         <div className="flex max-w-5xl flex-wrap gap-3">
           {categories.map((category) => (
@@ -65,21 +65,21 @@ export function BlogIndex({ posts }: { posts: BlogPostRecord[] }) {
       </div>
 
       <div className="mt-14">
-        <h2 className="text-6xl font-light tracking-[-0.07em] text-navy">{activeCategory}</h2>
+        <h2 className="text-4xl font-light tracking-[-0.07em] text-navy sm:text-5xl lg:text-6xl">{activeCategory}</h2>
       </div>
 
-      <div className="mt-12 grid gap-x-7 gap-y-12 lg:grid-cols-3">
+      <div className="mt-12 grid gap-x-7 gap-y-12 md:grid-cols-2 lg:grid-cols-3">
         {pagedPosts.map((post) => (
           <article key={post.id} className="group">
             <Link href={`/blog/${post.slug}`} className="block overflow-hidden rounded-sm bg-[#f4f0e7]">
               <div
-                className="h-[370px] w-full bg-cover bg-center transition duration-500 group-hover:scale-[1.02]"
+                className="h-[260px] w-full bg-cover bg-center transition duration-500 group-hover:scale-[1.02] sm:h-[320px] lg:h-[370px]"
                 style={{ backgroundImage: `url(${post.image})` }}
               />
             </Link>
             <Link
               href={`/blog/${post.slug}`}
-              className="mt-5 block text-[2rem] font-medium leading-tight tracking-[-0.05em] text-navy"
+              className="mt-5 block text-[1.55rem] font-medium leading-tight tracking-[-0.05em] text-navy sm:text-[2rem]"
             >
               {post.title}
             </Link>

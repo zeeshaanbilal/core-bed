@@ -52,7 +52,7 @@ export function ProductZoomModal({
   return (
     <div className="fixed inset-0 z-[100] bg-[#2f2a28e8] p-3 sm:p-5" onClick={onClose}>
       <div
-        className="mx-auto flex h-full w-full max-w-6xl flex-col overflow-hidden rounded-[1.5rem] bg-white shadow-[0_30px_90px_rgba(0,0,0,0.26)]"
+        className="mx-auto flex h-full w-full max-w-6xl flex-col overflow-hidden rounded-[1.2rem] bg-white shadow-[0_30px_90px_rgba(0,0,0,0.26)] sm:rounded-[1.5rem]"
         onClick={(event) => event.stopPropagation()}
       >
         <div className="flex items-center justify-between border-b border-ink/10 px-4 py-3 sm:px-6">
@@ -92,7 +92,7 @@ export function ProductZoomModal({
                 backgroundSize: "170%"
               }}
             />
-            <div className="absolute left-4 top-4 rounded-full bg-[#2f2a28cc] px-3 py-2 text-[11px] uppercase tracking-[0.24em] text-white sm:left-6 sm:top-6">
+            <div className="absolute left-4 top-4 hidden rounded-full bg-[#2f2a28cc] px-3 py-2 text-[11px] uppercase tracking-[0.24em] text-white sm:left-6 sm:top-6 md:block">
               Hover to zoom
             </div>
           </div>

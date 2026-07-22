@@ -18,6 +18,7 @@ body {
   color: #3f3a39;
   scrollbar-width: none;
   -ms-overflow-style: none;
+  overflow-x: hidden;
 }
 
 html::-webkit-scrollbar,
@@ -38,6 +39,7 @@ a {
 
 .page-shell {
   background: linear-gradient(180deg, #ffffff 0%, #fbfaf7 100%);
+  overflow-x: clip;
 }
 
 .section-frame {

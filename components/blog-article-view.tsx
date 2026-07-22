@@ -23,11 +23,11 @@ export function BlogArticleView({
 
   return (
     <main>
-      <section className="mx-auto grid max-w-7xl gap-10 px-6 py-12 lg:grid-cols-[1.35fr_0.65fr]">
+      <section className="mx-auto grid max-w-7xl gap-8 px-4 py-8 sm:px-6 sm:py-12 lg:grid-cols-[1.35fr_0.65fr] lg:gap-10">
         <article>
           <div className="max-w-4xl">
             <p className="text-xs uppercase tracking-[0.3em] text-bronze">{post.categories.join(" • ")}</p>
-            <h1 className="mt-4 font-serif text-6xl font-semibold leading-[0.95] tracking-[-0.07em] text-navy">
+            <h1 className="mt-4 font-serif text-4xl font-semibold leading-[0.95] tracking-[-0.07em] text-navy sm:text-5xl lg:text-6xl">
               {post.title}
             </h1>
             <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs uppercase tracking-[0.18em] text-slate">
@@ -38,7 +38,7 @@ export function BlogArticleView({
           </div>
 
           <div className="mt-8 overflow-hidden rounded-[1.5rem] bg-[#f4f0e7]">
-            <div className="h-[620px] w-full bg-cover bg-center" style={{ backgroundImage: `url(${post.image})` }} />
+            <div className="h-[260px] w-full bg-cover bg-center sm:h-[420px] lg:h-[620px]" style={{ backgroundImage: `url(${post.image})` }} />
           </div>
 
           <div className="mt-10 space-y-6 text-[15px] leading-8 text-slate">
@@ -50,7 +50,7 @@ export function BlogArticleView({
           <div className="mt-14 space-y-12">
             {post.sections.map((section) => (
               <section key={section.heading}>
-                <h2 className="text-4xl font-semibold tracking-[-0.05em] text-navy">{section.heading}</h2>
+                <h2 className="text-3xl font-semibold tracking-[-0.05em] text-navy sm:text-4xl">{section.heading}</h2>
                 <div className="mt-5 space-y-5 text-[15px] leading-8 text-slate">
                   {section.paragraphs.map((paragraph) => (
                     <p key={paragraph}>{paragraph}</p>
@@ -68,7 +68,7 @@ export function BlogArticleView({
           </div>
 
           <section className="mt-14">
-            <h2 className="text-4xl font-semibold tracking-[-0.05em] text-navy">FAQs</h2>
+            <h2 className="text-3xl font-semibold tracking-[-0.05em] text-navy sm:text-4xl">FAQs</h2>
             <div className="mt-6 space-y-5">
               {post.faq.map((item) => (
                 <div key={item.question} className="rounded-[1.25rem] border border-ink/10 bg-white p-6">
@@ -106,7 +106,7 @@ export function BlogArticleView({
         <aside className="space-y-10">
           <div className="rounded-[1.5rem] border border-ink/10 bg-white p-6">
             <p className="text-2xl font-semibold tracking-[-0.04em] text-navy">Search</p>
-            <div className="mt-5 flex gap-3">
+            <div className="mt-5 flex flex-col gap-3 sm:flex-row">
               <input className="min-h-[48px] flex-1 rounded-lg border border-ink/10 px-4 text-sm" placeholder="Search article" />
               <button className="rounded-lg bg-navy px-5 text-sm font-semibold text-white">Search</button>
             </div>
@@ -145,15 +145,15 @@ export function BlogArticleView({
         </aside>
       </section>
 
-      <section className="mx-auto max-w-7xl px-6 pb-16">
-        <h2 className="text-4xl font-semibold tracking-[-0.05em] text-navy">Related Posts</h2>
-        <div className="mt-8 grid gap-6 lg:grid-cols-3">
+      <section className="mx-auto max-w-7xl px-4 pb-16 sm:px-6">
+        <h2 className="text-3xl font-semibold tracking-[-0.05em] text-navy sm:text-4xl">Related Posts</h2>
+        <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {relatedPosts.map((related) => (
             <article key={related.slug}>
               <Link href={`/blog/${related.slug}`} className="block overflow-hidden rounded-xl bg-[#f4f0e7]">
-                <div className="h-[220px] w-full bg-cover bg-center" style={{ backgroundImage: `url(${related.image})` }} />
+                <div className="h-[220px] w-full bg-cover bg-center sm:h-[260px]" style={{ backgroundImage: `url(${related.image})` }} />
               </Link>
-              <Link href={`/blog/${related.slug}`} className="mt-4 block text-2xl font-medium leading-tight tracking-[-0.04em] text-navy">
+              <Link href={`/blog/${related.slug}`} className="mt-4 block text-xl font-medium leading-tight tracking-[-0.04em] text-navy sm:text-2xl">
                 {related.title}
               </Link>
               <p className="mt-2 text-sm text-slate">{formatDate(related.publishedAt)}</p>

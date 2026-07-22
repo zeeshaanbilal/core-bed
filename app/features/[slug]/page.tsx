@@ -42,7 +42,7 @@ export default async function FeatureDetailPage({
   }
 
   return (
-    <main className="mx-auto max-w-6xl px-6 py-16">
+    <main className="mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-16">
       <StructuredData
         data={buildBreadcrumbSchema([
           { name: "Home", path: "/" },
@@ -57,14 +57,14 @@ export default async function FeatureDetailPage({
         <span>{feature.title}</span>
       </div>
 
-      <section className="grid gap-8 rounded-[2rem] border border-[#dfe8d7] bg-[linear-gradient(135deg,#fbfcf8_0%,#f5f7f1_46%,#edf2e6_100%)] p-8 shadow-[0_22px_70px_rgba(70,86,53,0.08)] lg:grid-cols-[0.75fr_1.25fr]">
-        <div className="flex flex-col justify-between rounded-[1.5rem] bg-white/85 p-8">
+      <section className="grid gap-8 rounded-[2rem] border border-[#dfe8d7] bg-[linear-gradient(135deg,#fbfcf8_0%,#f5f7f1_46%,#edf2e6_100%)] p-5 shadow-[0_22px_70px_rgba(70,86,53,0.08)] sm:p-8 lg:grid-cols-[0.75fr_1.25fr]">
+        <div className="flex flex-col justify-between rounded-[1.5rem] bg-white/85 p-5 sm:p-8">
           <div>
             <div className="flex h-16 w-16 items-center justify-center rounded-full border border-[#cbd9bc] text-4xl text-navy">
               {feature.icon}
             </div>
             <p className="mt-6 text-xs uppercase tracking-[0.32em] text-bronze">Corebed feature</p>
-            <h1 className="mt-4 text-5xl font-semibold leading-[0.95] tracking-[-0.06em] text-navy">
+            <h1 className="mt-4 text-3xl font-semibold leading-[0.95] tracking-[-0.06em] text-navy sm:text-4xl lg:text-5xl">
               {feature.title}
             </h1>
             <p className="mt-5 text-base leading-8 text-slate">{feature.body}</p>
@@ -74,9 +74,9 @@ export default async function FeatureDetailPage({
           </Link>
         </div>
 
-        <div className="rounded-[1.5rem] bg-[#2f2a28] p-8 text-white">
+        <div className="rounded-[1.5rem] bg-[#2f2a28] p-5 text-white sm:p-8">
           <p className="text-xs uppercase tracking-[0.32em] text-[#d8e3c5]">Detail</p>
-          <h2 className="mt-4 text-4xl font-semibold leading-tight tracking-[-0.05em]">
+          <h2 className="mt-4 text-3xl font-semibold leading-tight tracking-[-0.05em] sm:text-4xl">
             {feature.detailTitle}
           </h2>
           <p className="mt-6 max-w-3xl text-base leading-8 text-white/82">{feature.detailBody}</p>

@@ -38,7 +38,7 @@ export default async function StoreDetailPage({ params }: StoreDetailPageProps) 
   }
 
   return (
-    <main className="mx-auto max-w-7xl px-6 py-16">
+    <main className="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-16">
       <div className="flex flex-wrap items-center gap-3 text-sm text-slate">
         <Link href="/" className="text-navy">
           Home
@@ -52,9 +52,9 @@ export default async function StoreDetailPage({ params }: StoreDetailPageProps) 
       </div>
 
       <section className="mt-8 grid gap-8 lg:grid-cols-[0.9fr_1.1fr]">
-        <article className="section-frame rounded-[1.75rem] p-8">
+        <article className="section-frame rounded-[1.75rem] p-5 sm:p-8">
           <p className="text-xs uppercase tracking-[0.3em] text-bronze">{store.city}</p>
-          <h1 className="mt-4 font-serif text-5xl leading-tight text-ink">{store.address}</h1>
+          <h1 className="mt-4 font-serif text-3xl leading-tight text-ink sm:text-4xl lg:text-5xl">{store.address}</h1>
           <p className="mt-6 text-base leading-8 text-slate">{store.summary}</p>
 
           <div className="mt-8 space-y-3 text-sm leading-7 text-slate">
@@ -90,7 +90,7 @@ export default async function StoreDetailPage({ params }: StoreDetailPageProps) 
           <iframe
             title={`Map for ${store.address}, ${store.city}`}
             src={store.mapEmbedUrl}
-            className="h-[520px] w-full"
+            className="h-[320px] w-full sm:h-[420px] lg:h-[520px]"
             loading="lazy"
             referrerPolicy="no-referrer-when-downgrade"
           />
